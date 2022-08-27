@@ -31,7 +31,7 @@ function SELF:Open(ent, flipped)
 	local targetInfoWindowAng = Angle(0, 71.5, 27)
 	local targetSelectionWindowPos = Vector(-26, -1, 3.5)
 	local targetSelectionWindowAng = Angle(0, 0, 11)
-	local shipInfoWindowPos = Vector(-27.25, -3.5, 3)
+	local shipInfoWindowPos = Vector(-27.25, -3.6, 3)
 	local shipInfoWindowAng = Angle(0, 0, 11)
 	if self.Flipped then
 		mapWindowPos = Vector(45, -10, 30)
@@ -40,7 +40,7 @@ function SELF:Open(ent, flipped)
 		targetInfoWindowAng = Angle(0, -71.5, 27)
 		targetSelectionWindowPos = Vector(26, -1, 3.5)
 		--targetSelectionWindowAng = Angle(0, 0, 11)
-		shipInfoWindowPos = Vector(27.25, -3.5, 3)
+		shipInfoWindowPos = Vector(27.25, -3.6, 3)
 		--shipInfoWindowAng = Angle(0, 0, 11)
 	end
 
@@ -95,9 +95,13 @@ function SELF:Open(ent, flipped)
 		Star_Trek.Logs:AddEntry(self.Ent, ply, "Alert Disabled!")
 	end)
 
-	local mRow1 = targetSelectionWindow:CreateMainButtonRow(32)
-	targetSelectionWindow:AddButtonToRow(mRow1, "Test", number, color, activeColor, disabled, toggle, callback)
+	local scannerRangeRow = targetSelectionWindow:CreateMainButtonRow(32)
+	targetSelectionWindow:AddButtonToRow(scannerRangeRow, "<"         , nil, color, activeColor, false, false, callback)
+	targetSelectionWindow:AddButtonToRow(scannerRangeRow, "Scanner:", nil, color, activeColor, true, false, callback)
+	targetSelectionWindow:AddButtonToRow(scannerRangeRow, "1 AU"     , nil, color, activeColor, true, false, callback)
+	targetSelectionWindow:AddButtonToRow(scannerRangeRow, ">"         , nil, color, activeColor, false, false, callback)
 
+	targetSelectionWindow:CreateMainButtonRow(32 * 3)
 	local success4, shipInfoWindow = Star_Trek.LCARS:CreateWindow("ship_info", shipInfoWindowPos, shipInfoWindowAng, 22, 340, 100,
 	function(windowData, interfaceData, ply, buttonId)
 		-- No Interactivity here yet.
@@ -105,6 +109,14 @@ function SELF:Open(ent, flipped)
 	if not success4 then
 		return false, targetInfoWindow
 	end
+
+	local uselessRow = targetSelectionWindow:CreateMainButtonRow(32)
+	targetSelectionWindow:AddButtonToRow(uselessRow, "Useless Button", nil, color, activeColor, false, false, callback)
+
+	local closeMenuRow = targetSelectionWindow:CreateMainButtonRow(32)
+	targetSelectionWindow:AddButtonToRow(closeMenuRow, "Close Menu", nil, Star_Trek.LCARS.ColorRed, activeColor, false, false, function()
+		self:Close()
+	end)
 
 	return true, {mapWindow, targetInfoWindow, targetSelectionWindow, shipInfoWindow}, Vector(), Angle(0, 90, 0)
 end

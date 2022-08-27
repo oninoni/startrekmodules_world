@@ -37,13 +37,24 @@ function SELF:Open(ent)
 	end
 
 	local shieldChargeRow = shieldWindow:CreateSecondaryButtonRow(32)
-	shieldWindow:AddButtonToRow(shieldChargeRow, "Enable Shields", nil, Star_Trek.LCARS.ColorOrange, activeColor, disabled, toggle, callback)
+	shieldWindow:AddButtonToRow(shieldChargeRow, "Enable Shields", nil, Star_Trek.LCARS.ColorOrange, Star_Trek.LCARS.ColorRed, false, true, function(buttonData)
+		if buttonData.Selected then
+			buttonData.Name = "Disable Shields"
+		else
+			buttonData.Name = "Enable Shields"
+		end
+
+		-- TODO: Hook
+	end)
 
 	local shieldFreqRow = shieldWindow:CreateSecondaryButtonRow(32)
-	shieldWindow:AddButtonToRow(shieldFreqRow, "<"         , nil, color, activeColor, false, false, callback)
-	shieldWindow:AddButtonToRow(shieldFreqRow, "Frequency:", nil, color, activeColor, false, false, callback)
-	shieldWindow:AddButtonToRow(shieldFreqRow, "1 GHz"     , nil, color, activeColor, false, false, callback)
-	shieldWindow:AddButtonToRow(shieldFreqRow, ">"         , nil, color, activeColor, false, false, callback)
+	shieldWindow:AddSelectorToRow(shieldFreqRow, "Frequency", {
+		{Name = "1 GHz", Data = 1},
+		{Name = "5 GHz", Data = 2},
+		{Name = "10 GHz", Data = 3},
+		{Name = "50 GHz", Data = 4},
+		{Name = "100 GHz", Data = 5},
+	}, 3)
 
 	table.insert(windows, shieldWindow)
 
@@ -60,43 +71,89 @@ function SELF:Open(ent)
 
 	-- Phaser Control
 	local phaserChargeRow = weaponWindow:CreateSecondaryButtonRow(32)
-	weaponWindow:AddButtonToRow(phaserChargeRow, "Charge Phasers", nil, Star_Trek.LCARS.ColorOrange, activeColor, disabled, toggle, callback)
+	weaponWindow:AddButtonToRow(phaserChargeRow, "Charge Phasers", nil, Star_Trek.LCARS.ColorOrange, Star_Trek.LCARS.ColorRed, false, true, function(buttonData)
+		if buttonData.Selected then
+			buttonData.Name = "Disable Phasers"
+
+			self.FirePhaser.Disabled = false
+			self.FirePhaserBurst.Disabled = false
+		else
+			buttonData.Name = "Charge Phasers"
+
+			self.FirePhaser.Disabled = true
+			self.FirePhaserBurst.Disabled = true
+		end
+
+		-- TODO: Hook
+	end)
 
 	local pasherPowerRow = weaponWindow:CreateSecondaryButtonRow(32)
-	weaponWindow:AddButtonToRow(pasherPowerRow, "<"     , nil, color, activeColor, false, false, callback)
-	weaponWindow:AddButtonToRow(pasherPowerRow, "Yield:", nil, color, activeColor, false, false, callback)
-	weaponWindow:AddButtonToRow(pasherPowerRow, "100%"  , nil, color, activeColor, false, false, callback)
-	weaponWindow:AddButtonToRow(pasherPowerRow, ">"     , nil, color, activeColor, false, false, callback)
+	weaponWindow:AddSelectorToRow(pasherPowerRow, "Yield", {
+		{Name = "1 %", Data = 1},
+		{Name = "5 %", Data = 2},
+		{Name = "10 %", Data = 3},
+		{Name = "50 %", Data = 4},
+		{Name = "100 %", Data = 5},
+	}, 3)
 
 	local phaserFreqRow = weaponWindow:CreateSecondaryButtonRow(32)
-	weaponWindow:AddButtonToRow(phaserFreqRow, "<"         , nil, color, activeColor, false, false, callback)
-	weaponWindow:AddButtonToRow(phaserFreqRow, "Frequency:", nil, color, activeColor, false, false, callback)
-	weaponWindow:AddButtonToRow(phaserFreqRow, "1 GHz"     , nil, color, activeColor, false, false, callback)
-	weaponWindow:AddButtonToRow(phaserFreqRow, ">"         , nil, color, activeColor, false, false, callback)
+	weaponWindow:AddSelectorToRow(phaserFreqRow, "Frequency", {
+		{Name = "1 GHz", Data = 1},
+		{Name = "5 GHz", Data = 2},
+		{Name = "10 GHz", Data = 3},
+		{Name = "50 GHz", Data = 4},
+		{Name = "100 GHz", Data = 5},
+	}, 3)
 
 	local phaserFireRow = weaponWindow:CreateSecondaryButtonRow(32)
-	weaponWindow:AddButtonToRow(phaserFireRow, "Fire Burst"  , nil, Star_Trek.LCARS.ColorRed   , activeColor, false, false, callback)
-	weaponWindow:AddButtonToRow(phaserFireRow, "Fire at Will", nil, Star_Trek.LCARS.ColorOrange, activeColor, false, false, callback)
+	self.FirePhaser = weaponWindow:AddButtonToRow(phaserFireRow, "Fire"  , nil, Star_Trek.LCARS.ColorOrange, nil, true, false, function()
+		-- TODO: Hook
+	end)
+	self.FirePhaserBurst = weaponWindow:AddButtonToRow(phaserFireRow, "Fire Burst", nil, Star_Trek.LCARS.ColorRed, nil, true, false, function()
+		-- TODO: Hook
+	end)
 
 	-- Torpedo Control
 	local torpedoChargeRow = weaponWindow:CreateMainButtonRow(32)
-	weaponWindow:AddButtonToRow(torpedoChargeRow, "Prime Torpedos", nil, Star_Trek.LCARS.ColorOrange, activeColor, disabled, toggle, callback)
+	weaponWindow:AddButtonToRow(torpedoChargeRow, "Prime Torpedos", nil, Star_Trek.LCARS.ColorOrange, Star_Trek.LCARS.ColorRed, false, true, function(buttonData)
+		if buttonData.Selected then
+			buttonData.Name = "Defuse Torpedos"
+
+			self.FireTorpedo.Disabled = false
+			self.FireTorpedoBurst.Disabled = false
+		else
+			buttonData.Name = "Prime Torpedos"
+
+			self.FireTorpedo.Disabled = true
+			self.FireTorpedoBurst.Disabled = true
+		end
+
+		-- TODO: Hook
+	end)
 
 	local torpedoPowerRow = weaponWindow:CreateMainButtonRow(32)
-	weaponWindow:AddButtonToRow(torpedoPowerRow, "<"     , nil, color, activeColor, false, false, callback)
-	weaponWindow:AddButtonToRow(torpedoPowerRow, "Yield:", nil, color, activeColor, false, false, callback)
-	weaponWindow:AddButtonToRow(torpedoPowerRow, "100%"  , nil, color, activeColor, false, false, callback)
-	weaponWindow:AddButtonToRow(torpedoPowerRow, ">"     , nil, color, activeColor, false, false, callback)
+	weaponWindow:AddSelectorToRow(torpedoPowerRow, "Yield", {
+		{Name = "1 %", Data = 1},
+		{Name = "5 %", Data = 2},
+		{Name = "10 %", Data = 3},
+		{Name = "50 %", Data = 4},
+		{Name = "100 %", Data = 5},
+	}, 3)
 
 	local torpedoTypeRow = weaponWindow:CreateMainButtonRow(32)
-	weaponWindow:AddButtonToRow(torpedoTypeRow, "<"     , nil, color, activeColor, false, false, callback)
-	weaponWindow:AddButtonToRow(torpedoTypeRow, "Type:" , nil, color, activeColor, false, false, callback)
-	weaponWindow:AddButtonToRow(torpedoTypeRow, "Photon", nil, color, activeColor, false, false, callback)
-	weaponWindow:AddButtonToRow(torpedoTypeRow, ">"     , nil, color, activeColor, false, false, callback)
+	weaponWindow:AddSelectorToRow(torpedoTypeRow, "Type", {
+		{Name = "Photon", Data = 1},
+		{Name = "Quantum", Data = 2},
+		{Name = "Tricobalt", Data = 3},
+	}, 1)
 
 	local torpedoFireRow = weaponWindow:CreateMainButtonRow(32)
-	weaponWindow:AddButtonToRow(torpedoFireRow, "Fire Single", nil, Star_Trek.LCARS.ColorOrange, activeColor, false, false, callback)
-	weaponWindow:AddButtonToRow(torpedoFireRow, "Fire Burst" , nil, Star_Trek.LCARS.ColorRed   , activeColor, false, false, callback)
+	self.FireTorpedo = weaponWindow:AddButtonToRow(torpedoFireRow, "Fire", nil, Star_Trek.LCARS.ColorOrange, nil, true, false, function()
+		-- TODO: Hook
+	end)
+	self.FireTorpedoBurst = weaponWindow:AddButtonToRow(torpedoFireRow, "Fire Burst" , nil, Star_Trek.LCARS.ColorRed, nil, true, false, function()
+		-- TODO: Hook
+	end)
 
 	table.insert(windows, weaponWindow)
 
