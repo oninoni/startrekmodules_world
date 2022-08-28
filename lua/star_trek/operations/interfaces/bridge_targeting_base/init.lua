@@ -19,76 +19,79 @@
 if not istable(INTERFACE) then Star_Trek:LoadAllModules() return end
 local SELF = INTERFACE
 
+include("util.lua")
+
 SELF.BaseInterface = "base"
 
 -- Opening general purpose menus.
 function SELF:Open(ent, flipped)
 	self.Flipped = flipped
 
-	local mapWindowPos = Vector(-45, -10, 30)
-	local mapWindowAng = Angle(0, 70, 90)
-	local targetInfoWindowPos = Vector(-45.6, -20, 3.6)
-	local targetInfoWindowAng = Angle(0, 71.5, 27)
-	local targetSelectionWindowPos = Vector(-26, -1, 3.5)
-	local targetSelectionWindowAng = Angle(0, 0, 11)
-	local shipInfoWindowPos = Vector(-27.25, -3.6, 3)
-	local shipInfoWindowAng = Angle(0, 0, 11)
+	self.MapWindowPos = Vector(-45, -10, 30)
+	self.MapWindowAng = Angle(0, 70, 90)
+	self.TargetInfoWindowPos = Vector(-45.6, -20, 3.6)
+	self.TargetInfoWindowAng = Angle(0, 71.5, 27)
+	self.TargetSelectionWindowPos = Vector(-25.9, -1, 3.5)
+	self.TargetSelectionWindowAng = Angle(0, 0, 11)
+	self.ShipInfoWindowPos = Vector(-27.2, -5.25, 2.675)
+	self.ShipInfoWindowAng = Angle(0, 0, 11)
+
 	if self.Flipped then
-		mapWindowPos = Vector(45, -10, 30)
-		mapWindowAng = Angle(0, -70, 90)
-		targetInfoWindowPos = Vector(45.6, -20, 3.6)
-		targetInfoWindowAng = Angle(0, -71.5, 27)
-		targetSelectionWindowPos = Vector(26, -1, 3.5)
-		--targetSelectionWindowAng = Angle(0, 0, 11)
-		shipInfoWindowPos = Vector(27.25, -3.6, 3)
-		--shipInfoWindowAng = Angle(0, 0, 11)
+		self.MapWindowPos.x   = -self.MapWindowPos.x
+		self.MapWindowAng.yaw = -self.MapWindowAng.yaw
+
+		self.TargetInfoWindowPos.x   = -self.TargetInfoWindowPos.x
+		self.TargetInfoWindowAng.yaw = -self.TargetInfoWindowAng.yaw
+
+		self.TargetSelectionWindowPos.x   = -self.TargetSelectionWindowPos.x
+		self.TargetSelectionWindowAng.yaw = -self.TargetSelectionWindowAng.yaw
+
+		self.ShipInfoWindowPos.x   = -self.ShipInfoWindowPos.x
+		self.ShipInfoWindowAng.yaw = -self.ShipInfoWindowAng.yaw
 	end
 
-	local success1, mapWindow = Star_Trek.LCARS:CreateWindow("system_map", mapWindowPos, mapWindowAng, 15, 600, 600,
-	function(windowData, interfaceData, ply, buttonId)
-		-- No Interactivity here yet.
-	end, systemName, not self.Flipped)
-	if not success1 then
-		return false, mapWindow
+	local success, holoWindow = self:CreateLogsWindow()
+	if not success then
+		return false, holoWindow
 	end
 
-	local success2, targetInfoWindow = Star_Trek.LCARS:CreateWindow("target_info", targetInfoWindowPos, targetInfoWindowAng, nil, 420, 140,
+	local success2, targetInfoWindow = Star_Trek.LCARS:CreateWindow("target_info", self.TargetInfoWindowPos, self.TargetInfoWindowAng, nil, 420, 140,
 	function(windowData, interfaceData, ply, buttonId)
-		-- No Interactivity here yet.
+		-- No Additional Interactivity here.
 	end, 2, false, true, self.Flipped)
 	if not success2 then
 		return false, targetInfoWindow
 	end
 
-	local success3, targetSelectionWindow = Star_Trek.LCARS:CreateWindow("button_matrix", targetSelectionWindowPos, targetSelectionWindowAng, nil, 360, 350,
+	local success3, targetSelectionWindow = Star_Trek.LCARS:CreateWindow("button_matrix", self.TargetSelectionWindowPos, self.TargetSelectionWindowAng, nil, 368, 350,
 	function(windowData, interfaceData, ply, categoryId, buttonId)
-		-- No Interactivity here yet.
+		-- No Additional Interactivity here.
 	end, "Ship Control", "ALERT", not self.Flipped)
 	if not success3 then
-		return false, mapWindow
+		return false, targetSelectionWindow
 	end
 
 	local sRow1 = targetSelectionWindow:CreateSecondaryButtonRow(32)
-	targetSelectionWindow:AddButtonToRow(sRow1, "Red Alert", number, Star_Trek.LCARS.ColorRed, nil, false, false, function()
+	targetSelectionWindow:AddButtonToRow(sRow1, "Red Alert", nil, Star_Trek.LCARS.ColorRed, nil, false, false, function(ply)
 		Star_Trek.Alert:Enable("red")
 
 		Star_Trek.Logs:AddEntry(self.Ent, ply, "")
 		Star_Trek.Logs:AddEntry(self.Ent, ply, "RED ALERT!")
 	end)
-	targetSelectionWindow:AddButtonToRow(sRow1, "Yellow Alert", number, Star_Trek.LCARS.ColorOrange, nil, false, false, function()
+	targetSelectionWindow:AddButtonToRow(sRow1, "Yellow Alert", nil, Star_Trek.LCARS.ColorOrange, nil, false, false, function(ply)
 		Star_Trek.Alert:Enable("yellow")
 
 		Star_Trek.Logs:AddEntry(self.Ent, ply, "")
 		Star_Trek.Logs:AddEntry(self.Ent, ply, "YELLOW ALERT!")
 	end)
 	local sRow2 = targetSelectionWindow:CreateSecondaryButtonRow(32)
-	targetSelectionWindow:AddButtonToRow(sRow2, "Blue Alert", number, Star_Trek.LCARS.ColorLightBlue, nil, false, false, function()
+	targetSelectionWindow:AddButtonToRow(sRow2, "Blue Alert", nil, Star_Trek.LCARS.ColorLightBlue, nil, false, false, function(ply)
 		Star_Trek.Alert:Enable("blue")
 
 		Star_Trek.Logs:AddEntry(self.Ent, ply, "")
 		Star_Trek.Logs:AddEntry(self.Ent, ply, "BLUE ALERT!")
 	end)
-	targetSelectionWindow:AddButtonToRow(sRow2, "Disable Alert", number, Star_Trek.LCARS.ColorOrange, nil, false, false, function()
+	targetSelectionWindow:AddButtonToRow(sRow2, "Disable Alert", nil, Star_Trek.LCARS.ColorOrange, nil, false, false, function(ply)
 		Star_Trek.Alert:Disable()
 
 		Star_Trek.Logs:AddEntry(self.Ent, ply, "")
@@ -96,27 +99,48 @@ function SELF:Open(ent, flipped)
 	end)
 
 	local scannerRangeRow = targetSelectionWindow:CreateMainButtonRow(32)
-	targetSelectionWindow:AddButtonToRow(scannerRangeRow, "<"         , nil, color, activeColor, false, false, callback)
-	targetSelectionWindow:AddButtonToRow(scannerRangeRow, "Scanner:", nil, color, activeColor, true, false, callback)
-	targetSelectionWindow:AddButtonToRow(scannerRangeRow, "1 AU"     , nil, color, activeColor, true, false, callback)
-	targetSelectionWindow:AddButtonToRow(scannerRangeRow, ">"         , nil, color, activeColor, false, false, callback)
+	targetSelectionWindow:AddSelectorToRow(scannerRangeRow, "Map Zoom", {
+		{Name = "0.25x", Data = 1},
+		{Name = "0.5x", Data = 2},
+		{Name = "1x", Data = 3},
+		{Name = "2x", Data = 4},
+		{Name = "4x", Data = 5},
+	}, 3)
 
-	targetSelectionWindow:CreateMainButtonRow(32 * 3)
-	local success4, shipInfoWindow = Star_Trek.LCARS:CreateWindow("ship_info", shipInfoWindowPos, shipInfoWindowAng, 22, 340, 100,
+	local toggleLogsRow = targetSelectionWindow:CreateMainButtonRow(32)
+	targetSelectionWindow:AddButtonToRow(toggleLogsRow, "Show Logs", nil, nil, nil, false, false, function(ply, buttonData)
+		self.ShowLogs = not self.ShowLogs
+		if self.ShowLogs then
+			buttonData.Name = "Show Map"
+			scannerRangeRow:SetDisabled(true)
+		else
+			buttonData.Name = "Show Logs"
+			scannerRangeRow:SetDisabled(false)
+		end
+
+		local success5, logsWindow = self:CreateLogsWindow()
+		if not success5 then
+			return false, logsWindow -- TODO: Testing
+		end
+
+		logsWindow.Id = holoWindow.Id
+		logsWindow.Interface = holoWindow.Interface
+		logsWindow:Update()
+	end)
+
+	targetSelectionWindow:CreateMainButtonRow(3 * 32 + 2)
+	local success4, shipInfoWindow = Star_Trek.LCARS:CreateWindow("ship_info", self.ShipInfoWindowPos, self.ShipInfoWindowAng, 22, 346, 108,
 	function(windowData, interfaceData, ply, buttonId)
-		-- No Interactivity here yet.
+		-- No Additional Interactivity here.
 	end, self.Flipped)
 	if not success4 then
 		return false, targetInfoWindow
 	end
 
-	local uselessRow = targetSelectionWindow:CreateMainButtonRow(32)
-	targetSelectionWindow:AddButtonToRow(uselessRow, "Useless Button", nil, color, activeColor, false, false, callback)
-
 	local closeMenuRow = targetSelectionWindow:CreateMainButtonRow(32)
-	targetSelectionWindow:AddButtonToRow(closeMenuRow, "Close Menu", nil, Star_Trek.LCARS.ColorRed, activeColor, false, false, function()
+	targetSelectionWindow:AddButtonToRow(closeMenuRow, "Close Menu", nil, Star_Trek.LCARS.ColorRed, nil, false, false, function()
 		self:Close()
 	end)
 
-	return true, {mapWindow, targetInfoWindow, targetSelectionWindow, shipInfoWindow}, Vector(), Angle(0, 90, 0)
+	return true, {holoWindow, targetInfoWindow, targetSelectionWindow, shipInfoWindow}, Vector(), Angle(0, 90, 0)
 end

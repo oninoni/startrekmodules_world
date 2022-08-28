@@ -28,16 +28,17 @@ function SELF:Open(ent)
 	local shieldSelectionWindowPos = Vector(0, -1.5, 3.3)
 	local shieldSelectionWindowAng = Angle(0, 0, 11)
 
-	local success2, shieldWindow = Star_Trek.LCARS:CreateWindow("button_matrix", shieldSelectionWindowPos, shieldSelectionWindowAng, nil, 380, 320,
+	local success2, shieldWindow = Star_Trek.LCARS:CreateWindow("button_matrix", shieldSelectionWindowPos, shieldSelectionWindowAng, nil, 388, 320,
 	function(windowData, interfaceData, ply, categoryId, buttonId)
-		-- No Interactivity here yet.
-	end, "Shield Control", "PHASER", not self.Flipped)
+		-- No Additional Interactivity here.
+	end, "Shield Control", "SHIELD", not self.Flipped)
 	if not success2 then
-		return false, mapWindow
+		return false, shieldWindow
 	end
+	table.insert(windows, shieldWindow)
 
 	local shieldChargeRow = shieldWindow:CreateSecondaryButtonRow(32)
-	shieldWindow:AddButtonToRow(shieldChargeRow, "Enable Shields", nil, Star_Trek.LCARS.ColorOrange, Star_Trek.LCARS.ColorRed, false, true, function(buttonData)
+	shieldWindow:AddButtonToRow(shieldChargeRow, "Enable Shields", nil, Star_Trek.LCARS.ColorOrange, Star_Trek.LCARS.ColorRed, false, true, function(ply, buttonData)
 		if buttonData.Selected then
 			buttonData.Name = "Disable Shields"
 		else
@@ -56,22 +57,21 @@ function SELF:Open(ent)
 		{Name = "100 GHz", Data = 5},
 	}, 3)
 
-	table.insert(windows, shieldWindow)
-
-	local weaponSelectionWindowPos = Vector(-26, -1, 3.5)
+	local weaponSelectionWindowPos = Vector(-25.9, -1, 3.5)
 	local weaponSelectionWindowAng = Angle(0, 0, 11)
 
-	local success3, weaponWindow = Star_Trek.LCARS:CreateWindow("button_matrix", weaponSelectionWindowPos, weaponSelectionWindowAng, nil, 360, 350,
+	local success3, weaponWindow = Star_Trek.LCARS:CreateWindow("button_matrix", weaponSelectionWindowPos, weaponSelectionWindowAng, nil, 368, 350,
 	function(windowData, interfaceData, ply, categoryId, buttonId)
-		-- No Interactivity here yet.
+		-- No Additional Interactivity here.
 	end, "Weapons Control", "WEAPON", self.Flipped)
 	if not success3 then
-		return false, mapWindow
+		return false, weaponWindow
 	end
+	table.insert(windows, weaponWindow)
 
 	-- Phaser Control
 	local phaserChargeRow = weaponWindow:CreateSecondaryButtonRow(32)
-	weaponWindow:AddButtonToRow(phaserChargeRow, "Charge Phasers", nil, Star_Trek.LCARS.ColorOrange, Star_Trek.LCARS.ColorRed, false, true, function(buttonData)
+	weaponWindow:AddButtonToRow(phaserChargeRow, "Charge Phasers", nil, Star_Trek.LCARS.ColorOrange, Star_Trek.LCARS.ColorRed, false, true, function(ply, buttonData)
 		if buttonData.Selected then
 			buttonData.Name = "Disable Phasers"
 
@@ -115,7 +115,7 @@ function SELF:Open(ent)
 
 	-- Torpedo Control
 	local torpedoChargeRow = weaponWindow:CreateMainButtonRow(32)
-	weaponWindow:AddButtonToRow(torpedoChargeRow, "Prime Torpedos", nil, Star_Trek.LCARS.ColorOrange, Star_Trek.LCARS.ColorRed, false, true, function(buttonData)
+	weaponWindow:AddButtonToRow(torpedoChargeRow, "Prime Torpedos", nil, Star_Trek.LCARS.ColorOrange, Star_Trek.LCARS.ColorRed, false, true, function(ply, buttonData)
 		if buttonData.Selected then
 			buttonData.Name = "Defuse Torpedos"
 
@@ -154,8 +154,6 @@ function SELF:Open(ent)
 	self.FireTorpedoBurst = weaponWindow:AddButtonToRow(torpedoFireRow, "Fire Burst" , nil, Star_Trek.LCARS.ColorRed, nil, true, false, function()
 		-- TODO: Hook
 	end)
-
-	table.insert(windows, weaponWindow)
 
 	return success, windows, offsetPos, offsetAngle
 end

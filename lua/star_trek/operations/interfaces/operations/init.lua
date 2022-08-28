@@ -28,26 +28,26 @@ function SELF:Open(ent)
 	local scannerSelectionWindowPos = Vector(0, -1.5, 3.3)
 	local scannerSelectionWindowAng = Angle(0, 0, 11)
 
-	local success2, scannerWindow = Star_Trek.LCARS:CreateWindow("button_matrix", scannerSelectionWindowPos, scannerSelectionWindowAng, nil, 380, 320,
+	local success2, scannerWindow = Star_Trek.LCARS:CreateWindow("button_matrix", scannerSelectionWindowPos, scannerSelectionWindowAng, nil, 388, 320,
 	function(windowData, interfaceData, ply, categoryId, buttonId)
-		-- No Interactivity here yet.
+		-- No Additional Interactivity here.
 	end, "Scanner Control", "SCANNER", not self.Flipped)
 	if not success2 then
 		return false, scannerWindow
 	end
 	table.insert(windows, scannerWindow)
 
-	local logSelectionWindowPos = Vector(26, -1, 3.5)
-	local logSelectionWindowAng = Angle(0, 0, 11)
+	local commsSelectionWindowPos = Vector(25.9, -1, 3.5)
+	local commsSelectionWindowAng = Angle(0, 0, 11)
 
-	local success3, logWindow = Star_Trek.LCARS:CreateWindow("log_entry", logSelectionWindowPos, logSelectionWindowAng, nil, 360, 350,
+	local success3, commsWindow = Star_Trek.LCARS:CreateWindow("button_matrix", commsSelectionWindowPos, commsSelectionWindowAng, nil, 368, 350,
 	function(windowData, interfaceData, ply, categoryId, buttonId)
-		-- No Interactivity here yet.
-	end)
+		-- No Additional Interactivity here.
+	end, "Communications", "COMMS", self.Flipped)
 	if not success3 then
-		return false, logWindow
+		return false, commsWindow
 	end
-	table.insert(windows, logWindow)
+	table.insert(windows, commsWindow)
 
 	return success, windows, offsetPos, offsetAngle
 end
