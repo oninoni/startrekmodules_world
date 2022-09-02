@@ -1,6 +1,6 @@
 ---------------------------------------
 ---------------------------------------
---        Star Trek Utilities        --
+--         Star Trek Modules         --
 --                                   --
 --            Created by             --
 --       Jan 'Oninoni' Ziegler       --
@@ -8,18 +8,16 @@
 -- This software can be used freely, --
 --    but only distributed by me.    --
 --                                   --
---    Copyright © 2021 Jan Ziegler   --
+--    Copyright © 2022 Jan Ziegler   --
 ---------------------------------------
 ---------------------------------------
 
 ---------------------------------------
---      Star Trek World | Loader     --
+--       LCARS Scanner | Shared      --
 ---------------------------------------
 
-Star_Trek = Star_Trek or {}
-Star_Trek.Modules = Star_Trek.Modules or {}
+if not istable(WINDOW) then Star_Trek:LoadAllModules() return end
+local SELF = WINDOW
 
-Star_Trek.Modules["world"] = false
-
-Star_Trek.Modules["operations"] = true
-Star_Trek.Modules["tactical"] = true
+-- Determines the parent windows name for this one. (Like Deriving Classes)
+SELF.BaseWindow = "button_matrix"
