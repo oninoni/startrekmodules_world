@@ -43,12 +43,20 @@ function SELF:Open(ent)
 			buttonData.Name = "Lower Shields"
 
 			Star_Trek.Logs:AddEntry(ent, ply, "Shields raised.")
+
+			ent:EmitSound("star_trek.world.power_up")
 			-- TODO: Hook
+
+			return true
 		else
 			buttonData.Name = "Raise Shields"
 
 			Star_Trek.Logs:AddEntry(ent, ply, "Shields lowered")
+
+			ent:EmitSound("star_trek.world.power_down")
 			-- TODO: Hook
+
+			return true
 		end
 	end)
 
@@ -125,11 +133,19 @@ function SELF:Open(ent)
 	local phaserFireRow = weaponWindow:CreateSecondaryButtonRow(32)
 	self.FirePhaser = weaponWindow:AddButtonToRow(phaserFireRow, "Fire", nil, Star_Trek.LCARS.ColorOrange, nil, true, false, function(ply, buttonData)
 		Star_Trek.Logs:AddEntry(ent, ply, "Firing Phaser!", Star_Trek.LCARS.ColorRed, TEXT_ALIGN_RIGHT)
+
+		ent:EmitSound("star_trek.world.voy_phaser")
 		-- TODO: Hook
+
+		return true
 	end)
 	self.FirePhaserBurst = weaponWindow:AddButtonToRow(phaserFireRow, "Fire Burst", nil, Star_Trek.LCARS.ColorRed, nil, true, false, function(ply, buttonData)
 		Star_Trek.Logs:AddEntry(ent, ply, "Firing Phaser Burst!", Star_Trek.LCARS.ColorRed, TEXT_ALIGN_RIGHT)
+
+		ent:EmitSound("star_trek.world.voy_phaser")
 		-- TODO: Hook
+
+		return true
 	end)
 
 	-- Torpedo Control
@@ -179,11 +195,19 @@ function SELF:Open(ent)
 	local torpedoFireRow = weaponWindow:CreateMainButtonRow(32)
 	self.FireTorpedo = weaponWindow:AddButtonToRow(torpedoFireRow, "Fire", nil, Star_Trek.LCARS.ColorOrange, nil, true, false, function(ply, buttonData)
 		Star_Trek.Logs:AddEntry(ent, ply, "Firing Torpedo!", Star_Trek.LCARS.ColorRed, TEXT_ALIGN_RIGHT)
+
+		ent:EmitSound("star_trek.world.voy_torpedo")
 		-- TODO: Hook
+
+		return true
 	end)
 	self.FireTorpedoBurst = weaponWindow:AddButtonToRow(torpedoFireRow, "Fire Burst" , nil, Star_Trek.LCARS.ColorRed, nil, true, false, function(ply, buttonData)
 		Star_Trek.Logs:AddEntry(ent, ply, "Firing Torpedo Burst!", Star_Trek.LCARS.ColorRed, TEXT_ALIGN_RIGHT)
+
+		ent:EmitSound("star_trek.world.voy_torpedo")
 		-- TODO: Hook
+
+		return true
 	end)
 
 	return success, windows, offsetPos, offsetAngle

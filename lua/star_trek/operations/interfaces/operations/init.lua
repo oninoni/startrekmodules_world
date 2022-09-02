@@ -99,22 +99,30 @@ function SELF:Open(ent)
 	local launchProbeRow = scannerWindow:CreateMainButtonRow(32)
 	scannerWindow:AddButtonToRow(launchProbeRow, "Launch Probe", nil, nil, nil, false, false, function(ply, buttonData)
 		Star_Trek.Logs:AddEntry(ent, ply, "Launching Probe.")
+
+		ent:EmitSound("star_trek.world.voy_probe_launch")
 		-- TODO: Hook
+
+		return true
 	end)
 
 	scannerWindow:CreateMainButtonRow(32)
 
 	local tractorBeamRow = scannerWindow:CreateMainButtonRow(32)
-	scannerWindow:AddButtonToRow(tractorBeamRow, "Enable Tractor Beam", nil, nil, nil, false, false, function(ply, buttonData)
+	scannerWindow:AddButtonToRow(tractorBeamRow, "Enable Tractor Beam", nil, nil, nil, false, true, function(ply, buttonData)
 		if buttonData.Selected then
 			buttonData.Name = "Disable Tractor Beam"
 
 			Star_Trek.Logs:AddEntry(ent, ply, "Tractor Beam enabled.")
+
+			tractorBeamRow.LoopId = ent:StartLoopingSound("star_trek.world.voy_tractor_loop")
 			-- TODO: Hook
 		else
 			buttonData.Name = "Enable Tractor Beam"
 
 			Star_Trek.Logs:AddEntry(ent, ply, "Tractor Beam disabled")
+
+			ent:StopLoopingSound(tractorBeamRow.LoopId)
 			-- TODO: Hook
 		end
 	end)
@@ -133,20 +141,26 @@ function SELF:Open(ent)
 
 	local hailTargetRow = commsWindow:CreateSecondaryButtonRow(32)
 	self.HailTargetButton = commsWindow:AddButtonToRow(hailTargetRow, "Hail Target", nil, nil, nil, false, true, function(ply, buttonData)
-		print("Button Pressed")
-
 		if buttonData.Selected then
 			buttonData.Name = "Close Channel"
 			self.HailRespondButton.Name = "Mute Channel"
 
 			Star_Trek.Logs:AddEntry(ent, ply, "Hailing Target...")
+
+			ent:EmitSound("star_trek.world.comms_open")
 			-- TODO: Hook
+
+			return true
 		else
 			buttonData.Name = "Hail Target"
 			self.HailRespondButton.Name = "Respond to Hail"
 
 			Star_Trek.Logs:AddEntry(ent, ply, "Channel Closed.")
+
+			ent:EmitSound("star_trek.world.comms_close")
 			-- TODO: Hook
+
+			return true
 		end
 	end)
 
@@ -157,12 +171,20 @@ function SELF:Open(ent)
 				buttonData.Name = "Resume Channel"
 
 				Star_Trek.Logs:AddEntry(ent, ply, "Channel Muted.")
+
+				ent:EmitSound("star_trek.world.comms_close")
 				-- TODO: Hook
+
+				return true
 			else
 				buttonData.Name = "Mute Channel"
 
 				Star_Trek.Logs:AddEntry(ent, ply, "Channel Resumed.")
+
+				ent:EmitSound("star_trek.world.comms_open")
 				-- TODO: Hook
+
+				return true
 			end
 		else
 			buttonData.Selected = false
@@ -172,7 +194,11 @@ function SELF:Open(ent)
 			self.HailTargetButton.Name = "Close Channel"
 
 			Star_Trek.Logs:AddEntry(ent, ply, "Accepting Incoming Hail.")
+
+			ent:EmitSound("star_trek.world.comms_open")
 			-- TODO: Hook
+
+			return true
 		end
 	end)
 

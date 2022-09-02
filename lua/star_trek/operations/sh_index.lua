@@ -21,11 +21,15 @@ Star_Trek:RequireModules("lcars", "button", "alert", "sensors")
 Star_Trek.Operations = Star_Trek.Operations or {}
 
 if SERVER then
+	AddCSLuaFile("sh_sounds.lua")
+
+	include("sh_sounds.lua")
+
 	include("sv_operations.lua")
 end
 
 if CLIENT then
-	return
+	include("sh_sounds.lua")
 end
 
 if game.GetMap() ~= "rp_intrepid_v1" then return end
