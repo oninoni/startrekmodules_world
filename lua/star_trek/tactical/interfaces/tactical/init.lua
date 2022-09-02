@@ -38,14 +38,18 @@ function SELF:Open(ent)
 	table.insert(windows, shieldWindow)
 
 	local shieldChargeRow = shieldWindow:CreateSecondaryButtonRow(32)
-	shieldWindow:AddButtonToRow(shieldChargeRow, "Enable Shields", nil, Star_Trek.LCARS.ColorOrange, Star_Trek.LCARS.ColorRed, false, true, function(ply, buttonData)
+	shieldWindow:AddButtonToRow(shieldChargeRow, "Raise Shields", nil, Star_Trek.LCARS.ColorOrange, Star_Trek.LCARS.ColorRed, false, true, function(ply, buttonData)
 		if buttonData.Selected then
-			buttonData.Name = "Disable Shields"
-		else
-			buttonData.Name = "Enable Shields"
-		end
+			buttonData.Name = "Lower Shields"
 
-		-- TODO: Hook
+			Star_Trek.Logs:AddEntry(ent, ply, "Shields raised.")
+			-- TODO: Hook
+		else
+			buttonData.Name = "Raise Shields"
+
+			Star_Trek.Logs:AddEntry(ent, ply, "Shields lowered")
+			-- TODO: Hook
+		end
 	end)
 
 	local shieldFreqRow = shieldWindow:CreateSecondaryButtonRow(32)
@@ -55,7 +59,10 @@ function SELF:Open(ent)
 		{Name = "10 GHz", Data = 3},
 		{Name = "50 GHz", Data = 4},
 		{Name = "100 GHz", Data = 5},
-	}, 3)
+	}, 3, function(ply, buttonData, valueData)
+		Star_Trek.Logs:AddEntry(ent, ply, "Shield Frequency Set: " .. valueData.Name)
+		-- TODO: Hook
+	end)
 
 	local weaponSelectionWindowPos = Vector(-25.9, -1, 3.5)
 	local weaponSelectionWindowAng = Angle(0, 0, 11)
@@ -71,20 +78,24 @@ function SELF:Open(ent)
 
 	-- Phaser Control
 	local phaserChargeRow = weaponWindow:CreateSecondaryButtonRow(32)
-	weaponWindow:AddButtonToRow(phaserChargeRow, "Charge Phasers", nil, Star_Trek.LCARS.ColorOrange, Star_Trek.LCARS.ColorRed, false, true, function(ply, buttonData)
+	weaponWindow:AddButtonToRow(phaserChargeRow, "Power Phasers", nil, Star_Trek.LCARS.ColorOrange, Star_Trek.LCARS.ColorRed, false, true, function(ply, buttonData)
 		if buttonData.Selected then
-			buttonData.Name = "Disable Phasers"
+			buttonData.Name = "Lower Phasers"
 
 			self.FirePhaser.Disabled = false
 			self.FirePhaserBurst.Disabled = false
+
+			Star_Trek.Logs:AddEntry(ent, ply, "Phasers Powered")
+			-- TODO: Hook
 		else
-			buttonData.Name = "Charge Phasers"
+			buttonData.Name = "Power Phasers"
 
 			self.FirePhaser.Disabled = true
 			self.FirePhaserBurst.Disabled = true
-		end
 
-		-- TODO: Hook
+			Star_Trek.Logs:AddEntry(ent, ply, "Phasers Lowered")
+			-- TODO: Hook
+		end
 	end)
 
 	local pasherPowerRow = weaponWindow:CreateSecondaryButtonRow(32)
@@ -94,7 +105,10 @@ function SELF:Open(ent)
 		{Name = "10 %", Data = 3},
 		{Name = "50 %", Data = 4},
 		{Name = "100 %", Data = 5},
-	}, 3)
+	}, 3, function(ply, buttonData, valueData)
+		Star_Trek.Logs:AddEntry(ent, ply, "Phaser Yield Set: " .. valueData.Name)
+		-- TODO: Hook
+	end)
 
 	local phaserFreqRow = weaponWindow:CreateSecondaryButtonRow(32)
 	weaponWindow:AddSelectorToRow(phaserFreqRow, "Frequency", {
@@ -103,13 +117,18 @@ function SELF:Open(ent)
 		{Name = "10 GHz", Data = 3},
 		{Name = "50 GHz", Data = 4},
 		{Name = "100 GHz", Data = 5},
-	}, 3)
-
-	local phaserFireRow = weaponWindow:CreateSecondaryButtonRow(32)
-	self.FirePhaser = weaponWindow:AddButtonToRow(phaserFireRow, "Fire"  , nil, Star_Trek.LCARS.ColorOrange, nil, true, false, function()
+	}, 3, function(ply, buttonData, valueData)
+		Star_Trek.Logs:AddEntry(ent, ply, "Phaser Frequency Set: " .. valueData.Name)
 		-- TODO: Hook
 	end)
-	self.FirePhaserBurst = weaponWindow:AddButtonToRow(phaserFireRow, "Fire Burst", nil, Star_Trek.LCARS.ColorRed, nil, true, false, function()
+
+	local phaserFireRow = weaponWindow:CreateSecondaryButtonRow(32)
+	self.FirePhaser = weaponWindow:AddButtonToRow(phaserFireRow, "Fire", nil, Star_Trek.LCARS.ColorOrange, nil, true, false, function(ply, buttonData)
+		Star_Trek.Logs:AddEntry(ent, ply, "Firing Phaser!", Star_Trek.LCARS.ColorRed, TEXT_ALIGN_RIGHT)
+		-- TODO: Hook
+	end)
+	self.FirePhaserBurst = weaponWindow:AddButtonToRow(phaserFireRow, "Fire Burst", nil, Star_Trek.LCARS.ColorRed, nil, true, false, function(ply, buttonData)
+		Star_Trek.Logs:AddEntry(ent, ply, "Firing Phaser Burst!", Star_Trek.LCARS.ColorRed, TEXT_ALIGN_RIGHT)
 		-- TODO: Hook
 	end)
 
@@ -121,14 +140,18 @@ function SELF:Open(ent)
 
 			self.FireTorpedo.Disabled = false
 			self.FireTorpedoBurst.Disabled = false
+
+			Star_Trek.Logs:AddEntry(ent, ply, "Torpedos Primed")
+			-- TODO: Hook
 		else
 			buttonData.Name = "Prime Torpedos"
 
 			self.FireTorpedo.Disabled = true
 			self.FireTorpedoBurst.Disabled = true
-		end
 
-		-- TODO: Hook
+			Star_Trek.Logs:AddEntry(ent, ply, "Torpedos Defused")
+			-- TODO: Hook
+		end
 	end)
 
 	local torpedoPowerRow = weaponWindow:CreateMainButtonRow(32)
@@ -138,20 +161,28 @@ function SELF:Open(ent)
 		{Name = "10 %", Data = 3},
 		{Name = "50 %", Data = 4},
 		{Name = "100 %", Data = 5},
-	}, 3)
+	}, 3, function(ply, buttonData, valueData)
+		Star_Trek.Logs:AddEntry(ent, ply, "Topedo Yield Set: " .. valueData.Name)
+		-- TODO: Hook
+	end)
 
 	local torpedoTypeRow = weaponWindow:CreateMainButtonRow(32)
 	weaponWindow:AddSelectorToRow(torpedoTypeRow, "Type", {
 		{Name = "Photon", Data = 1},
 		{Name = "Quantum", Data = 2},
 		{Name = "Tricobalt", Data = 3},
-	}, 1)
-
-	local torpedoFireRow = weaponWindow:CreateMainButtonRow(32)
-	self.FireTorpedo = weaponWindow:AddButtonToRow(torpedoFireRow, "Fire", nil, Star_Trek.LCARS.ColorOrange, nil, true, false, function()
+	}, 1, function(ply, buttonData, valueData)
+		Star_Trek.Logs:AddEntry(ent, ply, "Changing to " .. valueData.Name .. " Torpedos")
 		-- TODO: Hook
 	end)
-	self.FireTorpedoBurst = weaponWindow:AddButtonToRow(torpedoFireRow, "Fire Burst" , nil, Star_Trek.LCARS.ColorRed, nil, true, false, function()
+
+	local torpedoFireRow = weaponWindow:CreateMainButtonRow(32)
+	self.FireTorpedo = weaponWindow:AddButtonToRow(torpedoFireRow, "Fire", nil, Star_Trek.LCARS.ColorOrange, nil, true, false, function(ply, buttonData)
+		Star_Trek.Logs:AddEntry(ent, ply, "Firing Torpedo!", Star_Trek.LCARS.ColorRed, TEXT_ALIGN_RIGHT)
+		-- TODO: Hook
+	end)
+	self.FireTorpedoBurst = weaponWindow:AddButtonToRow(torpedoFireRow, "Fire Burst" , nil, Star_Trek.LCARS.ColorRed, nil, true, false, function(ply, buttonData)
+		Star_Trek.Logs:AddEntry(ent, ply, "Firing Torpedo Burst!", Star_Trek.LCARS.ColorRed, TEXT_ALIGN_RIGHT)
 		-- TODO: Hook
 	end)
 
