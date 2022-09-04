@@ -30,6 +30,8 @@ end
 
 if CLIENT then
 	include("sh_sounds.lua")
+
+	return
 end
 
 if game.GetMap() ~= "rp_intrepid_v1" then return end
