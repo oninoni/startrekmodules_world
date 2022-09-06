@@ -63,7 +63,7 @@ timer.Simple(0, function()
 	local sun = addPlanet(4, sunPos, "models/planets/sun.mdl", Star_Trek.World:MeterToSkybox(sunRadius))
 end)
 
-hook.Add("Star_Trek.LCARS.BasicPressed", "WarpDrive.Weeee", function(ply, interfaceData, buttonId)
+hook.Add("Star_Trek.LCARS.BasicPressed", "WarpDrive.Weeee", function(ply, interfaceData, buttonId, buttonData)
 	local ent = interfaceData.Ent
 	local name = ent:GetName()
 
