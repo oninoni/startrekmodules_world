@@ -43,16 +43,19 @@ function SELF:Open(ent)
 	scannerWindow:AddButtonToRow(scanSystemRow, "Scan Area", nil, nil, nil, false, false, function(ply, buttonData)
 		scannerWindow:EnableScanning()
 
-		Star_Trek.Logs:AddEntry(ent, ply, "Area Scan Started.")
+		Star_Trek.Logs:AddEntry(ent, ply, "Area scan started.")
 		ent:EmitSound("star_trek.lcars_close")
-		-- TODO: Hook
+
+		hook.Run("Star_Trek.Operations.ScanArea", ply)
 
 		if timer.Exists(timerName) then
 			timer.Remove(timerName)
 		end
 		timer.Create(timerName, 5, 1, function()
-			Star_Trek.Logs:AddEntry(ent, ply, "Area Scan Completed.")
+			Star_Trek.Logs:AddEntry(ent, ply, "Area scan completed.")
 			ent:EmitSound("star_trek.lcars_close")
+
+			hook.Run("Star_Trek.Operations.ScanAreaFinished", ply)
 		end)
 
 		return true
@@ -62,17 +65,19 @@ function SELF:Open(ent)
 	scannerWindow:AddButtonToRow(scanTargetRow, "Scan Target", nil, nil, nil, false, false, function(ply, buttonData)
 		scannerWindow:EnableScanning()
 
-		Star_Trek.Logs:AddEntry(ent, ply, "Target Scan Started.")
+		Star_Trek.Logs:AddEntry(ent, ply, "Target scan started.")
 		ent:EmitSound("star_trek.lcars_close")
-		-- TODO: Hook
+
+		hook.Run("Star_Trek.Operations.ScanTarget", ply)
 
 		if timer.Exists(timerName) then
 			timer.Remove(timerName)
 		end
 		timer.Create(timerName, 5, 1, function()
-			Star_Trek.Logs:AddEntry(ent, ply, "Target Scan Completed.")
+			Star_Trek.Logs:AddEntry(ent, ply, "Target scan completed.")
 			ent:EmitSound("star_trek.lcars_close")
-			-- TODO: Hook
+
+			hook.Run("Star_Trek.Operations.ScanTargetFinished", ply)
 		end)
 
 		return true
@@ -80,17 +85,19 @@ function SELF:Open(ent)
 	scannerWindow:AddButtonToRow(scanTargetRow, "Scan Lifeforms", nil, nil, nil, false, false, function(ply, buttonData)
 		scannerWindow:EnableScanning()
 
-		Star_Trek.Logs:AddEntry(ent, ply, "Liftform Scan Started.")
+		Star_Trek.Logs:AddEntry(ent, ply, "Liftform scan started.")
 		ent:EmitSound("star_trek.lcars_close")
-		-- TODO: Hook
+
+		hook.Run("Star_Trek.Operations.ScanLifeforms", ply)
 
 		if timer.Exists(timerName) then
 			timer.Remove(timerName)
 		end
 		timer.Create(timerName, 5, 1, function()
-			Star_Trek.Logs:AddEntry(ent, ply, "Liftform Scan Completed.")
+			Star_Trek.Logs:AddEntry(ent, ply, "Liftform scan completed.")
 			ent:EmitSound("star_trek.lcars_close")
-			-- TODO: Hook
+
+			hook.Run("Star_Trek.Operations.ScanLifeformsFinished", ply)
 		end)
 
 		return true
@@ -98,10 +105,11 @@ function SELF:Open(ent)
 
 	local launchProbeRow = scannerWindow:CreateMainButtonRow(32)
 	scannerWindow:AddButtonToRow(launchProbeRow, "Launch Probe", nil, nil, nil, false, false, function(ply, buttonData)
-		Star_Trek.Logs:AddEntry(ent, ply, "Launching Probe.")
+		Star_Trek.Logs:AddEntry(ent, ply, "Launching probe.")
 
 		ent:EmitSound("star_trek.world.voy_probe_launch")
-		-- TODO: Hook
+
+		hook.Run("Star_Trek.Operations.LaunchProbe", ply)
 
 		return true
 	end)
@@ -113,17 +121,19 @@ function SELF:Open(ent)
 		if buttonData.Selected then
 			buttonData.Name = "Disable Tractor Beam"
 
-			Star_Trek.Logs:AddEntry(ent, ply, "Tractor Beam enabled.")
+			Star_Trek.Logs:AddEntry(ent, ply, "Tractor beam enabled.")
 
 			tractorBeamRow.LoopId = ent:StartLoopingSound("star_trek.world.voy_tractor_loop")
-			-- TODO: Hook
+
+			hook.Run("Star_Trek.Operations.TractorBeamEnabled", ply)
 		else
 			buttonData.Name = "Enable Tractor Beam"
 
-			Star_Trek.Logs:AddEntry(ent, ply, "Tractor Beam disabled")
+			Star_Trek.Logs:AddEntry(ent, ply, "Tractor beam disabled")
 
 			ent:StopLoopingSound(tractorBeamRow.LoopId)
-			-- TODO: Hook
+
+			hook.Run("Star_Trek.Operations.TractorBeamDisabled", ply)
 		end
 	end)
 
@@ -145,20 +155,22 @@ function SELF:Open(ent)
 			buttonData.Name = "Close Channel"
 			self.HailRespondButton.Name = "Mute Channel"
 
-			Star_Trek.Logs:AddEntry(ent, ply, "Hailing Target...")
+			Star_Trek.Logs:AddEntry(ent, ply, "Hailing target...")
 
 			ent:EmitSound("star_trek.world.comms_open")
-			-- TODO: Hook
+
+			hook.Run("Star_Trek.Operations.CommsOpen", ply)
 
 			return true
 		else
 			buttonData.Name = "Hail Target"
 			self.HailRespondButton.Name = "Respond to Hail"
 
-			Star_Trek.Logs:AddEntry(ent, ply, "Channel Closed.")
+			Star_Trek.Logs:AddEntry(ent, ply, "Channel closed.")
 
 			ent:EmitSound("star_trek.world.comms_close")
-			-- TODO: Hook
+
+			hook.Run("Star_Trek.Operations.CommsClose", ply)
 
 			return true
 		end
@@ -170,19 +182,21 @@ function SELF:Open(ent)
 			if buttonData.Selected then
 				buttonData.Name = "Resume Channel"
 
-				Star_Trek.Logs:AddEntry(ent, ply, "Channel Muted.")
+				Star_Trek.Logs:AddEntry(ent, ply, "Channel muted.")
 
 				ent:EmitSound("star_trek.world.comms_close")
-				-- TODO: Hook
+
+				hook.Run("Star_Trek.Operations.CommsMute", ply)
 
 				return true
 			else
 				buttonData.Name = "Mute Channel"
 
-				Star_Trek.Logs:AddEntry(ent, ply, "Channel Resumed.")
+				Star_Trek.Logs:AddEntry(ent, ply, "Channel resumed.")
 
 				ent:EmitSound("star_trek.world.comms_open")
-				-- TODO: Hook
+
+				hook.Run("Star_Trek.Operations.CommsResume", ply)
 
 				return true
 			end
@@ -193,10 +207,11 @@ function SELF:Open(ent)
 			self.HailTargetButton.Selected = true
 			self.HailTargetButton.Name = "Close Channel"
 
-			Star_Trek.Logs:AddEntry(ent, ply, "Accepting Incoming Hail.")
+			Star_Trek.Logs:AddEntry(ent, ply, "Accepting incoming hail.")
 
 			ent:EmitSound("star_trek.world.comms_open")
-			-- TODO: Hook
+
+			hook.Run("Star_Trek.Operations.CommsReply", ply)
 
 			return true
 		end
