@@ -33,6 +33,9 @@ function Star_Trek.World:LoadEntity(id, class)
 	ent.RenderId = table.insert(self.RenderEntities, ent)
 	ent.Distance = 0
 
+	-- Force a render sort.
+	Star_Trek.World:RenderSort(true)
+
 	return true
 end
 
@@ -47,10 +50,14 @@ function Star_Trek.World:UnLoadEntity(id)
 		table.remove(self.RenderEntities, ent.RenderId)
 	end
 
+	-- Force a render sort.
+	Star_Trek.World:RenderSort(true)
+
 	local successTerminate, errorTerminate = self:TerminateEntity(id)
 	if not successTerminate then
 		return false, errorTerminate
 	end
+
 
 	return true
 end

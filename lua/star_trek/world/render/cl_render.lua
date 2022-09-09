@@ -16,18 +16,27 @@
 --       World Render | Client       --
 ---------------------------------------
 
--- Vector_Max in Skybox is  (2^17) 
--- @ x1024 (2^10) Scale -> Visually at 134217728 (2^27)
-local VECTOR_MAX = 131071 -- TODO: Recheck
+local VECTOR_MAX = Star_Trek.World.Vector_Max or 131071
+local SKY_CAM_SCALE = Star_Trek.World.Skybox_Scale or (1 / 1024)
+local SORT_DELAY = Star_Trek.World.SortDelay or 0.5
 
-local SKY_CAM_SCALE = Star_Trek.World.Skybox_Scale
+local nextSort = CurTime()
+function Star_Trek.World:RenderSort(force)
+	local curTime = CurTime()
+	if not force and curTime < nextSort then
+		return
+	end
+	nextSort = curTime + SORT_DELAY
+
+	table.SortByMember(self.RenderEntities, "Distance")
+end
 
 local shipPos, shipAng
 function Star_Trek.World:RenderThink()
 	shipPos, shipAng = Star_Trek.World:GetShipPos()
 	if not shipPos then return end
 
-	table.SortByMember(self.RenderEntities, "Distance")
+	self:RenderSort()
 	for id, ent in ipairs(self.RenderEntities) do
 		local pos, ang = WorldToLocalBig(ent.Pos, ent.Ang, shipPos, shipAng)
 
