@@ -16,14 +16,23 @@
 --       World Render | Client       --
 ---------------------------------------
 
+Star_Trek.World.RenderEntities = {}
+
 local VECTOR_MAX = Star_Trek.World.Vector_Max or 131071
 local SKY_CAM_SCALE = Star_Trek.World.Skybox_Scale or (1 / 1024)
 local SORT_DELAY = Star_Trek.World.SortDelay or 0.5
 
+function Star_Trek.World:GenerateRenderEntities()
+	self.RenderEntities = {}
+	for _, otherEnt in SortedPairsByMemberValue(self.Entities, "Distance", true) do
+		otherEnt.RenderId = table.insert(self.RenderEntities, otherEnt)
+	end
+end
+
 local nextSort = CurTime()
-function Star_Trek.World:RenderSort(force)
+function Star_Trek.World:RenderSort()
 	local curTime = CurTime()
-	if not force and curTime < nextSort then
+	if curTime < nextSort then
 		return
 	end
 	nextSort = curTime + SORT_DELAY

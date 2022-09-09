@@ -16,8 +16,6 @@
 --      World Entities | Client      --
 ---------------------------------------
 
-Star_Trek.World.RenderEntities = {}
-
 -- Load a given entity into the cache.
 --
 -- @param Number id
@@ -30,11 +28,13 @@ function Star_Trek.World:LoadEntity(id, class)
 		return false, ent
 	end
 
-	ent.RenderId = table.insert(self.RenderEntities, ent)
-	ent.Distance = 0
+	local shipPos, shipAng = Star_Trek.World:GetShipPos()
+	if shipPos then
+		local pos = WorldToLocalBig(ent.Pos, ent.Ang, shipPos, shipAng)
+		ent.Distance = pos:Length()
+	end
 
-	-- Force a render sort.
-	Star_Trek.World:RenderSort(true)
+	self:GenerateRenderEntities()
 
 	return true
 end
@@ -45,19 +45,12 @@ end
 -- @return Boolean success
 -- @return String error
 function Star_Trek.World:UnLoadEntity(id)
-	local ent = self.Entities[id]
-	if istable(ent) then
-		table.remove(self.RenderEntities, ent.RenderId)
-	end
-
-	-- Force a render sort.
-	Star_Trek.World:RenderSort(true)
-
 	local successTerminate, errorTerminate = self:TerminateEntity(id)
 	if not successTerminate then
 		return false, errorTerminate
 	end
 
+	self:GenerateRenderEntities()
 
 	return true
 end

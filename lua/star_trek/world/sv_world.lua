@@ -49,7 +49,7 @@ timer.Simple(0, function()
 
 	local earthRadius = 6371000
 	local earthDistance = earthRadius + 42164000
-	local earthPos = Vector(0, Star_Trek.World:MeterToSkybox(earthDistance), 0)
+	local earthPos = Vector(Star_Trek.World:MeterToSkybox(earthDistance), 0, 0)
 	local earth = addPlanet(2, earthPos, "models/planets/earth.mdl", Star_Trek.World:MeterToSkybox(earthRadius), 1)
 
 	local moonRadius = 1737400
