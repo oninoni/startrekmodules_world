@@ -21,10 +21,16 @@ Star_Trek:RequireModules("lcars", "button")
 Star_Trek.Tactical = Star_Trek.Tactical or {}
 
 if SERVER then
+	AddCSLuaFile("sh_sounds.lua")
+
+	include("sh_sounds.lua")
+
 	include("sv_tactical.lua")
 end
 
 if CLIENT then
+	include("sh_sounds.lua")
+
 	return
 end
 
