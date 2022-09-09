@@ -82,7 +82,7 @@ function Star_Trek.World:Draw()
 	if not shipPos then return end
 
 	render.SuppressEngineLighting(true)
-	cam.IgnoreZ(true)
+	render.DepthRange(0, 0)
 
 	local mat = Matrix()
 	mat:SetAngles(shipAng)
@@ -100,7 +100,7 @@ function Star_Trek.World:Draw()
 		end
 	cam.End3D()
 
-	cam.IgnoreZ(false)
+	render.DepthRange(0, 1)
 	render.SuppressEngineLighting(false)
 end
 
