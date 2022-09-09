@@ -49,7 +49,7 @@ timer.Simple(0, function()
 
 	local earthRadius = 6371000
 	local earthDistance = earthRadius + 42164000
-	local earthPos = Vector(Star_Trek.World:MeterToSkybox(earthDistance), 0, 0)
+	local earthPos = Vector(0, Star_Trek.World:MeterToSkybox(earthDistance), 0)
 	local earth = addPlanet(2, earthPos, "models/planets/earth.mdl", Star_Trek.World:MeterToSkybox(earthRadius), 1)
 
 	local moonRadius = 1737400
@@ -70,7 +70,7 @@ hook.Add("Star_Trek.LCARS.BasicPressed", "WarpDrive.Weeee", function(ply, interf
 	if name == "connBut4" then
 		if buttonId == 1 then
 			timer.Simple(5, function()
-				local c = Star_Trek.World:WarpToC(9)
+				local c = Star_Trek.World:WarpToC(0.5)
 				ship:SetVelocity(Vector(-Star_Trek.World:KilometerToSkybox(300000 * c), 0, 0))
 			end)
 		else

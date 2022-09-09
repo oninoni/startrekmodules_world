@@ -16,6 +16,8 @@
 --      World Entities | Client      --
 ---------------------------------------
 
+Star_Trek.World.RenderEntities = {}
+
 -- Load a given entity into the cache.
 --
 -- @param Number id
@@ -28,6 +30,9 @@ function Star_Trek.World:LoadEntity(id, class)
 		return false, ent
 	end
 
+	ent.RenderId = table.insert(self.RenderEntities, ent)
+	ent.Distance = 0
+
 	return true
 end
 
@@ -37,6 +42,11 @@ end
 -- @return Boolean success
 -- @return String error
 function Star_Trek.World:UnLoadEntity(id)
+	local ent = self.Entities[id]
+	if istable(ent) then
+		table.remove(self.RenderEntities, ent.RenderId)
+	end
+
 	local successTerminate, errorTerminate = self:TerminateEntity(id)
 	if not successTerminate then
 		return false, errorTerminate

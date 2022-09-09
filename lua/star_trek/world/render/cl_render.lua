@@ -27,30 +27,31 @@ function Star_Trek.World:RenderThink()
 	shipPos, shipAng = Star_Trek.World:GetShipPos()
 	if not shipPos then return end
 
-	--TODO: Optimise + Sorting
+	table.SortByMember(self.RenderEntities, "Distance")
+	for id, ent in ipairs(self.RenderEntities) do
+		local pos, ang = WorldToLocalBig(ent.Pos, ent.Ang, shipPos, shipAng)
 
-	for _, ent in ipairs(self.Entities) do
-		if CLIENT then
-			local pos, ang = WorldToLocalBig(ent.Pos, ent.Ang, shipPos, shipAng)
+		local realEnt = ent.ClientEntity
 
-			local realEnt = ent.ClientEntity
+		-- Apply scaling
+		local modelScale = ent.Scale or 1
+		local distance = pos:Length()
+		ent.Distance = distance
 
-			-- Apply scaling
-			local modelScale = ent.Scale or 1
-			local distance = pos:Length()
-			if distance > VECTOR_MAX then
-				pos = Vector(pos)
-				pos:Normalize()
+		if distance > VECTOR_MAX then
+			pos = Vector(pos)
+			pos:Normalize()
 
-				pos = pos * VECTOR_MAX
-				realEnt:SetModelScale(modelScale * (VECTOR_MAX / distance))
-			else
-				realEnt:SetModelScale(modelScale)
-			end
-
-			realEnt:SetPos(pos)
-			realEnt:SetAngles(ang)
+			pos = pos * VECTOR_MAX
+			realEnt:SetModelScale(modelScale * (VECTOR_MAX / distance))
+		else
+			realEnt:SetModelScale(modelScale)
 		end
+
+		realEnt:SetPos(pos)
+		realEnt:SetAngles(ang)
+
+		ent.RenderId = id
 	end
 end
 
@@ -74,8 +75,8 @@ function Star_Trek.World:Draw()
 	cam.End3D()
 
 	cam.Start3D(eyePos * SKY_CAM_SCALE, eyeAngles, nil, nil, nil, nil, nil, 0.0005, 10000000)
-		for i, ent in ipairs(self.Entities) do
-			if i == 1 then continue end
+		for _, ent in ipairs(self.RenderEntities) do
+			if ent.Id == 1 then continue end
 
 			ent.ClientEntity:DrawModel()
 		end
