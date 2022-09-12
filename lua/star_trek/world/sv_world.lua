@@ -16,12 +16,18 @@
 --           World | Server          --
 ---------------------------------------
 
-local function addTestingShip(id, pos, model)
-	local success, worldEnt = Star_Trek.World:LoadEntity(id, "ship",
+local id = 1
+local function getId()
+	id = id + 1
+	return id
+end
+
+local function addTestingShip(pos, model)
+	local success, worldEnt = Star_Trek.World:LoadEntity(getId(), "ship",
 		WorldVector(0, 0, 0, pos.x, pos.y, pos.z),
-		Angle(),
+		Angle(0, 0, 0),
 		model or "models/hunter/blocks/cube1x1x1.mdl",
-		Star_Trek.World.Skybox_Scale
+		1
 	)
 
 	if not success then
@@ -31,8 +37,8 @@ local function addTestingShip(id, pos, model)
 	return worldEnt
 end
 
-local function addPlanet(id, pos, model, radius, spin)
-	local success, worldEnt = Star_Trek.World:LoadEntity(id, "planet",
+local function addPlanet(pos, model, radius, spin)
+	local success, worldEnt = Star_Trek.World:LoadEntity(getId(), "planet",
 		WorldVector(0, 0, 0, pos.x, pos.y, pos.z), Angle(), model, radius, spin
 	)
 
@@ -45,22 +51,22 @@ end
 
 local ship
 timer.Simple(0, function()
-	ship = addTestingShip(1, Vector())
+	ship = addTestingShip(Vector(0, 0, 0), "models/kingpommes/startrek/intrepid/intrepid_sky_1024.mdl")
 
 	local earthRadius = 6371000
 	local earthDistance = earthRadius + 42164000
 	local earthPos = Vector(Star_Trek.World:MeterToSkybox(earthDistance), 0, 0)
-	local earth = addPlanet(2, earthPos, "models/planets/earth.mdl", Star_Trek.World:MeterToSkybox(earthRadius), 1)
+	local earth = addPlanet(earthPos, "models/planets/earth.mdl", Star_Trek.World:MeterToSkybox(earthRadius), 1)
 
 	local moonRadius = 1737400
 	local moonDistance = 356500000
 	local moonPos = earthPos + Vector(-Star_Trek.World:MeterToSkybox(moonDistance), 0, 0)
-	local moon = addPlanet(3, moonPos, "models/planets/luna_big.mdl", Star_Trek.World:MeterToSkybox(moonRadius))
+	local moon = addPlanet(moonPos, "models/planets/luna_big.mdl", Star_Trek.World:MeterToSkybox(moonRadius))
 
 	local sunRadius = 696340000
 	local sunDistance = 150000000000
 	local sunPos = earthPos + Vector(-Star_Trek.World:MeterToSkybox(sunDistance), 0, 0)
-	local sun = addPlanet(4, sunPos, "models/planets/sun.mdl", Star_Trek.World:MeterToSkybox(sunRadius))
+	local sun = addPlanet(sunPos, "models/planets/sun.mdl", Star_Trek.World:MeterToSkybox(sunRadius))
 end)
 
 hook.Add("Star_Trek.LCARS.BasicPressed", "WarpDrive.Weeee", function(ply, interfaceData, buttonId, buttonData)

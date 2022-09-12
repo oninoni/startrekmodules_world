@@ -40,10 +40,18 @@ function Star_Trek.World:RenderSort()
 	table.SortByMember(self.RenderEntities, "Distance")
 end
 
-local shipPos, shipAng
+local shipId, shipPos, shipAng
 function Star_Trek.World:RenderThink()
-	shipPos, shipAng = Star_Trek.World:GetShipPos()
-	if not shipPos then return end
+	shipId = LocalPlayer():GetNWInt("Star_Trek.World.ShipId", 1)
+	local shipEnt = self.Entities[shipId]
+	if shipEnt then
+		shipPos = shipEnt.Pos
+		shipAng = shipEnt.Ang
+	else
+		-- Disable rendering if ship is not valid.
+		shipId = nil
+		return
+	end
 
 	self:RenderSort()
 	for id, ent in ipairs(self.RenderEntities) do
@@ -79,7 +87,7 @@ hook.Add("PreDrawSkyBox", "Star_Trek.World.Draw", function()
 end)
 
 function Star_Trek.World:Draw()
-	if not shipPos then return end
+	if not shipId then return end
 
 	render.SuppressEngineLighting(true)
 	render.DepthRange(0, 0)
@@ -94,7 +102,7 @@ function Star_Trek.World:Draw()
 
 	cam.Start3D(eyePos * SKY_CAM_SCALE, eyeAngles, nil, nil, nil, nil, nil, 0.0005, 10000000)
 		for _, ent in ipairs(self.RenderEntities) do
-			if ent.Id == 1 then continue end
+			if ent.Id == shipId then continue end
 
 			ent.ClientEntity:DrawModel()
 		end
