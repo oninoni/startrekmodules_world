@@ -67,9 +67,9 @@ hook.Add("PlayerInitialSpawn", "Star_Trek.World.NetworkLoaded", function(ply)
 	-- Set Ship Id of player.
 	local shipId = hook.Run("Star_Trek.World.GetSpawnShipId")
 	if isnumber(shipId) then
-		ply:SetNWString("Star_Trek.World.ShipId", shipId)
+		ply:SetNWInt("Star_Trek.World.ShipId", shipId)
 	else
-		ply:SetNWString("Star_Trek.World.ShipId", 1)
+		ply:SetNWInt("Star_Trek.World.ShipId", 1)
 	end
 end)
 
