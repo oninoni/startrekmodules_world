@@ -75,14 +75,14 @@ hook.Add("Star_Trek.LCARS.BasicPressed", "WarpDrive.Weeee", function(ply, interf
 
 	if name == "connBut4" then
 		if buttonId == 1 then
-			timer.Simple(5, function()
-				local c = Star_Trek.World:WarpToC(0.5)
-				ship:SetVelocity(Vector(-Star_Trek.World:KilometerToSkybox(300000 * c), 0, 0))
-			end)
+			--timer.Simple(5, function()
+			--	local c = Star_Trek.World:WarpToC(0.5)
+			--	ship:SetVelocity(Vector(-Star_Trek.World:KilometerToSkybox(300000 * c), 0, 0))
+			--end)
 		else
-			timer.Simple(2, function()
-				ship:SetVelocity(Vector(0, 0, 0))
-			end)
+			--timer.Simple(2, function()
+			--	ship:SetVelocity(Vector(0, 0, 0))
+			--end)
 		end
 	end
 end)

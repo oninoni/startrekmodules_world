@@ -53,6 +53,11 @@ function Star_Trek.World:RenderThink()
 		return
 	end
 
+	-- Apply World Correction Offset
+	-- Compensates Offset between Skybox and Map Model of Intrepid
+	shipPos = shipPos + Vector(1.255, 0, 1.015)
+	shipAng = shipAng + Angle(0, 180, 0)
+
 	self:RenderSort()
 	for id, ent in ipairs(self.RenderEntities) do
 		local pos, ang = WorldToLocalBig(ent.Pos, ent.Ang, shipPos, shipAng)
