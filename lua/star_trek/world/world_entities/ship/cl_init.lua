@@ -19,3 +19,7 @@
 
 if not istable(ENT) then Star_Trek:LoadAllModules() return end
 local SELF = ENT
+
+function SELF:Init(clientData)
+	SELF.Base.Init(self, clientData)
+end

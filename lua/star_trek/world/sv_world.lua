@@ -49,23 +49,24 @@ local function addPlanet(pos, model, radius, spin)
 	return worldEnt
 end
 
-local ship
 timer.Simple(0, function()
-	ship = addTestingShip(Vector(0, 0, 0), "models/kingpommes/startrek/intrepid/intrepid_sky_1024.mdl")
+	for i = 1, 32 do
+		local ship = addTestingShip(Vector(0, i*8, 0), "models/kingpommes/startrek/intrepid/intrepid_sky_1024.mdl")
+	end
 
 	local earthRadius = 6371000
 	local earthDistance = earthRadius + 42164000
-	local earthPos = Vector(Star_Trek.World:MeterToSkybox(earthDistance), 0, 0)
+	local earthPos = Vector(-Star_Trek.World:MeterToSkybox(earthDistance), 0, 0)
 	local earth = addPlanet(earthPos, "models/planets/earth.mdl", Star_Trek.World:MeterToSkybox(earthRadius), 1)
 
 	local moonRadius = 1737400
 	local moonDistance = 356500000
-	local moonPos = earthPos + Vector(-Star_Trek.World:MeterToSkybox(moonDistance), 0, 0)
+	local moonPos = earthPos + Vector(Star_Trek.World:MeterToSkybox(moonDistance), 0, 0)
 	local moon = addPlanet(moonPos, "models/planets/luna_big.mdl", Star_Trek.World:MeterToSkybox(moonRadius))
 
 	local sunRadius = 696340000
 	local sunDistance = 150000000000
-	local sunPos = earthPos + Vector(-Star_Trek.World:MeterToSkybox(sunDistance), 0, 0)
+	local sunPos = earthPos + Vector(Star_Trek.World:MeterToSkybox(sunDistance), 0, 0)
 	local sun = addPlanet(sunPos, "models/planets/sun.mdl", Star_Trek.World:MeterToSkybox(sunRadius))
 end)
 
@@ -75,14 +76,14 @@ hook.Add("Star_Trek.LCARS.BasicPressed", "WarpDrive.Weeee", function(ply, interf
 
 	if name == "connBut4" then
 		if buttonId == 1 then
-			--timer.Simple(5, function()
-			--	local c = Star_Trek.World:WarpToC(0.5)
-			--	ship:SetVelocity(Vector(-Star_Trek.World:KilometerToSkybox(300000 * c), 0, 0))
-			--end)
+			timer.Simple(5, function()
+				local c = Star_Trek.World:WarpToC(5)
+				Star_Trek.World.MapShip:SetVelocity(Vector(Star_Trek.World:KilometerToSkybox(300000 * c), 0, 0))
+			end)
 		else
-			--timer.Simple(2, function()
-			--	ship:SetVelocity(Vector(0, 0, 0))
-			--end)
+			timer.Simple(2, function()
+				Star_Trek.World.MapShip:SetVelocity(Vector(0, 0, 0))
+			end)
 		end
 	end
 end)

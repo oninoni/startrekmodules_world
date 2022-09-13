@@ -22,8 +22,11 @@
 -- @param String class
 -- @return Boolean success
 -- @return String error
-function Star_Trek.World:LoadEntity(id, class)
-	local successInit, ent = self:InitEntity(id, class)
+function Star_Trek.World:LoadEntity(clientData)
+	local id = clientData.Id
+	local class = clientData.Class
+
+	local successInit, ent = self:InitEntity(id, class, clientData)
 	if not successInit then
 		return false, ent
 	end

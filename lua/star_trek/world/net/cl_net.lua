@@ -17,12 +17,22 @@
 ---------------------------------------
 
 net.Receive("Star_Trek.World.Load", function()
-	local id = net.ReadInt(32)
-	local class = net.ReadString()
+	local clientData = Star_Trek.Util:ReadNetTable()
 
-	local success, error = Star_Trek.World:LoadEntity(id, class)
+	local success, error = Star_Trek.World:LoadEntity(clientData)
 	if not success then
 		print(error)
+	end
+end)
+
+net.Receive("Star_Trek.World.LoadMultiple", function()
+	local clientDataMultiple = Star_Trek.Util:ReadNetTable()
+
+	for _, clientData in pairs(clientDataMultiple) do
+		local success, error = Star_Trek.World:LoadEntity(clientData)
+		if not success then
+			print(error)
+		end
 	end
 end)
 
@@ -33,20 +43,34 @@ net.Receive("Star_Trek.World.UnLoad", function()
 end)
 
 net.Receive("Star_Trek.World.Update", function()
-	local id = net.ReadInt(32)
+	local clientData = Star_Trek.Util:ReadNetTable()
+	local id = clientData.Id
+	if not isnumber(id) then
+		return
+	end
 
 	local ent = Star_Trek.World.Entities[id]
-	if ent then
-		ent:ReadData()
-		ent:ReadDynData()
+	if not istable(ent) then
+		return
 	end
+
+	ent:SetData(clientData)
+	ent:SetDynData(clientData)
 end)
 
 net.Receive("Star_Trek.World.Sync", function()
-	local id = net.ReadInt(32)
+	local clientDataMultiple = Star_Trek.Util:ReadNetTable()
+	for _, clientData in pairs(clientDataMultiple) do
+		local id = clientData.Id
+		if not isnumber(id) then
+			continue
+		end
 
-	local ent = Star_Trek.World.Entities[id]
-	if ent then
-		ent:ReadDynData()
+		local ent = Star_Trek.World.Entities[id]
+		if not istable(ent) then
+			continue
+		end
+
+		ent:SetDynData(clientData)
 	end
 end)

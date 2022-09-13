@@ -78,6 +78,11 @@ end
 -- Warp Scale --
 ----------------
 
+local A = 0.00264320
+local N = 2.87926700
+local F1 = 0.06274120
+local F2 = 0.32574600
+
 -- Return the multiples of c for a given warp factor.
 -- 
 -- @param Number warpFactor
@@ -86,6 +91,15 @@ function Star_Trek.World:WarpToC(warpFactor)
 	if warpFactor <= 9 then
 		return math.pow(warpFactor, 10 / 3)
 	else
-		return 0 -- TODO
+		return math.pow(warpFactor,
+			10 / 3
+			+ A * math.pow(-math.log(10 - warpFactor), N)
+			+ F1 * math.pow(warpFactor - 9, 5)
+			+ F2 * math.pow(warpFactor - 9, 11)
+		)
 	end
 end
+
+print(Star_Trek.World:WarpToC(10))
+
+-- WF[<(10/3)+a*(-Ln(10-WF))^n>+f1*((WF-9)^5)+f2*((WF-9)^11)]

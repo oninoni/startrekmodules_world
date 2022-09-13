@@ -20,20 +20,17 @@
 if not istable(ENT) then Star_Trek:LoadAllModules() return end
 local SELF = ENT
 
-function SELF:WriteData()
-	net.WriteString(self.Model)
-	net.WriteFloat(self.Scale)
+function SELF:GetClientData(clientData)
+	clientData.Model = self.Model
+	clientData.Scale = self.Scale
 
-	net.WriteFloat(self.Vel[1])
-	net.WriteFloat(self.Vel[2])
-	net.WriteFloat(self.Vel[3])
-
-	net.WriteAngle(self.AngVel)
+	clientData.Vel = self.Vel
+	clientData.AngVel = self.AngVel
 end
 
-function SELF:WriteDynData()
-	net.WriteWorldVector(self.Pos)
-	net.WriteAngle(self.Ang)
+function SELF:GetClientDynData(clientData)
+	clientData.Pos = self.Pos
+	clientData.Ang = self.Ang
 end
 
 function SELF:Init(pos, ang, model, scale, vel, angVel)
