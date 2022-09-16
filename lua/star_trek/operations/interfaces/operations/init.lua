@@ -131,7 +131,9 @@ function SELF:Open(ent)
 
 			Star_Trek.Logs:AddEntry(ent, ply, "Tractor beam disabled")
 
-			ent:StopLoopingSound(tractorBeamRow.LoopId)
+			if isnumber(tractorBeamRow.LoopId) then
+				ent:StopLoopingSound(tractorBeamRow.LoopId)
+			end
 
 			hook.Run("Star_Trek.Operations.TractorBeamDisabled", ply)
 		end
