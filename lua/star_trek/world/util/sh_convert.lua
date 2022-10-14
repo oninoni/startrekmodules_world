@@ -55,6 +55,26 @@ function Star_Trek.World:UnitsToMeter(u)
 end
 
 ----------------
+-- Conversion --
+----------------
+
+function Star_Trek.World:AstronomicalUnitToMeter(au)
+	return au * self.MetersPerAstrometricalUnit
+end
+
+function Star_Trek.World:MeterToAstronomicalUnit(m)
+	return m / self.MetersPerAstrometricalUnit
+end
+
+function Star_Trek.World:LightyearToMeter(ly)
+	return ly * self.MetersPerLightyear
+end
+
+function Star_Trek.World:MeterToLightyear(m)
+	return m / self.MetersPerLightyear
+end
+
+----------------
 --   Skybox   --
 ----------------
 
@@ -66,12 +86,20 @@ function Star_Trek.World:MeterToSkybox(m)
 	return self:MeterToUnits(m) / SKYBOX_SCALE
 end
 
+function Star_Trek.World:SkyboxToMeter(skybox)
+	return self:UnitsToMeter(skybox * SKYBOX_SCALE)
+end
+
 -- Return the units in the skybox representing the kilometers given.
 -- 
 -- @param Number m
 -- @return Number sU
 function Star_Trek.World:KilometerToSkybox(km)
 	return self:MeterToSkybox(km * 1000)
+end
+
+function Star_Trek.World:SkyboxToKiloMeter(skybox)
+	return self:SkyboxToMeter(skybox) / 1000
 end
 
 ----------------
@@ -99,7 +127,3 @@ function Star_Trek.World:WarpToC(warpFactor)
 		)
 	end
 end
-
-print(Star_Trek.World:WarpToC(10))
-
--- WF[<(10/3)+a*(-Ln(10-WF))^n>+f1*((WF-9)^5)+f2*((WF-9)^11)]

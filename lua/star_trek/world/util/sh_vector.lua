@@ -24,6 +24,7 @@
 
 -- Split Value is set here:
 local MAX_SMALL_VALUE = 1024 * 1024
+WorldVectorMaxSmallValue = MAX_SMALL_VALUE
 
 local vectorMeta = {}
 vectorMeta.IsWorldVector = true
