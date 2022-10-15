@@ -25,7 +25,7 @@ local SORT_DELAY = Star_Trek.World.SortDelay or 0.5
 function Star_Trek.World:GenerateRenderEntities()
 	self.RenderEntities = {}
 	for _, otherEnt in SortedPairsByMemberValue(self.Entities, "Distance", true) do
-		otherEnt.RenderId = table.insert(self.RenderEntities, otherEnt)
+		table.insert(self.RenderEntities, otherEnt)
 	end
 end
 
@@ -66,14 +66,14 @@ function Star_Trek.World:RenderThink()
 
 		-- Apply scaling
 		local modelScale = ent.Scale or 1
+
 		local distance = pos:Length()
 		ent.Distance = distance
-
 		if distance > VECTOR_MAX then
 			pos = Vector(pos)
 			pos:Normalize()
-
 			pos = pos * VECTOR_MAX
+
 			realEnt:SetModelScale(modelScale * (VECTOR_MAX / distance))
 		else
 			realEnt:SetModelScale(modelScale)
@@ -81,8 +81,6 @@ function Star_Trek.World:RenderThink()
 
 		realEnt:SetPos(pos)
 		realEnt:SetAngles(ang)
-
-		ent.RenderId = id
 	end
 end
 
@@ -95,6 +93,7 @@ function Star_Trek.World:Draw()
 	if not shipId then return end
 
 	render.SuppressEngineLighting(true)
+	render.SetColorModulation(1, 1, 1)
 	render.DepthRange(0, 0)
 
 	local mat = Matrix()
@@ -106,7 +105,9 @@ function Star_Trek.World:Draw()
 	cam.End3D()
 
 	cam.Start3D(eyePos * SKY_CAM_SCALE, eyeAngles, nil, nil, nil, nil, nil, 0.0005, 10000000)
-		for _, ent in ipairs(self.RenderEntities) do
+		local renderEntities = self.RenderEntities
+		for i = 1, #renderEntities do
+			local ent = renderEntities[i]
 			if ent.Id == shipId then continue end
 
 			ent.ClientEntity:DrawModel()
