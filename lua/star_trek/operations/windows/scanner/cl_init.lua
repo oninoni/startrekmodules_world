@@ -19,7 +19,7 @@
 if not istable(WINDOW) then Star_Trek:LoadAllModules() return end
 local SELF = WINDOW
 
-local SCAN_TIME = Star_Trek.Tricorder.ScanTime
+local SCAN_TIME = Star_Trek.Operations.ScanTime
 local SCAN_STEPS = 6
 
 function SELF:OnCreate(windowData)
