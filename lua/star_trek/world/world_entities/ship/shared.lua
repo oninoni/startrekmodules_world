@@ -21,3 +21,5 @@ if not istable(ENT) then Star_Trek:LoadAllModules() return end
 local SELF = ENT
 
 SELF.BaseClass = "base_acc"
+
+SELF.Dynamic = true

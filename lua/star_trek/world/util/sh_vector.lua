@@ -24,6 +24,7 @@
 
 -- Split Value is set here:
 local MAX_SMALL_VALUE = 1024 * 1024
+WorldVectorMaxSmallValue = MAX_SMALL_VALUE
 
 local vectorMeta = {}
 vectorMeta.IsWorldVector = true
@@ -203,12 +204,12 @@ local metaTable = {
 -- @return WorldVector worldVector
 function WorldVector(bx, by, bz, sx, sy, sz)
 	local worldVector = {
-		[1] = bx,
-		[2] = by,
-		[3] = bz,
-		[4] = sx,
-		[5] = sy,
-		[6] = sz,
+		[1] = bx or 0,
+		[2] = by or 0,
+		[3] = bz or 0,
+		[4] = sx or 0,
+		[5] = sy or 0,
+		[6] = sz or 0,
 	}
 
 	setmetatable(worldVector, metaTable)

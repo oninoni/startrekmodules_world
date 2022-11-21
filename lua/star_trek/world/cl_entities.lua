@@ -22,11 +22,25 @@
 -- @param String class
 -- @return Boolean success
 -- @return String error
-function Star_Trek.World:LoadEntity(id, class)
-	local successInit, ent = self:InitEntity(id, class)
+function Star_Trek.World:LoadEntity(clientData)
+	local id = clientData.Id
+	local class = clientData.Class
+
+	local successInit, ent = self:InitEntity(id, class, clientData)
 	if not successInit then
 		return false, ent
 	end
+
+	local shipId = LocalPlayer():GetNWInt("Star_Trek.World.ShipId", 1)
+	local shipEnt = self.Entities[shipId]
+	if shipEnt and IsWorldVector(shipEnt.Pos) and isangle(shipEnt.Ang) then
+		local pos = WorldToLocalBig(ent.Pos, ent.Ang, shipEnt.Pos, shipEnt.Ang)
+		ent.Distance = pos:Length()
+	else
+		return false, "Invalid Player ShipId"
+	end
+
+	self:GenerateRenderEntities()
 
 	return true
 end
@@ -42,17 +56,7 @@ function Star_Trek.World:UnLoadEntity(id)
 		return false, errorTerminate
 	end
 
+	self:GenerateRenderEntities()
+
 	return true
-end
-
--- Returns the position of you current ship.
--- Used for rendering.
---
--- @return WorldVector pos
--- @return Angle ang 
-function Star_Trek.World:GetShipPos()
-	local id = LocalPlayer():GetNWInt("Star_Trek.World.ShipId", 1)
-	local ent = self.Entities[id]
-
-	return ent.Pos, ent.Ang
 end

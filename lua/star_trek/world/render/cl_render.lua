@@ -16,41 +16,71 @@
 --       World Render | Client       --
 ---------------------------------------
 
--- Vector_Max in Skybox is  (2^17) 
--- @ x1024 (2^10) Scale -> Visually at 134217728 (2^27)
-local VECTOR_MAX = 131071 -- TODO: Recheck
+Star_Trek.World.RenderEntities = {}
 
-local SKY_CAM_SCALE = Star_Trek.World.Skybox_Scale
+local VECTOR_MAX = Star_Trek.World.Vector_Max or 131071
+local SKY_CAM_SCALE = Star_Trek.World.Skybox_Scale or (1 / 1024)
+local SORT_DELAY = Star_Trek.World.SortDelay or 0.5
 
-local shipPos, shipAng
+function Star_Trek.World:GenerateRenderEntities()
+	self.RenderEntities = {}
+	for _, otherEnt in SortedPairsByMemberValue(self.Entities, "Distance", true) do
+		table.insert(self.RenderEntities, otherEnt)
+	end
+end
+
+local nextSort = CurTime()
+function Star_Trek.World:RenderSort()
+	local curTime = CurTime()
+	if curTime < nextSort then
+		return
+	end
+	nextSort = curTime + SORT_DELAY
+
+	table.SortByMember(self.RenderEntities, "Distance")
+end
+
+local shipId, shipPos, shipAng
 function Star_Trek.World:RenderThink()
-	shipPos, shipAng = Star_Trek.World:GetShipPos()
-	if not shipPos then return end
+	shipId = LocalPlayer():GetNWInt("Star_Trek.World.ShipId", 1)
+	local shipEnt = self.Entities[shipId]
+	if shipEnt then
+		shipPos = shipEnt.Pos
+		shipAng = shipEnt.Ang
+	else
+		-- Disable rendering if ship is not valid.
+		shipId = nil
+		return
+	end
 
-	--TODO: Optimise + Sorting
+	-- Apply World Correction Offset
+	-- Compensates Offset between Skybox and Map Model of Intrepid
+	shipPos = shipPos + Vector(1.255, 0, 1.015)
+	shipAng = shipAng + Angle(0, 180, 0)
 
-	for _, ent in ipairs(self.Entities) do
-		if CLIENT then
-			local pos, ang = WorldToLocalBig(ent.Pos, ent.Ang, shipPos, shipAng)
+	self:RenderSort()
+	for id, ent in ipairs(self.RenderEntities) do
+		local pos, ang = WorldToLocalBig(ent.Pos, ent.Ang, shipPos, shipAng)
 
-			local realEnt = ent.ClientEntity
+		local realEnt = ent.ClientEntity
 
-			-- Apply scaling
-			local modelScale = ent.Scale or 1
-			local distance = pos:Length()
-			if distance > VECTOR_MAX then
-				pos = Vector(pos)
-				pos:Normalize()
+		-- Apply scaling
+		local modelScale = ent.Scale or 1
 
-				pos = pos * VECTOR_MAX
-				realEnt:SetModelScale(modelScale * (VECTOR_MAX / distance))
-			else
-				realEnt:SetModelScale(modelScale)
-			end
+		local distance = pos:Length()
+		ent.Distance = distance
+		if distance > VECTOR_MAX then
+			pos = Vector(pos)
+			pos:Normalize()
+			pos = pos * VECTOR_MAX
 
-			realEnt:SetPos(pos)
-			realEnt:SetAngles(ang)
+			realEnt:SetModelScale(modelScale * (VECTOR_MAX / distance))
+		else
+			realEnt:SetModelScale(modelScale)
 		end
+
+		realEnt:SetPos(pos)
+		realEnt:SetAngles(ang)
 	end
 end
 
@@ -60,10 +90,11 @@ hook.Add("PreDrawSkyBox", "Star_Trek.World.Draw", function()
 end)
 
 function Star_Trek.World:Draw()
-	if not shipPos then return end
+	if not shipId then return end
 
 	render.SuppressEngineLighting(true)
-	cam.IgnoreZ(true)
+	render.SetColorModulation(1, 1, 1)
+	render.DepthRange(0, 0)
 
 	local mat = Matrix()
 	mat:SetAngles(shipAng)
@@ -74,14 +105,16 @@ function Star_Trek.World:Draw()
 	cam.End3D()
 
 	cam.Start3D(eyePos * SKY_CAM_SCALE, eyeAngles, nil, nil, nil, nil, nil, 0.0005, 10000000)
-		for i, ent in ipairs(self.Entities) do
-			if i == 1 then continue end
+		local renderEntities = self.RenderEntities
+		for i = 1, #renderEntities do
+			local ent = renderEntities[i]
+			if ent.Id == shipId then continue end
 
 			ent.ClientEntity:DrawModel()
 		end
 	cam.End3D()
 
-	cam.IgnoreZ(false)
+	render.DepthRange(0, 1)
 	render.SuppressEngineLighting(false)
 end
 

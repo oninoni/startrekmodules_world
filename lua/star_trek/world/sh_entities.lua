@@ -18,6 +18,8 @@
 
 Star_Trek.World.Entities = Star_Trek.World.Entities or {}
 
+local THINK_DELAY = Star_Trek.World.ThinkDelay or 0.025
+
 function Star_Trek.World:GetEntity(id)
 	return self.Entities[id]
 end
@@ -74,7 +76,7 @@ hook.Add("Think", "Star_Trek.World.Think", function()
 	if sysTime < nextThink then
 		return
 	end
-	nextThink = sysTime + 0.025
+	nextThink = sysTime + THINK_DELAY
 
 	local deltaT = sysTime - lastTime
 	lastTime = sysTime

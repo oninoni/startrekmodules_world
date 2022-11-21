@@ -55,6 +55,26 @@ function Star_Trek.World:UnitsToMeter(u)
 end
 
 ----------------
+-- Conversion --
+----------------
+
+function Star_Trek.World:AstronomicalUnitToMeter(au)
+	return au * self.MetersPerAstrometricalUnit
+end
+
+function Star_Trek.World:MeterToAstronomicalUnit(m)
+	return m / self.MetersPerAstrometricalUnit
+end
+
+function Star_Trek.World:LightyearToMeter(ly)
+	return ly * self.MetersPerLightyear
+end
+
+function Star_Trek.World:MeterToLightyear(m)
+	return m / self.MetersPerLightyear
+end
+
+----------------
 --   Skybox   --
 ----------------
 
@@ -66,6 +86,10 @@ function Star_Trek.World:MeterToSkybox(m)
 	return self:MeterToUnits(m) / SKYBOX_SCALE
 end
 
+function Star_Trek.World:SkyboxToMeter(skybox)
+	return self:UnitsToMeter(skybox * SKYBOX_SCALE)
+end
+
 -- Return the units in the skybox representing the kilometers given.
 -- 
 -- @param Number m
@@ -74,9 +98,18 @@ function Star_Trek.World:KilometerToSkybox(km)
 	return self:MeterToSkybox(km * 1000)
 end
 
+function Star_Trek.World:SkyboxToKiloMeter(skybox)
+	return self:SkyboxToMeter(skybox) / 1000
+end
+
 ----------------
 -- Warp Scale --
 ----------------
+
+local A = 0.00264320
+local N = 2.87926700
+local F1 = 0.06274120
+local F2 = 0.32574600
 
 -- Return the multiples of c for a given warp factor.
 -- 
@@ -86,6 +119,11 @@ function Star_Trek.World:WarpToC(warpFactor)
 	if warpFactor <= 9 then
 		return math.pow(warpFactor, 10 / 3)
 	else
-		return 0 -- TODO
+		return math.pow(warpFactor,
+			10 / 3
+			+ A * math.pow(-math.log(10 - warpFactor), N)
+			+ F1 * math.pow(warpFactor - 9, 5)
+			+ F2 * math.pow(warpFactor - 9, 11)
+		)
 	end
 end

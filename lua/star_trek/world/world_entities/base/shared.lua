@@ -22,5 +22,7 @@ local SELF = ENT
 
 SELF.BaseClass = nil
 
+SELF.Dynamic = false
+
 function SELF:Think(deltaT)
 end

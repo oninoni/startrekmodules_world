@@ -20,20 +20,21 @@
 if not istable(ENT) then Star_Trek:LoadAllModules() return end
 local SELF = ENT
 
-function SELF:ReadData()
-	self.Pos = net.ReadWorldVector()
-	self.Ang = net.ReadAngle()
+function SELF:SetData(clientData)
+	local pos = clientData.Pos
+	self.Pos = WorldVector(pos[1], pos[2], pos[3], pos[4], pos[5], pos[6])
+	self.Ang = clientData.Ang
 
-	self.Model = net.ReadString()
-	self.Scale = net.ReadFloat()
+	self.Model = clientData.Model
+	self.Scale = clientData.Scale
 end
 
-function SELF:ReadDynData()
+function SELF:SetDynData(clientData)
 end
 
-function SELF:Init()
-	self:ReadData()
-	self:ReadDynData()
+function SELF:Init(clientData)
+	self:SetData(clientData)
+	self:SetDynData(clientData)
 
 	local ent = ClientsideModel(self.Model, RENDERGROUP_BOTH)
 	ent:SetModelScale(self.Scale or 1)

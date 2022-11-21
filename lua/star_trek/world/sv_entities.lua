@@ -56,17 +56,46 @@ function Star_Trek.World:UnLoadEntity(id)
 	return true
 end
 
-timer.Create("TestingSync", 1, 0, function()
+timer.Create("Star_Trek.World.SyncRegular", 1, 0, function()
 	Star_Trek.World:NetworkSync()
 end)
 
 -- Networks all loaded entities for the new player.
 hook.Add("PlayerInitialSpawn", "Star_Trek.World.NetworkLoaded", function(ply)
 	Star_Trek.World:NetworkLoaded(ply)
+
+	-- Set Ship Id of player.
+	local shipId = hook.Run("Star_Trek.World.GetSpawnShipId")
+	if isnumber(shipId) then
+		ply:SetNWInt("Star_Trek.World.ShipId", shipId)
+	else
+		ply:SetNWInt("Star_Trek.World.ShipId", 1)
+	end
+end)
+
+-- Adding the map ship.
+-- An Intrepid class vessel, that is represented by the map.
+--
+-- @return Boolean success
+-- @return String error
+function Star_Trek.World:AddMapShip()
+	local success, mapShip = Star_Trek.World:LoadEntity(1, "ship", WorldVector(), Angle(), "models/kingpommes/startrek/intrepid/intrepid_sky_1024.mdl", 1)
+
+	if not success then
+		return false, worldEnt
+	end
+
+	self.MapShip = mapShip
+
+	return true
+end
+
+hook.Add("Star_Trek.ModulesLoaded", "Star_Trek.World.LoadObjects", function()
+	Star_Trek.World:AddMapShip()
 end)
 
 -- Remove the map based sun effect for now.
-hook.Add("InitPostEntity", "Star_Trek.World.RemoveMapSun", function(ply)
+hook.Add("InitPostEntity", "Star_Trek.World.RemoveMapSun", function()
 	local entities = ents.FindByClass("env_sun")
 	for _, ent in pairs(entities) do
 		ent:Remove()
