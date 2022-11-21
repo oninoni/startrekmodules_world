@@ -85,7 +85,7 @@ function SELF:Open(ent)
 	scannerWindow:AddButtonToRow(scanTargetRow, "Scan Lifeforms", nil, nil, nil, false, false, function(ply, buttonData)
 		scannerWindow:EnableScanning()
 
-		Star_Trek.Logs:AddEntry(ent, ply, "Liftform scan started.")
+		Star_Trek.Logs:AddEntry(ent, ply, "Lifeform scan started.")
 		ent:EmitSound("star_trek.lcars_close")
 
 		hook.Run("Star_Trek.Operations.ScanLifeforms", ply)
@@ -94,7 +94,7 @@ function SELF:Open(ent)
 			timer.Remove(timerName)
 		end
 		timer.Create(timerName, 5, 1, function()
-			Star_Trek.Logs:AddEntry(ent, ply, "Liftform scan completed.")
+			Star_Trek.Logs:AddEntry(ent, ply, "Lifeform scan completed.")
 			ent:EmitSound("star_trek.lcars_close")
 
 			hook.Run("Star_Trek.Operations.ScanLifeformsFinished", ply)
@@ -131,7 +131,9 @@ function SELF:Open(ent)
 
 			Star_Trek.Logs:AddEntry(ent, ply, "Tractor beam disabled")
 
-			ent:StopLoopingSound(tractorBeamRow.LoopId)
+			if isnumber(tractorBeamRow.LoopId) then
+				ent:StopLoopingSound(tractorBeamRow.LoopId)
+			end
 
 			hook.Run("Star_Trek.Operations.TractorBeamDisabled", ply)
 		end
