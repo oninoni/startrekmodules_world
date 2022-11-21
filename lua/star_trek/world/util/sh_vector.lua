@@ -221,6 +221,22 @@ end
 -- Reduces the Value to its minimum "Small" Vector Size.
 -- Should be called after any operation.
 function vectorMeta:FixValue()
+	-- Fix non integer big values.
+	local xDiff = self[1] - math.floor(self[1])
+	local yDiff = self[2] - math.floor(self[2])
+	local zDiff = self[3] - math.floor(self[3])
+	if xDiff ~= 0 or yDiff ~= 0 or zDiff ~= 0 then
+		self[1] = math.floor(self[1])
+		self[4] = self[4] + xDiff * MAX_SMALL_VALUE
+
+		self[2] = math.floor(self[2])
+		self[5] = self[5] + yDiff * MAX_SMALL_VALUE
+
+		self[3] = math.floor(self[3])
+		self[6] = self[6] + zDiff * MAX_SMALL_VALUE
+	end
+
+	-- Fix Overflow
 	if 	self[4] <= MAX_SMALL_VALUE and self[4] > 0
 	and self[5] <= MAX_SMALL_VALUE and self[5] > 0
 	and self[6] <= MAX_SMALL_VALUE and self[6] > 0 then
@@ -240,15 +256,27 @@ function vectorMeta:FixValue()
 	self[6] = z
 end
 
+function vectorMeta:GetX()
+	return self[1] * MAX_SMALL_VALUE + self[4]
+end
+
+function vectorMeta:GetY()
+	return self[2] * MAX_SMALL_VALUE + self[5]
+end
+
+function vectorMeta:GetZ()
+	return self[3] * MAX_SMALL_VALUE + self[6]
+end
+
 -- Returns a normal Vector from the worldVector.
 -- WARNING: This can cause a loss of precision!
 --
 -- @return Vector result
 function vectorMeta:ToVector()
 	return Vector(
-		self[1] * MAX_SMALL_VALUE + self[4],
-		self[2] * MAX_SMALL_VALUE + self[5],
-		self[3] * MAX_SMALL_VALUE + self[6]
+		self:GetX(),
+		self:GetY(),
+		self:GetZ()
 	)
 end
 
@@ -270,9 +298,27 @@ function vectorMeta:Length()
 	return temp:Length()
 end
 
+function vectorMeta:GetCeil()
+	return WorldVector(
+		self[1],
+		self[2],
+		self[3],
+		math.ceil(self[4]),
+		math.ceil(self[5]),
+		math.ceil(self[6])
+	)
+end
 
-
-
+function vectorMeta:GetFloor()
+	return WorldVector(
+		self[1],
+		self[2],
+		self[3],
+		math.floor(self[4]),
+		math.floor(self[5]),
+		math.floor(self[6])
+	)
+end
 
 function WorldToLocalBig(pos, ang, newSystemOrigin, newSystemAngles)
 	local offsetPos = pos - newSystemOrigin
