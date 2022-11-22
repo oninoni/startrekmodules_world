@@ -102,6 +102,30 @@ function Star_Trek.World:SkyboxToKiloMeter(skybox)
 	return self:SkyboxToMeter(skybox) / 1000
 end
 
+-- Return the units in the skybox representing the astronomical units given.
+-- 
+-- @param Number au
+-- @return Number sU
+function Star_Trek.World:AstronomicalUnitToSkybox(au)
+	return self:MeterToUnits(self:AstronomicalUnitToMeter(au)) / SKYBOX_SCALE
+end
+
+function Star_Trek.World:SkyboxToAstronomicalUnit(skybox)
+	return self:MeterToAstronomicalUnit(self:UnitsToMeter(skybox * SKYBOX_SCALE))
+end
+
+-- Return the units in the skybox representing the lightyears given.
+-- 
+-- @param Number au
+-- @return Number sU
+function Star_Trek.World:LightyearToSkybox(ly)
+	return self:MeterToUnits(self:LightyearToMeter(ly)) / SKYBOX_SCALE
+end
+
+function Star_Trek.World:SkyboxToLightyear(skybox)
+	return self:MeterToLightyear(self:UnitsToMeter(skybox * SKYBOX_SCALE))
+end
+
 ----------------
 -- Warp Scale --
 ----------------
