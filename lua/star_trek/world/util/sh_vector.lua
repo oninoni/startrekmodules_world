@@ -20,8 +20,7 @@
 -- 2 Floats per Coordiate
 -- Split at 1024*1024
 -- plenty precision for ,... !
--- RANGE: (1024*1024*1024*1024*64) * (1024*1024), (1024 * 1024 * 1024 * 64)
-
+-- RANGE: (2^52) (2^20),(2^32)
 -- Split Value is set here:
 local MAX_SMALL_VALUE = 1024 * 1024
 WorldVectorMaxSmallValue = MAX_SMALL_VALUE
@@ -31,11 +30,7 @@ vectorMeta.IsWorldVector = true
 Star_Trek.World.Vector = vectorMeta
 
 function IsWorldVector(a)
-	if a.IsWorldVector then
-		return true
-	end
-
-	return false
+	return a.IsWorldVector or false
 end
 
 -- Negates WorldVector and returns the result.
