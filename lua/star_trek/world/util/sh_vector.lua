@@ -27,10 +27,10 @@ WorldVectorMaxSmallValue = MAX_SMALL_VALUE
 
 local vectorMeta = {}
 vectorMeta.IsWorldVector = true
-Star_Trek.World.Vector = vectorMeta
 
+-- Helper function, to determine if a table is a world vector.
 function IsWorldVector(a)
-	return a.IsWorldVector or false
+	return (istable(a) and a.IsWorldVector) or false
 end
 
 -- Negates WorldVector and returns the result.
@@ -284,6 +284,12 @@ function vectorMeta:LengthSqr()
 	return temp:LengthSqr()
 end
 
+-- Returns the distance between 2 world vectors.
+-- WARNING: This can cause a loss of precision!
+function vectorMeta:DistanceSqr(b)
+	return (self - b):LengthSqr()
+end
+
 -- Returns the length of the world vector.
 -- WARNING: This can cause a loss of precision!
 --
@@ -291,6 +297,12 @@ end
 function vectorMeta:Length()
 	local temp = self:ToVector()
 	return temp:Length()
+end
+
+-- Returns the distance between 2 world vectors.
+-- WARNING: This can cause a loss of precision!
+function vectorMeta:Distance(b)
+	return (self - b):Length()
 end
 
 function vectorMeta:GetCeil()

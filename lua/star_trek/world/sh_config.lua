@@ -36,5 +36,3 @@ Star_Trek.World.MetersPerAstrometricalUnit = 149597870700
 -- Scales the distances between systems (Changes Lightyears Calculation)
 -- Default / Real Value: 9460730472580800
 Star_Trek.World.MetersPerLightyear = 94607304725808
-
-print(Star_Trek.World.MetersPerLightyear / Star_Trek.World.MetersPerAstrometricalUnit)
