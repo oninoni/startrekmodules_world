@@ -26,6 +26,7 @@ if SERVER then
 
 	AddCSLuaFile("util/sh_convert.lua")
 	AddCSLuaFile("util/sh_vector.lua")
+	AddCSLuaFile("util/sh_quadtree.lua")
 	AddCSLuaFile("sh_entities.lua")
 
 	AddCSLuaFile("net/cl_net.lua")
@@ -38,6 +39,7 @@ if SERVER then
 
 	include("util/sh_convert.lua")
 	include("util/sh_vector.lua")
+	include("util/sh_quadtree.lua")
 	include("sh_entities.lua")
 
 	include("net/sv_net.lua")
@@ -52,6 +54,7 @@ if CLIENT then
 
 	include("util/sh_convert.lua")
 	include("util/sh_vector.lua")
+	include("util/sh_quadtree.lua")
 	include("sh_entities.lua")
 
 	include("net/cl_net.lua")
