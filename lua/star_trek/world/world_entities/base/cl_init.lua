@@ -20,6 +20,20 @@
 if not istable(ENT) then Star_Trek:LoadAllModules() return end
 local SELF = ENT
 
+function SELF:Init(clientData)
+	self:SetData(clientData)
+	self:SetDynData(clientData)
+
+	local ent = ClientsideModel(self.Model, RENDERGROUP_BOTH)
+	ent:SetNoDraw(true)
+
+	self.ClientEntity = ent
+end
+
+function SELF:Terminate()
+	SafeRemoveEntity(self.ClientEntity)
+end
+
 function SELF:SetData(clientData)
 	local pos = clientData.Pos
 	self.Pos = WorldVector(pos[1], pos[2], pos[3], pos[4], pos[5], pos[6])
@@ -30,19 +44,4 @@ function SELF:SetData(clientData)
 end
 
 function SELF:SetDynData(clientData)
-end
-
-function SELF:Init(clientData)
-	self:SetData(clientData)
-	self:SetDynData(clientData)
-
-	local ent = ClientsideModel(self.Model, RENDERGROUP_BOTH)
-	ent:SetModelScale(self.Scale or 1)
-	ent:SetNoDraw(true)
-
-	self.ClientEntity = ent
-end
-
-function SELF:Terminate()
-	SafeRemoveEntity(self.ClientEntity)
 end

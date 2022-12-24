@@ -20,12 +20,10 @@
 if not istable(ENT) then Star_Trek:LoadAllModules() return end
 local SELF = ENT
 
-function SELF:Init(pos, ang, model, radius, spin)
+function SELF:Init(pos, ang, model, diameter, spin)
 	model = model or "models/planets/earth.mdl"
 
-	local modelDiameter = Star_Trek.World:GetModelDiameter(model)
-	local scale = radius / (modelDiameter / 2)
-	SELF.Base.Init(self, pos, ang, model, scale, Vector(), Angle(0, spin, 0))
+	SELF.Base.Init(self, pos, ang, model, diameter, Vector(), Angle(0, spin, 0))
 end
 
 function SELF:SetSpin(spin)

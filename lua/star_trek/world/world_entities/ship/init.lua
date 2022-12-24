@@ -20,6 +20,6 @@
 if not istable(ENT) then Star_Trek:LoadAllModules() return end
 local SELF = ENT
 
-function SELF:Init(pos, ang, model, scale)
-	SELF.Base.Init(self, pos, ang, model, scale)
+function SELF:Init(pos, ang, model, diameter)
+	SELF.Base.Init(self, pos, ang, model, diameter)
 end

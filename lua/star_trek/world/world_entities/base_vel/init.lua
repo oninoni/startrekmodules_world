@@ -20,21 +20,8 @@
 if not istable(ENT) then Star_Trek:LoadAllModules() return end
 local SELF = ENT
 
-function SELF:GetClientData(clientData)
-	clientData.Model = self.Model
-	clientData.Scale = self.Scale
-
-	clientData.Vel = self.Vel
-	clientData.AngVel = self.AngVel
-end
-
-function SELF:GetClientDynData(clientData)
-	clientData.Pos = self.Pos
-	clientData.Ang = self.Ang
-end
-
-function SELF:Init(pos, ang, model, scale, vel, angVel)
-	SELF.Base.Init(self, pos, ang, model, scale)
+function SELF:Init(pos, ang, model, diameter, vel, angVel)
+	SELF.Base.Init(self, pos, ang, model, diameter)
 
 	self.Vel = vel or Vector()
 	self.AngVel = angVel or Angle()
@@ -50,4 +37,17 @@ function SELF:SetAngularVelocity(angVel)
 	self.AngVel = angVel
 
 	self.Updated = true
+end
+
+function SELF:GetClientData(clientData)
+	clientData.Model = self.Model
+	clientData.Scale = self.Scale
+
+	clientData.Vel = self.Vel
+	clientData.AngVel = self.AngVel
+end
+
+function SELF:GetClientDynData(clientData)
+	clientData.Pos = self.Pos
+	clientData.Ang = self.Ang
 end

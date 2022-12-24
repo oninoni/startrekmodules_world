@@ -60,6 +60,8 @@ function Star_Trek.World:RenderThink()
 
 	self:RenderSort()
 	for id, ent in ipairs(self.RenderEntities) do
+		if ent.Id == shipId then continue end
+
 		local pos, ang = WorldToLocalBig(ent.Pos, ent.Ang, shipPos, shipAng)
 
 		local realEnt = ent.ClientEntity

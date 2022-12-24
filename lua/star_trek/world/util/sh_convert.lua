@@ -13,12 +13,11 @@
 ---------------------------------------
 
 ---------------------------------------
---       Size Convert | Shared       --
+--      Unit Conversion | Shared     --
 ---------------------------------------
 
-local UNIT_PER_FOOT  = 16
-local FOOT_PER_METER = 3.28084
-local UNIT_PER_METER = UNIT_PER_FOOT * FOOT_PER_METER
+local FOOT_PER_METER = 3.2808398950131233595800524934383
+local UNIT_PER_METER = Star_Trek.World.UnitPerFoot * FOOT_PER_METER
 
 local SKYBOX_SCALE = 1 / Star_Trek.World.Skybox_Scale
 
@@ -61,18 +60,22 @@ end
 function Star_Trek.World:AstronomicalUnitToMeter(au)
 	return au * self.MetersPerAstrometricalUnit
 end
+function AUtoM(au) return Star_Trek.World:AstronomicalUnitToMeter(au) end
 
 function Star_Trek.World:MeterToAstronomicalUnit(m)
 	return m / self.MetersPerAstrometricalUnit
 end
+function MtoAU(m) return Star_Trek.World:MeterToAstronomicalUnit(m) end
 
 function Star_Trek.World:LightyearToMeter(ly)
 	return ly * self.MetersPerLightyear
 end
+function LYtoM(ly) return Star_Trek.World:LightyearToMeter(ly) end
 
 function Star_Trek.World:MeterToLightyear(m)
 	return m / self.MetersPerLightyear
 end
+function MtoLY(m) return Star_Trek.World:LightyearToMeter(m) end
 
 ----------------
 --   Skybox   --
@@ -85,10 +88,12 @@ end
 function Star_Trek.World:MeterToSkybox(m)
 	return self:MeterToUnits(m) / SKYBOX_SCALE
 end
+function M(m) return Star_Trek.World:MeterToSkybox(m) end
 
 function Star_Trek.World:SkyboxToMeter(skybox)
 	return self:UnitsToMeter(skybox * SKYBOX_SCALE)
 end
+function SBtoM(skybox) return Star_Trek.World:SkyboxToMeter(skybox) end
 
 -- Return the units in the skybox representing the kilometers given.
 -- 
@@ -97,10 +102,12 @@ end
 function Star_Trek.World:KilometerToSkybox(km)
 	return self:MeterToSkybox(km * 1000)
 end
+function KM(km) return Star_Trek.World:KilometerToSkybox(km) end
 
 function Star_Trek.World:SkyboxToKiloMeter(skybox)
 	return self:SkyboxToMeter(skybox) / 1000
 end
+function SBtoKM(skybox) return Star_Trek.World:SkyboxToKiloMeter(skybox) end
 
 -- Return the units in the skybox representing the astronomical units given.
 -- 
@@ -109,10 +116,12 @@ end
 function Star_Trek.World:AstronomicalUnitToSkybox(au)
 	return self:MeterToUnits(self:AstronomicalUnitToMeter(au)) / SKYBOX_SCALE
 end
+function AU(au) return Star_Trek.World:AstronomicalUnitToSkybox(au) end
 
 function Star_Trek.World:SkyboxToAstronomicalUnit(skybox)
 	return self:MeterToAstronomicalUnit(self:UnitsToMeter(skybox * SKYBOX_SCALE))
 end
+function SBtoAU(skybox) return Star_Trek.World:SkyboxToAstronomicalUnit(skybox) end
 
 -- Return the units in the skybox representing the lightyears given.
 -- 
@@ -121,10 +130,12 @@ end
 function Star_Trek.World:LightyearToSkybox(ly)
 	return self:MeterToUnits(self:LightyearToMeter(ly)) / SKYBOX_SCALE
 end
+function LY(ly) return Star_Trek.World:LightyearToSkybox(ly) end
 
 function Star_Trek.World:SkyboxToLightyear(skybox)
 	return self:MeterToLightyear(self:UnitsToMeter(skybox * SKYBOX_SCALE))
 end
+function SBtoLY(skybox) return Star_Trek.World:SkyboxToLightyear(skybox) end
 
 ----------------
 -- Warp Scale --
