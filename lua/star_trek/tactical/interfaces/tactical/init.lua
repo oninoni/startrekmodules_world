@@ -24,6 +24,7 @@ SELF.BaseInterface = "bridge_targeting_base"
 -- Opening general purpose menus.
 function SELF:Open(ent)
 	local success, windows, offsetPos, offsetAngle = SELF.Base.Open(self, ent, true)
+	if not success then return false, windows end
 
 	local shieldSelectionWindowPos = Vector(0, -1.5, 3.3)
 	local shieldSelectionWindowAng = Angle(0, 0, 11)
@@ -225,5 +226,5 @@ function SELF:Open(ent)
 		return true
 	end)
 
-	return success, windows, offsetPos, offsetAngle
+	return true, windows, offsetPos, offsetAngle
 end

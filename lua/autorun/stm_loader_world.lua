@@ -23,3 +23,4 @@ Star_Trek.Modules = Star_Trek.Modules or {}
 
 Star_Trek.Modules["operations"] = true
 Star_Trek.Modules["tactical"] = true
+Star_Trek.Modules["conn"] = true
