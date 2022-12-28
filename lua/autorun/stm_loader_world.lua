@@ -19,7 +19,7 @@
 Star_Trek = Star_Trek or {}
 Star_Trek.Modules = Star_Trek.Modules or {}
 
---Star_Trek.Modules["world"] = true
+Star_Trek.Modules["world"] = true
 
 Star_Trek.Modules["operations"] = true
 Star_Trek.Modules["tactical"] = true

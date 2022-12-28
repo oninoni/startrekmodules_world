@@ -28,10 +28,13 @@ function SELF:Think(deltaT)
 end
 
 function SELF:GetOrbit(r, d)
-	local ang = Angle(d or math.random(0, 360), 0, 0)
-	local dir = ang:Forward()
+	d = d or math.random(0, 360)
+	local dir = Angle(d, 0, 0):Forward()
+	local worldDir = WorldVector(0, 0, 0, dir.x, dir.z, 0)
 
-	return self.Pos + dir * r
+	print(r, d, worldDir)
+
+	return self.Pos + worldDir * r
 end
 
 function SELF:GetStandardOrbit()

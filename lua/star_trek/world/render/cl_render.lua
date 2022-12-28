@@ -89,6 +89,7 @@ end
 local eyePos, eyeAngles
 hook.Add("PreDrawSkyBox", "Star_Trek.World.Draw", function()
 	eyePos, eyeAngles = EyePos(), EyeAngles()
+	eyeAngles = LocalPlayer():EyeAngles()
 end)
 
 function Star_Trek.World:Draw()

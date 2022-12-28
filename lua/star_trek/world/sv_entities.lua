@@ -24,6 +24,8 @@
 -- @return Boolean success
 -- @return String error
 function Star_Trek.World:LoadEntity(id, class, ...)
+	print(id, class, ...)
+
 	local successInit, ent = self:InitEntity(id, class, ...)
 	if not successInit then
 		return false, ent
@@ -71,27 +73,6 @@ hook.Add("PlayerInitialSpawn", "Star_Trek.World.NetworkLoaded", function(ply)
 	else
 		ply:SetNWInt("Star_Trek.World.ShipId", 1)
 	end
-end)
-
--- Adding the map ship.
--- An Intrepid class vessel, that is represented by the map.
---
--- @return Boolean success
--- @return String error
-function Star_Trek.World:AddMapShip()
-	local success, mapShip = Star_Trek.World:LoadEntity(1, "ship", WorldVector(), Angle(), "models/kingpommes/startrek/intrepid/intrepid_sky_1024.mdl", 1)
-
-	if not success then
-		return false, worldEnt
-	end
-
-	self.MapShip = mapShip
-
-	return true
-end
-
-hook.Add("Star_Trek.ModulesLoaded", "Star_Trek.World.LoadObjects", function()
-	Star_Trek.World:AddMapShip()
 end)
 
 -- Remove the map based sun effect for now.

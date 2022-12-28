@@ -34,7 +34,7 @@ Star_Trek.World.ThinkDelay = 0.025
 Star_Trek.World.UnitPerFoot = 12
 
 -- Multiplier of an objects diameter to get to the standard orbit.
-Star_Trek.World.StandardOrbitMultiplier = 3
+Star_Trek.World.StandardOrbitMultiplier = 1
 
 -- Scales the distances between planets (Changes Astrometrical Units Calculation)
 -- Default / Real Value: 149597870700

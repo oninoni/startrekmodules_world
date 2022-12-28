@@ -46,7 +46,6 @@ if SERVER then
 	include("sv_entities.lua")
 
 	include("sv_systems.lua")
-	include("sv_world.lua")
 end
 
 if CLIENT then
