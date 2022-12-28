@@ -26,3 +26,14 @@ SELF.Dynamic = false
 
 function SELF:Think(deltaT)
 end
+
+function SELF:GetOrbit(r, d)
+	local ang = Angle(d or math.random(0, 360), 0, 0)
+	local dir = ang:Forward()
+
+	return self.Pos + dir * r
+end
+
+function SELF:GetStandardOrbit()
+	return self:GetOrbit(self.Diameter * Star_Trek.World.StandardOrbitMultiplier)
+end

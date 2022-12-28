@@ -40,6 +40,7 @@ function SELF:SetData(clientData)
 	self.Ang = clientData.Ang
 
 	self.Model = clientData.Model
+	self.Diameter = clientData.Diameter
 	self.Scale = clientData.Scale
 end
 

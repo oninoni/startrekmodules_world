@@ -26,6 +26,7 @@ end
 
 function SELF:SetData(clientData)
 	self.Model = clientData.Model
+	self.Diameter = clientData.Diameter
 	self.Scale = clientData.Scale
 
 	self.Acc = clientData.Acc

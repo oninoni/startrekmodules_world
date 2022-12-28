@@ -41,6 +41,7 @@ end
 
 function SELF:GetClientData(clientData)
 	clientData.Model = self.Model
+	clientData.Diameter = self.Diameter
 	clientData.Scale = self.Scale
 
 	clientData.Acc = self.Acc

@@ -31,7 +31,10 @@ Star_Trek.World.ThinkDelay = 0.025
 
 -- Ammount of Units per Foot used in the map's skybox and outer hull models.
 -- Is equal to 12 on the rp_intreipd map. Might be 16 on other maps.
-Star_Trek.World.UnitPerFoot  = 12
+Star_Trek.World.UnitPerFoot = 12
+
+-- Multiplier of an objects diameter to get to the standard orbit.
+Star_Trek.World.StandardOrbitMultiplier = 3
 
 -- Scales the distances between planets (Changes Astrometrical Units Calculation)
 -- Default / Real Value: 149597870700

@@ -46,6 +46,7 @@ function SELF:GetClientData(clientData)
 	clientData.Ang = self.Ang
 
 	clientData.Model = self.Model
+	clientData.Diameter = self.Diameter
 	clientData.Scale = self.Scale
 end
 
@@ -56,9 +57,8 @@ function SELF:Init(pos, ang, model, diameter)
 	self.Pos = pos or WorldVector()
 	self.Ang = ang or Angle()
 
-	local modelDiameter = Star_Trek.World:GetModelDiameter(model)
-	local scale = (diameter or 1) / modelDiameter
-	self.Scale = scale
+	self.Diameter = diameter or 1
+	self.Scale = self.Diameter / Star_Trek.World:GetModelDiameter(model)
 
 	self.Model = model or "models/hunter/blocks/cube4x4x4.mdl"
 end
