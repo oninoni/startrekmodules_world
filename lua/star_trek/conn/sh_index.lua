@@ -21,10 +21,16 @@ Star_Trek:RequireModules("lcars") -- TODO: Add world
 Star_Trek.Navigation = Star_Trek.Navigation or {}
 
 if SERVER then
+	AddCSLuaFile("sh_config.lua")
+
+	include("sh_config.lua")
+
 	include("sv_conn.lua")
 end
 
 if CLIENT then
+	include("sh_config.lua")
+
 	return
 end
 

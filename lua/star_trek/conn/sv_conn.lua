@@ -29,6 +29,7 @@ function Star_Trek.Navigation:RotateChair(veh, moveLeft)
 	local rotAng = rotButton:GetAngles()
 	local yaw = rotAng.y
 
+	-- Move from the center.
 	if yaw == 0 then
 		if moveLeft then
 			local ent = ents.FindByName("connBut2")[1]
@@ -45,6 +46,7 @@ function Star_Trek.Navigation:RotateChair(veh, moveLeft)
 		end
 	end
 
+	-- Move back from the Left.
 	if yaw == 18 and not moveLeft then
 		local ent = ents.FindByName("connBut2")[1]
 		if not IsValid(ent) then return end
@@ -53,6 +55,7 @@ function Star_Trek.Navigation:RotateChair(veh, moveLeft)
 		return
 	end
 
+	-- Move back from the Right.
 	if yaw == -18 and moveLeft then
 		local ent = ents.FindByName("connBut3")[1]
 		if not IsValid(ent) then return end

@@ -30,10 +30,10 @@ function SELF:AddEngineSelectionButtons()
 	if not istable(engineControlWindow) then return end
 
 	local directDriveTypeRow = engineControlWindow:CreateSecondaryButtonRow(32)
-	engineControlWindow:AddButtonToRow(directDriveTypeRow, "Docking Thrusters", nil, Star_Trek.LCARS.ColorBlue, nil, true, false, function(ply, buttonData)
+	engineControlWindow:AddButtonToRow(directDriveTypeRow, "Docking Thrusters", nil, Star_Trek.LCARS.ColorBlue, nil, not Star_Trek.Navigation.EnableDocking, false, function(ply, buttonData)
 		self:SelectEngineMode(self.DOCKING)
 	end)
-	engineControlWindow:AddButtonToRow(directDriveTypeRow, "Maneuvering Thrusters", nil, Star_Trek.LCARS.ColorLightBlue, nil, true, false, function(ply, buttonData)
+	engineControlWindow:AddButtonToRow(directDriveTypeRow, "Maneuvering Thrusters", nil, Star_Trek.LCARS.ColorLightBlue, nil, not Star_Trek.Navigation.EnableManeuver, false, function(ply, buttonData)
 		self:SelectEngineMode(self.MANEUVERING)
 	end)
 
@@ -44,14 +44,21 @@ function SELF:AddEngineSelectionButtons()
 	engineControlWindow:AddButtonToRow(plottedDriveTypeRow, "Warp Drive", nil, Star_Trek.LCARS.ColorLightBlue, nil, false, false, function(ply, buttonData)
 		self:SelectEngineMode(self.WARP)
 	end)
-	engineControlWindow:AddButtonToRow(plottedDriveTypeRow, "Slipstream", nil, Star_Trek.LCARS.ColorBlue, nil, false, false, function(ply, buttonData)
+	engineControlWindow:AddButtonToRow(plottedDriveTypeRow, "Slipstream", nil, Star_Trek.LCARS.ColorBlue, nil, not Star_Trek.Navigation.EnableSlipstream, false, function(ply, buttonData)
 		self:SelectEngineMode(self.SLIPSTREAM)
+	end)
+
+	local stopRow = engineControlWindow:CreateSecondaryButtonRow(32)
+	engineControlWindow:AddButtonToRow(stopRow, "Emergency Stop", nil, Star_Trek.LCARS.ColorRed, nil, false, false, function(ply, buttonData)
+		-- TODO
 	end)
 end
 
 function SELF:SelectEngineMode(mode)
 	local engineControlWindow = self.EngineControlWindow
 	if not istable(engineControlWindow) then return end
+
+	self.EngineControlMode = mode
 
 	for i = 1, 5 do
 		local buttonData = engineControlWindow.Buttons[i]
@@ -88,8 +95,10 @@ function SELF:SelectEngineMode(mode)
 
 		local autoDropRow = engineControlWindow:CreateMainButtonRow(32)
 		engineControlWindow:AddButtonToRow(autoDropRow, "Enable Auto Drop to Impulse", nil, nil, nil, false, false, function(ply, buttonData)
+			-- TODO
 		end)
 		engineControlWindow:AddButtonToRow(autoDropRow, "Enable Auto Drop to Warp", nil, nil, nil, false, false, function(ply, buttonData)
+			-- TODO
 		end)
 
 		engineControlWindow:CreateMainButtonRow(32 * 1)
@@ -101,7 +110,8 @@ function SELF:SelectEngineMode(mode)
 		end)
 
 		local engageRow = engineControlWindow:CreateMainButtonRow(32)
-		engineControlWindow:AddButtonToRow(engageRow, "Engage Impulse Engine", nil, Star_Trek.LCARS.ColorRed, nil, false, false, function(ply, buttonData)
+		engineControlWindow:AddButtonToRow(engageRow, "Engage Impulse Engine", nil, Star_Trek.LCARS.ColorOrange, nil, false, false, function(ply, buttonData)
+			-- TODO
 		end)
 	elseif mode == self.WARP then
 		local speedSelectorRow = engineControlWindow:CreateMainButtonRow(32)
@@ -138,8 +148,10 @@ function SELF:SelectEngineMode(mode)
 
 		local autoDropRow = engineControlWindow:CreateMainButtonRow(32)
 		engineControlWindow:AddButtonToRow(autoDropRow, "Enable Auto Drop to Impulse", nil, nil, nil, false, false, function(ply, buttonData)
+			-- TODO
 		end)
 		engineControlWindow:AddButtonToRow(autoDropRow, "Enable Auto Drop to Warp", nil, nil, nil, false, false, function(ply, buttonData)
+			-- TODO
 		end)
 
 		engineControlWindow:CreateMainButtonRow(32)
@@ -151,7 +163,8 @@ function SELF:SelectEngineMode(mode)
 		end)
 
 		local engageRow = engineControlWindow:CreateMainButtonRow(32)
-		engineControlWindow:AddButtonToRow(engageRow, "Engage Warp Drive", nil, Star_Trek.LCARS.ColorRed, nil, false, false, function(ply, buttonData)
+		engineControlWindow:AddButtonToRow(engageRow, "Engage Warp Drive", nil, Star_Trek.LCARS.ColorOrange, nil, false, false, function(ply, buttonData)
+			-- TODO
 		end)
 	elseif mode == self.SLIPSTREAM then
 		engineControlWindow:CreateMainButtonRow(32 * 1)
@@ -172,8 +185,10 @@ function SELF:SelectEngineMode(mode)
 
 		local autoDropRow = engineControlWindow:CreateMainButtonRow(32)
 		engineControlWindow:AddButtonToRow(autoDropRow, "Enable Auto Drop to Impulse", nil, nil, nil, false, false, function(ply, buttonData)
+			-- TODO
 		end)
 		engineControlWindow:AddButtonToRow(autoDropRow, "Enable Auto Drop to Warp", nil, nil, nil, false, false, function(ply, buttonData)
+			-- TODO
 		end)
 
 		engineControlWindow:CreateMainButtonRow(32 * 1)
@@ -185,7 +200,8 @@ function SELF:SelectEngineMode(mode)
 		end)
 
 		local engageRow = engineControlWindow:CreateMainButtonRow(32)
-		engineControlWindow:AddButtonToRow(engageRow, "Engage Slipstream", nil, Star_Trek.LCARS.ColorRed, nil, false, false, function(ply, buttonData)
+		engineControlWindow:AddButtonToRow(engageRow, "Engage Slipstream", nil, Star_Trek.LCARS.ColorOrange, nil, false, false, function(ply, buttonData)
+			-- TODO
 		end)
 	end
 end

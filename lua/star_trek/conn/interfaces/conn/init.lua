@@ -22,6 +22,7 @@ local SELF = INTERFACE
 SELF.BaseInterface = "bridge_targeting_base"
 
 include("engines.lua")
+include("navigation.lua")
 
 -- Opening general purpose menus.
 function SELF:Open(ent)
@@ -41,6 +42,7 @@ function SELF:Open(ent)
 	local logScreenAng = Angle(0, 33.5, 28)
 	local sideScreensW = 500
 	local sideScreensH = 420
+	local utilOffset = Vector(7.37, -1.075, 0)
 
 	local navigationPos = Vector(engineControlPos)
 	local navigationAng = Angle(engineControlAng)
@@ -85,17 +87,23 @@ function SELF:Open(ent)
 	self:AddEngineSelectionButtons()
 	self:SelectEngineMode(self.IMPULSE)
 
-	local stopRow = engineControlWindow:CreateSecondaryButtonRow(32)
-	engineControlWindow:AddButtonToRow(stopRow, "Emergency Stop", nil, Star_Trek.LCARS.ColorRed, nil, false, false, function(ply, buttonData)
-	end)
-
-	local success4, navigationWindow = Star_Trek.LCARS:CreateWindow("button_matrix", navigationPos, navigationAng, scale, middleScreensW, middleScreensH,
+	local success4, navigationWindow = Star_Trek.LCARS:CreateWindow("button_matrix", navigationPos - utilOffset, navigationAng, scale, middleScreensW / 2, middleScreensH,
 	function(windowData, interfaceData, ply, categoryId, buttonId)
 		-- No Additional Interactivity here.
-	end, "Navigation", "NAV", WINDOW_BORDER_BOTH)
+	end, "Navigation", "NAV", WINDOW_BORDER_LEFT)
 	if not success4 then
 		return false, navigationWindow
 	end
+	self.NavigationWindow = navigationWindow
+
+	local success4b, navigationUtilWindow = SELF:CreateUtilWindow(navigationPos + utilOffset, navigationAng, scale, middleScreensW / 2, middleScreensH, self.DIRECT)
+	if not success4b then
+		return false, navigationUtilWindow
+	end
+	self.NavigationUtilWindow = navigationUtilWindow
+
+	self:AddNavigationSelectionButtons()
+	self:SelectNavigationMode(self.DIRECT, true)
 
 	local success5, mapWindow = Star_Trek.LCARS:CreateWindow("text_entry", mapScreenPos, mapScreenAng, scale, mapScreenW, mapScreenH,
 	function(windowData, interfaceData, ply, categoryId, buttonId)
@@ -113,5 +121,5 @@ function SELF:Open(ent)
 		return false, mapControlWindow
 	end
 
-	return true, {logWindow, screenWindow, engineControlWindow, navigationWindow, mapWindow, mapControlWindow}, Vector(), Angle(0, 90, 0)
+	return true, {logWindow, screenWindow, engineControlWindow, navigationWindow, navigationUtilWindow, mapWindow, mapControlWindow}, Vector(), Angle(0, 90, 0)
 end
