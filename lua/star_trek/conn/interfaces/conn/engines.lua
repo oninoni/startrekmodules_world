@@ -73,10 +73,11 @@ function SELF:SelectEngineMode(mode)
 	elseif mode == self.IMPULSE then
 		local speedSelectorRow = engineControlWindow:CreateMainButtonRow(32)
 		engineControlWindow:AddSelectorToRow(speedSelectorRow, "Impulse Speed", {
-			{Name = "1/4 Impulse", Data = 1},
-			{Name = "1/2 Impulse", Data = 2},
-			{Name = "3/4 Impulse", Data = 3},
-			{Name = "Full Impulse", Data = 4},
+			{Name = "1/8 Impulse", Data = 1},
+			{Name = "1/4 Impulse", Data = 2},
+			{Name = "1/2 Impulse", Data = 3},
+			{Name = "3/4 Impulse", Data = 4},
+			{Name = "Full Impulse", Data = 5},
 		}, 2, callback)
 
 		local distanceSelectorRow = engineControlWindow:CreateMainButtonRow(32)

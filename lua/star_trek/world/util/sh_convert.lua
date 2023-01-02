@@ -141,6 +141,17 @@ function SBtoLY(skybox) return Star_Trek.World:SkyboxToLightyear(skybox) end
 -- Warp Scale --
 ----------------
 
+local METER_PER_SECOND_C = 	299792458
+
+-- Get light speed in skybox units per second.
+--
+-- @param Number c
+-- @return Number sU
+function Star_Trek.World:GetLightSpeed(c)
+	self:MeterToSkybox(METER_PER_SECOND_C * c)
+end
+function C(c) return Star_Trek.World:GetLightSpeed(c) end
+
 local A = 0.00264320
 local N = 2.87926700
 local F1 = 0.06274120
@@ -162,3 +173,14 @@ function Star_Trek.World:WarpToC(warpFactor)
 		)
 	end
 end
+
+-- Get warp factor in skybox units per second.
+--
+-- @param Number warpFactor
+-- @return Number sU
+function Star_Trek.World:Warp(warpFactor)
+	local c = self:WarpToC(warpFactor)
+
+	return self:GetLightSpeed(c)
+end
+function W(warpFactor) return Star_Trek.World:Warp(warpFactor) end
