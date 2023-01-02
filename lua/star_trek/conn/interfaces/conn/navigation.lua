@@ -98,7 +98,21 @@ function SELF:SelectNavigationMode(mode, skipUpdate)
 		navigationWindow:AddButtonToRow(hierarchyControl, "Show Members", nil, Star_Trek.LCARS.ColorBlue, nil, false, false, function(ply, buttonData)
 		end)
 
-		navigationWindow:CreateMainButtonRow(32 * 5)
+		navigationWindow:CreateMainButtonRow(32)
+
+		local targetRow = navigationWindow:CreateMainButtonRow(32)
+		navigationWindow:AddButtonToRow(targetRow, "Current Target:", nil, Star_Trek.LCARS.ColorBlue, nil, true, false, function(ply, buttonData)
+		end)
+		navigationWindow:AddButtonToRow(targetRow, "---", nil, Star_Trek.LCARS.ColorBlue, nil, true, false, function(ply, buttonData)
+		end)
+
+		local distanceRow = navigationWindow:CreateMainButtonRow(32)
+		navigationWindow:AddButtonToRow(distanceRow, "Distance:", nil, Star_Trek.LCARS.ColorBlue, nil, true, false, function(ply, buttonData)
+		end)
+		navigationWindow:AddButtonToRow(distanceRow, "---", nil, Star_Trek.LCARS.ColorBlue, nil, true, false, function(ply, buttonData)
+		end)
+
+		navigationWindow:CreateMainButtonRow(32 * 2)
 
 		local lockCourse = navigationWindow:CreateMainButtonRow(32)
 		navigationWindow:AddButtonToRow(lockCourse, "Lock Course", nil, Star_Trek.LCARS.ColorOrange, nil, false, false, function(ply, buttonData)
