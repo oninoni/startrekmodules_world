@@ -24,8 +24,6 @@
 -- @return Boolean success
 -- @return String error
 function Star_Trek.World:LoadEntity(id, class, ...)
-	print(id, class, ...)
-
 	local successInit, ent = self:InitEntity(id, class, ...)
 	if not successInit then
 		return false, ent

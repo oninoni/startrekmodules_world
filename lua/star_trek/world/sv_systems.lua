@@ -16,6 +16,8 @@
 --       Star Systems | Server       --
 ---------------------------------------
 
+Star_Trek.World.LoadedLeafs = {}
+
 -- Load all objects in a leaf.
 --
 -- @param Table leaf
@@ -23,6 +25,8 @@
 -- @return? String error
 function Star_Trek.World:LoadStarSystem(leaf)
 	if leaf.Loaded then return end
+
+	print("Loading " .. leaf.Data.Name)
 
 	local leafPos = WorldVector(0, 0, 0, leaf.X, leaf.Y, 0)
 	for _, entData in pairs(leaf.Data.Entities) do
@@ -47,6 +51,7 @@ function Star_Trek.World:LoadStarSystem(leaf)
 		end
 	end
 
+	table.insert(self.LoadedLeafs, leaf)
 	leaf.Loaded = true
 	return true
 end
@@ -59,6 +64,8 @@ end
 function Star_Trek.World:UnloadStarSystem(leaf)
 	if not leaf.Loaded then return end
 
+	print("Unloading " .. leaf.Data.Name)
+
 	for _, entData in pairs(self.Entities) do
 		local override = hook.Run("Star_Trek.World.UnloadStarSystem", leaf, entData)
 		if override then continue end
@@ -69,9 +76,33 @@ function Star_Trek.World:UnloadStarSystem(leaf)
 		end
 	end
 
+	table.RemoveByValue(self.LoadedLeafs, leaf)
 	leaf.Loaded = nil
 	return true
 end
+
+-- Update the locations, that should currently be loaded.
+function Star_Trek.World:UpdateLocations(x, y, r)
+	local leafs = self.QuadTree:QueryBounds(x, y, r)
+
+	local loadedLeafs = table.Copy(self.LoadedLeafs)
+	for _, leaf in pairs(leafs) do
+		Star_Trek.World:LoadStarSystem(leaf)
+
+		table.RemoveByValue(loadedLeafs, leaf)
+	end
+
+	for _, leaf in pairs(loadedLeafs) do
+		Star_Trek.World:UnloadStarSystem(leaf)
+	end
+end
+
+timer.Create("Star_Trek.World.UpdateMap", 10, 0, function()
+	local ship = Star_Trek.World.Entities[1]
+	local pos = ship.Pos
+
+	Star_Trek.World:UpdateLocations(pos:GetX(), pos:GetY(), LY(5))
+end)
 
 -- Adding the map ship.
 -- An Intrepid class vessel, that is represented by the map.
@@ -91,13 +122,21 @@ function Star_Trek.World:AddMapShip()
 end
 
 -- Setup the galaxy.
-function Star_Trek.World:LoadGalaxy()
+function Star_Trek.World:ReLoadGalaxy()
+	print("Reloading The Galaxy")
+
+	local loadedLeafs = table.Copy(self.LoadedLeafs or {})
+	for _, leaf in pairs(loadedLeafs) do
+		Star_Trek.World:UnloadStarSystem(leaf)
+	end
+
 	self.QuadTree = QuadTree(0, 0, LY(Star_Trek.World.MaxDistance))
+	self.LoadedLeafs = {}
 
 	local override = hook.Run("Star_Trek.World.LoadGalaxy", self.QuadTree)
 	if override then return end
 
-	local leaf = self.QuadTree:CreateLeaf(LY(0), LY(0), {Name = "Sol System", Entities = {
+	local solLeaf = self.QuadTree:CreateLeaf(LY(0), LY(0), {Name = "Sol System", Entities = {
 		{Id = 11, OrbitRadius = AU(0), Name = "Sol", Class = "planet", Model = "models/planets/sun.mdl", Diameter = KM(1392700)},
 		{Id = 2, OrbitRadius = AU(0.39), Name = "Mercury", Class = "planet", Model = "models/planets/mercury.mdl", Diameter = KM(4880)},
 		{Id = 3, OrbitRadius = AU(0.72), Name = "Venus", Class = "planet", Model = "models/planets/venus.mdl", Diameter = KM(12104)},
@@ -112,26 +151,41 @@ function Star_Trek.World:LoadGalaxy()
 		{Id = 10, ParentId = 4, OrbitRadius = KM(385000), Name = "Luna", Class = "planet", Model = "models/planets/luna_big.mdl", Diameter = KM(3474.8)},
 	}})
 	self.QuadTree:CreateLeaf(LY(-0.6162192048), LY(-12.8379001), {Name = "Vulcan System", Entities = {
+		{Id = 12, OrbitRadius = AU(0), Name = "40 Eridiani A", Class = "planet", Model = "models/planets/sun.mdl", Diameter = KM(1130872.4)},
+		{Id = 13, OrbitRadius = AU(0.3), Name = "40 Eridiani B", Class = "planet", Model = "models/planets/sun.mdl", Diameter = KM(19497.8)},
+		{Id = 14, OrbitRadius = AU(0.2), Name = "40 Eridiani C", Class = "planet", Model = "models/planets/sun.mdl", Diameter = KM(431737)},
 
+		{Id = 15, OrbitRadius = AU(0.9), Name = "Vulcan", Class = "planet", Model = "models/planets/mars.mdl", Diameter = KM(12142)},
 	}})
 	self.QuadTree:CreateLeaf(LY(6.264895249), LY(-9.756804077), {Name = "Andoria System", Entities = {
+		{Id = 16, OrbitRadius = AU(0), Name = "Procyon A", Class = "planet", Model = "models/planets/sun.mdl", Diameter = KM(2855035)},
+		{Id = 17, OrbitRadius = AU(0.3), Name = "Procyon B", Class = "planet", Model = "models/planets/sun.mdl", Diameter = KM(16712.4)},
 
+		{Id = 18, OrbitRadius = AU(2), Name = "Andor", Class = "planet", Model = "models/planets/earth.mdl", Diameter = KM(12142)},
 	}})
 	self.QuadTree:CreateLeaf(LY(-11.86221969), LY(1.386493211), {Name = "Tellar System", Entities = {
+		{Id = 19, OrbitRadius = AU(0), Name = "61 Cygni A", Class = "planet", Model = "models/planets/sun.mdl", Diameter = KM(926145.5)},
+		{Id = 20, OrbitRadius = AU(0.2), Name = "61 Cygni B", Class = "planet", Model = "models/planets/sun.mdl", Diameter = KM(828656.5)},
 
+		{Id = 21, OrbitRadius = AU(1.5), Name = "Tellar", Class = "planet", Model = "models/planets/earth.mdl", Diameter = KM(12142)},
 	}})
 
-	print(Star_Trek.World:LoadStarSystem(leaf))
-	print(Star_Trek.World:AddMapShip())
+	Star_Trek.World:LoadStarSystem(solLeaf)
+	Star_Trek.World:AddMapShip()
 end
 
 hook.Add("InitPostEntity", "Star_Trek.World.LoadGalaxy", function() Star_Trek.World:LoadGalaxy() end)
 hook.Add("PostCleanupMap", "Star_Trek.World.LoadGalaxy", function() Star_Trek.World:LoadGalaxy() end)
 
-local function flyToMars()
+local function flyToVulcan(warpFactor, callback)
+	warpFactor = warpFactor or 9.975
+
 	local ship = Star_Trek.World.Entities[1]
-	local mars = Star_Trek.World.Entities[10]
-	local targetPos = mars:GetStandardOrbit()
+	local targetPos = WorldVector(0, 0, 0, LY(-0.6162192048), LY(-12.8379001), 0)
+	local vulcan = Star_Trek.World.Entities[15]
+	if vulcan then
+		targetPos = vulcan.Pos
+	end
 
 	direction = targetPos - ship.Pos
 	local dirNorm = direction:ToVector()
@@ -139,20 +193,22 @@ local function flyToMars()
 	ship:SetAngle(dirNorm:Angle())
 
 	local distance = direction:Length()
-	print(SBtoAU(distance))
 
-	local speedC = Star_Trek.World:WarpToC(1)
+	local speedC = Star_Trek.World:WarpToC(warpFactor)
 	local speed = KM(300000) * speedC
-	print(SBtoAU(speed))
 
-	local travelTime = distance / speed
-	print(travelTime)
+	local travelTime = math.floor(distance / speed) - 1
+	print(travelTime .. "s")
 
 	ship:SetVelocity(dirNorm * speed)
 
 	timer.Simple(travelTime, function()
 		ship:SetVelocity(Vector())
+
+		if isfunction(callback) then
+			callback()
+		end
 	end)
 end
 
-flyToMars()
+flyToVulcan(9.9999, function() flyToVulcan(9.975, function() flyToVulcan(1) end) end)
