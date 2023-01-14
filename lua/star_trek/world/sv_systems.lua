@@ -26,7 +26,7 @@ Star_Trek.World.LoadedLeafs = {}
 function Star_Trek.World:LoadStarSystem(leaf)
 	if leaf.Loaded then return end
 
-	print("Loading " .. leaf.Data.Name)
+	print("Loading \"" .. leaf.Data.Name .. "\"", leaf)
 
 	local leafPos = WorldVector(0, 0, 0, leaf.X, leaf.Y, 0)
 	for _, entData in pairs(leaf.Data.Entities) do
@@ -64,9 +64,9 @@ end
 function Star_Trek.World:UnloadStarSystem(leaf)
 	if not leaf.Loaded then return end
 
-	print("Unloading " .. leaf.Data.Name)
+	print("Unloading \"" .. leaf.Data.Name .. "\"", leaf)
 
-	for _, entData in pairs(self.Entities) do
+	for _, entData in pairs(leaf.Data.Entities) do
 		local override = hook.Run("Star_Trek.World.UnloadStarSystem", leaf, entData)
 		if override then continue end
 
@@ -85,7 +85,11 @@ end
 function Star_Trek.World:UpdateLocations(x, y, r)
 	local leafs = self.QuadTree:QueryBounds(x, y, r)
 
-	local loadedLeafs = table.Copy(self.LoadedLeafs)
+	local loadedLeafs = {}
+	for i, leaf in pairs(self.LoadedLeafs) do
+		loadedLeafs[i] = leaf
+	end
+
 	for _, leaf in pairs(leafs) do
 		Star_Trek.World:LoadStarSystem(leaf)
 
@@ -98,10 +102,12 @@ function Star_Trek.World:UpdateLocations(x, y, r)
 end
 
 timer.Create("Star_Trek.World.UpdateMap", 10, 0, function()
-	local ship = Star_Trek.World.Entities[1]
-	local pos = ship.Pos
+	pcall(function()
+		local ship = Star_Trek.World.Entities[1]
+		local pos = ship.Pos
 
-	Star_Trek.World:UpdateLocations(pos:GetX(), pos:GetY(), LY(5))
+		Star_Trek.World:UpdateLocations(pos:GetX(), pos:GetY(), LY(5))
+	end)
 end)
 
 -- Adding the map ship.
@@ -123,16 +129,13 @@ end
 
 -- Setup the galaxy.
 function Star_Trek.World:ReLoadGalaxy()
-	print("Reloading The Galaxy")
-
 	local loadedLeafs = table.Copy(self.LoadedLeafs or {})
 	for _, leaf in pairs(loadedLeafs) do
 		Star_Trek.World:UnloadStarSystem(leaf)
 	end
-
-	self.QuadTree = QuadTree(0, 0, LY(Star_Trek.World.MaxDistance))
 	self.LoadedLeafs = {}
 
+	self.QuadTree = QuadTree(0, 0, LY(Star_Trek.World.MaxDistance))
 	local override = hook.Run("Star_Trek.World.LoadGalaxy", self.QuadTree)
 	if override then return end
 
@@ -174,41 +177,28 @@ function Star_Trek.World:ReLoadGalaxy()
 	Star_Trek.World:AddMapShip()
 end
 
-hook.Add("InitPostEntity", "Star_Trek.World.LoadGalaxy", function() Star_Trek.World:LoadGalaxy() end)
-hook.Add("PostCleanupMap", "Star_Trek.World.LoadGalaxy", function() Star_Trek.World:LoadGalaxy() end)
+hook.Add("InitPostEntity", "Star_Trek.World.LoadGalaxy", function() Star_Trek.World:ReLoadGalaxy() end)
+hook.Add("PostCleanupMap", "Star_Trek.World.LoadGalaxy", function() Star_Trek.World:ReLoadGalaxy() end)
 
-local function flyToVulcan(warpFactor, callback)
-	warpFactor = warpFactor or 9.975
+function flyToVulcan(warpFactor, callback)
+	warpFactor = warpFactor or 2
 
 	local ship = Star_Trek.World.Entities[1]
-	local targetPos = WorldVector(0, 0, 0, LY(-0.6162192048), LY(-12.8379001), 0)
-	local vulcan = Star_Trek.World.Entities[15]
-	if vulcan then
-		targetPos = vulcan.Pos
-	end
+	--local targetPos = WorldVector(0, 0, 0, LY(-0.6162192048), LY(-12.8379001), 0)
+	--local vulcan = Star_Trek.World.Entities[15]
+	--if vulcan then
+	--	targetPos = vulcan.Pos
+	--end
 
-	direction = targetPos - ship.Pos
-	local dirNorm = direction:ToVector()
-	dirNorm:Normalize()
-	ship:SetAngle(dirNorm:Angle())
+	local mars = Star_Trek.World.Entities[5]
+	local targetPos = mars:GetStandardOrbit()
 
-	local distance = direction:Length()
-
-	local speedC = Star_Trek.World:WarpToC(warpFactor)
-	local speed = KM(300000) * speedC
-
-	local travelTime = math.floor(distance / speed) - 1
-	print(travelTime .. "s")
-
-	ship:SetVelocity(dirNorm * speed)
-
-	timer.Simple(travelTime, function()
-		ship:SetVelocity(Vector())
-
-		if isfunction(callback) then
-			callback()
-		end
+	local maneuverData1 = ship:CreateAlignManeuverAt(ship.Pos, ship.Ang, targetPos)
+	ship:TriggerManeuver(maneuverData1, function(_)
+		print("A")
+		local maneuverData2 = ship:CreateWarpManeuver(ship.Pos, 0, targetPos, 0, W(warpFactor))
+		ship:TriggerManeuver(maneuverData2, function(_)
+			print("B")
+		end)
 	end)
 end
-
-flyToVulcan(9.9999, function() flyToVulcan(9.975, function() flyToVulcan(1) end) end)

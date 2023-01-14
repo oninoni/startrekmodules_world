@@ -148,7 +148,7 @@ local METER_PER_SECOND_C = 	299792458
 -- @param Number c
 -- @return Number sU
 function Star_Trek.World:GetLightSpeed(c)
-	self:MeterToSkybox(METER_PER_SECOND_C * c)
+	return self:MeterToSkybox(METER_PER_SECOND_C * c)
 end
 function C(c) return Star_Trek.World:GetLightSpeed(c) end
 

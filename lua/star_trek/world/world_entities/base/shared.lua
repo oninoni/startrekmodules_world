@@ -32,8 +32,6 @@ function SELF:GetOrbit(r, d)
 	local dir = Angle(d, 0, 0):Forward()
 	local worldDir = WorldVector(0, 0, 0, dir.x, dir.z, 0)
 
-	print(r, d, worldDir)
-
 	return self.Pos + worldDir * r
 end
 

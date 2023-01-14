@@ -213,6 +213,17 @@ function WorldVector(bx, by, bz, sx, sy, sz)
 	return worldVector
 end
 
+-- Create a World Vector from a table and return it.
+--
+-- @param Table worldVector
+-- @return WorldVector worldVector
+function WorldVectorFromTable(worldVector)
+	setmetatable(worldVector, metaTable)
+	worldVector:FixValue()
+
+	return worldVector
+end
+
 -- Reduces the Value to its minimum "Small" Vector Size.
 -- Should be called after any operation.
 function vectorMeta:FixValue()
@@ -303,6 +314,10 @@ end
 -- WARNING: This can cause a loss of precision!
 function vectorMeta:Distance(b)
 	return (self - b):Length()
+end
+
+function vectorMeta:GetNormalized()
+	return self:ToVector():GetNormalized()
 end
 
 function vectorMeta:GetCeil()

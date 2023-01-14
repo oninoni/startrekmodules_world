@@ -24,6 +24,7 @@ local SORT_DELAY = Star_Trek.World.SortDelay or 0.5
 
 function Star_Trek.World:GenerateRenderEntities()
 	self.RenderEntities = {}
+
 	for _, otherEnt in SortedPairsByMemberValue(self.Entities, "Distance", true) do
 		table.insert(self.RenderEntities, otherEnt)
 	end
@@ -97,7 +98,6 @@ function Star_Trek.World:Draw()
 
 	render.SuppressEngineLighting(true)
 	render.SetColorModulation(1, 1, 1)
-	render.DepthRange(0, 0)
 
 	local mat = Matrix()
 	mat:SetAngles(shipAng)
@@ -108,6 +108,7 @@ function Star_Trek.World:Draw()
 	cam.End3D()
 
 	cam.Start3D(eyePos * SKY_CAM_SCALE, eyeAngles, nil, nil, nil, nil, nil, 0.0005, 10000000)
+		cam.IgnoreZ(true)
 		local renderEntities = self.RenderEntities
 		for i = 1, #renderEntities do
 			local ent = renderEntities[i]
@@ -115,9 +116,9 @@ function Star_Trek.World:Draw()
 
 			ent.ClientEntity:DrawModel()
 		end
+		cam.IgnoreZ(false)
 	cam.End3D()
 
-	render.DepthRange(0, 1)
 	render.SuppressEngineLighting(false)
 end
 

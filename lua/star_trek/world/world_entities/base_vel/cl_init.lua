@@ -34,7 +34,6 @@ function SELF:SetData(clientData)
 end
 
 function SELF:SetDynData(clientData)
-	local pos = clientData.Pos
-	self.Pos = WorldVector(pos[1], pos[2], pos[3], pos[4], pos[5], pos[6])
+	self.Pos = WorldVectorFromTable(clientData.Pos)
 	self.Ang = clientData.Ang
 end
