@@ -190,7 +190,7 @@ function flyToVulcan(warpFactor, callback)
 	--	targetPos = vulcan.Pos
 	--end
 
-	local mars = Star_Trek.World.Entities[5]
+	local mars = Star_Trek.World.Entities[3]
 	local targetPos = mars:GetStandardOrbit()
 
 	local maneuverData1 = ship:CreateAlignManeuverAt(ship.Pos, ship.Ang, targetPos)

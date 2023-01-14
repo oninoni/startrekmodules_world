@@ -40,8 +40,10 @@ function SELF:FixManeuverData(activeManeuver)
 		WorldVectorFromTable(activeManeuver.EndPos)
 		WorldVectorFromTable(activeManeuver.AccelPos)
 		WorldVectorFromTable(activeManeuver.DeccelPos)
-	elseif activeManeuver.Type == "ALIGN" then
-		return
+	--elseif activeManeuver.Type == "ALIGN" then
+		-- No Conversion Needed.
+	--elseif maneuverType == "IMPULSE" then
+		-- TODO
 	end
 end
 

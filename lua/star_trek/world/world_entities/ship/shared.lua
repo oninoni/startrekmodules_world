@@ -75,5 +75,9 @@ function SELF:ManeuverThink(maneuverData)
 			local lerp = math.ease.InOutSine(time / maneuverData.Duration)
 			self.Ang = LerpAngle(lerp, maneuverData.StartAngle, targetAngle)
 		end
+	elseif maneuverType == "IMPULSE" then
+		-- TODO
+
+		return
 	end
 end

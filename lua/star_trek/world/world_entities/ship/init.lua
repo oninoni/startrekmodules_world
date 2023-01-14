@@ -23,7 +23,7 @@ local SELF = ENT
 -- Degree per second.
 local TURN_SPEED = 30
 -- Maximum Acceleration / Decceleration
-local MAX_ACCEL = C(1)
+local MAX_ACCEL = C(0.1)
 -- Minimum Warp Speed
 local MIN_WARP = C(1)
 
@@ -98,7 +98,17 @@ function SELF:CreateWarpManeuver(startPos, startSpeed, endPos, endSpeed, targetS
 	local deccelDistance = endSpeed * deccelDuration + deccelSpeedDiff * deccelDuration / 2
 
 	local coastDistance = distance - accelDistance - deccelDistance
-	-- TODO: Short Distances, that dont reach target Speed (negative)
+	if coastDistance < 0 then
+		coastDistance = 0
+
+		local distanceReductionFactor = distance / (accelDistance + deccelDistance)
+
+		accelDistance = accelDistance * distanceReductionFactor
+		accelDuration = accelDistance / (endSpeed + accelSpeedDiff / 2)
+
+		deccelDistance = deccelDistance * distanceReductionFactor
+		deccelDuration = deccelDistance / (endSpeed + deccelSpeedDiff / 2)
+	end
 	maneuverData.CoastDuration = coastDistance / targetSpeed
 
 	-- Calculate time frames.
