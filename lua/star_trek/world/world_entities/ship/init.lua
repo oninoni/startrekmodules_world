@@ -21,7 +21,7 @@ if not istable(ENT) then Star_Trek:LoadAllModules() return end
 local SELF = ENT
 
 -- Degree per second.
-local TURN_SPEED = 30
+local TURN_SPEED = 20
 -- Maximum Acceleration / Decceleration
 local MAX_ACCEL = C(0.1)
 -- Minimum Warp Speed
@@ -58,6 +58,48 @@ function SELF:TriggerManeuver(maneuverData, callback)
 
 	self.ManeuverStart = CurTime()
 	self.Updated = true
+end
+
+function SELF:ExecuteCourseStep()
+	local step = self.CourseStep
+	local startPos = self.Course[step]
+	local endPos = self.Course[step + 1]
+
+	if not IsWorldVector(endPos) then
+		local callback = self.CourseCallback
+		if isfunction(callback) then
+			callback(self)
+		end
+
+		self.Course = nil
+		self.CourseStep = nil
+		self.CourseCallback = nil
+
+		return
+	end
+
+	self.CourseStep = self.CourseStep + 1
+
+	-- Execute Course Segment
+	local maneuverData1 = self:CreateAlignManeuverAt(startPos, self.Ang, endPos)
+	self:TriggerManeuver(maneuverData1, function(_)
+		local maneuverData2 = self:CreateWarpManeuver(startPos, 0, endPos, 0, W(1)) -- TODO: Set Speed
+		self:TriggerManeuver(maneuverData2, function(_)
+			self:ExecuteCourseStep()
+		end)
+	end)
+end
+
+function SELF:ExecuteCourse(course, callback)
+	self.Course = course
+	self.CourseStep = 1
+	self.CourseCallback = callback
+
+	self:ExecuteCourseStep()
+end
+
+function SELF:PlotCourse(targetPos)
+	return Star_Trek.World:PlotCourse(self.Pos, targetPos)
 end
 
 --------------------------------
@@ -134,6 +176,8 @@ end
 -- @param Angle targetAngle
 -- @return Table maneuverData
 function SELF:CreateAlignManeuver(startAngle, targetAngle)
+	targetAngle.p = -targetAngle.p
+
 	local maneuverData = {
 		Type = "ALIGN",
 		StartAngle = startAngle,

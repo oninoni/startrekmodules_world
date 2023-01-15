@@ -43,12 +43,14 @@ function Star_Trek.World:LoadStarSystem(leaf)
 				entPos = parent:GetOrbit(entData.OrbitRadius)
 			end
 		end
-
+		entPos = entPos + Vector(0, 0, KM(math.random(-10000, 10000)))
 
 		local success, worldEnt = Star_Trek.World:LoadEntity(entData.Id, entData.Class, entPos, entData.Ang or Angle(), entData.Model, entData.Diameter, spin)
 		if not success then
 			return false, worldEnt
 		end
+
+		worldEnt.Name = entData.Name
 	end
 
 	table.insert(self.LoadedLeafs, leaf)
@@ -140,10 +142,10 @@ function Star_Trek.World:ReLoadGalaxy()
 	if override then return end
 
 	local solLeaf = self.QuadTree:CreateLeaf(LY(0), LY(0), {Name = "Sol System", Entities = {
-		{Id = 11, OrbitRadius = AU(0), Name = "Sol", Class = "planet", Model = "models/planets/sun.mdl", Diameter = KM(1392700)},
+		{Id = 11, OrbitRadius = AU(100), Name = "Sol", Class = "planet", Model = "models/planets/sun.mdl", Diameter = KM(1392700)},
 		{Id = 2, OrbitRadius = AU(0.39), Name = "Mercury", Class = "planet", Model = "models/planets/mercury.mdl", Diameter = KM(4880)},
 		{Id = 3, OrbitRadius = AU(0.72), Name = "Venus", Class = "planet", Model = "models/planets/venus.mdl", Diameter = KM(12104)},
-		{Id = 4, OrbitRadius = AU(1), Name = "Earth", Class = "planet", Model = "models/planets/earth.mdl", Diameter = KM(12142)},
+		{Id = 4, OrbitRadius = AU(0), Name = "Earth", Class = "planet", Model = "models/planets/earth.mdl", Diameter = KM(12142)},
 		{Id = 5, OrbitRadius = AU(1.52), Name = "Mars", Class = "planet", Model = "models/planets/mars.mdl", Diameter = KM(6780)},
 		{Id = 6, OrbitRadius = AU(5.20), Name = "Jupiter", Class = "planet", Model = "models/planets/jupiter.mdl", Diameter = KM(139822)},
 		{Id = 7, OrbitRadius = AU(9.58), Name = "Saturn", Class = "planet", Model = "models/planets/saturn.mdl", Diameter = KM(116464)},
@@ -184,21 +186,14 @@ function flyToVulcan(warpFactor, callback)
 	warpFactor = warpFactor or 2
 
 	local ship = Star_Trek.World.Entities[1]
-	--local targetPos = WorldVector(0, 0, 0, LY(-0.6162192048), LY(-12.8379001), 0)
-	--local vulcan = Star_Trek.World.Entities[15]
-	--if vulcan then
-	--	targetPos = vulcan.Pos
-	--end
+	local moon = Star_Trek.World.Entities[5]
 
-	local mars = Star_Trek.World.Entities[3]
-	local targetPos = mars:GetStandardOrbit()
+	local targetPos = moon:GetStandardOrbit()
 
-	local maneuverData1 = ship:CreateAlignManeuverAt(ship.Pos, ship.Ang, targetPos)
-	ship:TriggerManeuver(maneuverData1, function(_)
-		print("A")
-		local maneuverData2 = ship:CreateWarpManeuver(ship.Pos, 0, targetPos, 0, W(warpFactor))
-		ship:TriggerManeuver(maneuverData2, function(_)
-			print("B")
-		end)
+	local course = ship:PlotCourse(targetPos)
+	print("Nodes: ", #course)
+
+	ship:ExecuteCourse(course, function()
+		print("We There!")
 	end)
 end

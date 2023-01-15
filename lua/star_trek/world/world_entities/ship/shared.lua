@@ -30,12 +30,12 @@ function SELF:ResetManeuver()
 
 	if SERVER then
 		local callback = self.ManeuverCallback
+		self.ManeuverCallback = nil
+		self.Updated = true
+
 		if isfunction(callback) then
 			callback(self)
 		end
-
-		self.ManeuverCallback = nil
-		self.Updated = true
 	end
 end
 
