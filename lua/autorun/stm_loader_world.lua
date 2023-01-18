@@ -24,3 +24,5 @@ Star_Trek.Modules["world"] = true
 Star_Trek.Modules["operations"] = true
 Star_Trek.Modules["tactical"] = true
 Star_Trek.Modules["conn"] = true
+Star_Trek.Modules["science"] = true
+Star_Trek.Modules["engineering"] = true
