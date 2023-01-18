@@ -24,13 +24,13 @@ function SELF:Init(clientData)
 	SELF.Base.Init(self, clientData)
 end
 
-function SELF:Think(deltaT)
-	SELF.Base.Think(self, deltaT)
+function SELF:Think(sysTime, deltaT)
+	SELF.Base.Think(self, sysTime, deltaT)
 
 	-- Think hook for executing maneuvers.
 	local maneuverData = self.ActiveManeuver
 	if maneuverData then
-		self:ManeuverThink(maneuverData)
+		self:ManeuverThink(sysTime, deltaT, maneuverData)
 	end
 end
 

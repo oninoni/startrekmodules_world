@@ -24,7 +24,7 @@ SELF.BaseClass = nil
 
 SELF.Dynamic = false
 
-function SELF:Think(deltaT)
+function SELF:Think(sysTime, deltaT)
 end
 
 function SELF:GetOrbit(r, d)

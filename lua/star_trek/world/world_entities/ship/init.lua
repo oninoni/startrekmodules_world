@@ -31,13 +31,13 @@ function SELF:Init(pos, ang, model, diameter)
 	SELF.Base.Init(self, pos, ang, model, diameter)
 end
 
-function SELF:Think(deltaT)
-	SELF.Base.Think(self, deltaT)
+function SELF:Think(sysTime, deltaT)
+	SELF.Base.Think(self, sysTime, deltaT)
 
 	-- Think hook for executing maneuvers.
 	local maneuverData = self.ActiveManeuver
 	if maneuverData then
-		self:ManeuverThink(maneuverData)
+		self:ManeuverThink(sysTime, deltaT, maneuverData)
 	end
 end
 
@@ -56,7 +56,7 @@ function SELF:TriggerManeuver(maneuverData, callback)
 	self.ActiveManeuver = maneuverData
 	self.ManeuverCallback = callback
 
-	self.ManeuverStart = CurTime()
+	self.ManeuverStart = SysTime()
 	self.Updated = true
 end
 
@@ -83,7 +83,7 @@ function SELF:ExecuteCourseStep()
 	-- Execute Course Segment
 	local maneuverData1 = self:CreateAlignManeuverAt(startPos, self.Ang, endPos)
 	self:TriggerManeuver(maneuverData1, function(_)
-		local maneuverData2 = self:CreateWarpManeuver(startPos, 0, endPos, 0, W(1)) -- TODO: Set Speed
+		local maneuverData2 = self:CreateWarpManeuver(startPos, endPos, W(1)) -- TODO: Set Speed
 		self:TriggerManeuver(maneuverData2, function(_)
 			self:ExecuteCourseStep()
 		end)
@@ -109,12 +109,10 @@ end
 -- Creates a maneuver moving a ship to a given position.
 --
 -- @param WorldVector startPos
--- @param Vector startSpeed
 -- @param WorldVector endPos
--- @param Vector endSpeed
 -- @param Number targetSpeed
 -- @return Table maneuverData
-function SELF:CreateWarpManeuver(startPos, startSpeed, endPos, endSpeed, targetSpeed)
+function SELF:CreateWarpManeuver(startPos, endPos, targetSpeed)
 	targetSpeed = math.max(MIN_WARP, targetSpeed)
 
 	local maneuverData = {
@@ -123,49 +121,36 @@ function SELF:CreateWarpManeuver(startPos, startSpeed, endPos, endSpeed, targetS
 		EndPos   = endPos,
 
 		TargetSpeed = targetSpeed,
-		StartSpeed = startSpeed,
-		EndSpeed = endSpeed,
 	}
 
 	local diff = endPos - startPos
 	local distance = diff:Length()
 
 	-- Prep Distances and times.
-	local accelSpeedDiff = targetSpeed - startSpeed
-	local accelDuration = accelSpeedDiff / MAX_ACCEL
-	local accelDistance = startSpeed * accelDuration + accelSpeedDiff * accelDuration / 2
+	local accelDuration = targetSpeed / MAX_ACCEL
+	local accelDistance = targetSpeed * accelDuration / 2
 
-	local deccelSpeedDiff = targetSpeed - endSpeed
-	local deccelDuration = deccelSpeedDiff / MAX_ACCEL
-	local deccelDistance = endSpeed * deccelDuration + deccelSpeedDiff * deccelDuration / 2
-
-	local coastDistance = distance - accelDistance - deccelDistance
+	local coastDistance = distance - 2 * accelDistance
 	if coastDistance < 0 then
 		coastDistance = 0
 
-		local distanceReductionFactor = distance / (accelDistance + deccelDistance)
-
+		local distanceReductionFactor = distance / (2 * accelDistance)
 		accelDistance = accelDistance * distanceReductionFactor
-		accelDuration = accelDistance / (endSpeed + accelSpeedDiff / 2)
-
-		deccelDistance = deccelDistance * distanceReductionFactor
-		deccelDuration = deccelDistance / (endSpeed + deccelSpeedDiff / 2)
+		accelDuration = math.sqrt((accelDuration * 2 * accelDistance) / targetSpeed)
 	end
-	maneuverData.CoastDuration = coastDistance / targetSpeed
 
 	-- Calculate time frames.
-	maneuverData.Duration = accelDuration + maneuverData.CoastDuration + deccelDuration
-
 	maneuverData.AccelTime = accelDuration
-
+	maneuverData.CoastDuration = coastDistance / targetSpeed
 	maneuverData.DeccelTime = accelDuration + maneuverData.CoastDuration
-	maneuverData.DeccelDuration = deccelDuration
+	maneuverData.DeccelDuration = accelDuration
+
+	maneuverData.Duration = maneuverData.CoastDuration + 2 * accelDuration
 
 	-- Calculate Positions
 	local dir = diff:GetNormalized()
-
 	maneuverData.AccelPos = startPos + dir * accelDistance
-	maneuverData.DeccelPos = endPos - dir * deccelDistance
+	maneuverData.DeccelPos = endPos - dir * accelDistance
 
 	return maneuverData
 end
