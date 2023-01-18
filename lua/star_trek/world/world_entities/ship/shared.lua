@@ -76,19 +76,6 @@ function SELF:ManeuverThink(sysTime, deltaT, maneuverData)
 		local oldVel = self.OldVel or Vector()
 		self.Acc = (self.Vel - oldVel) / deltaT
 		self.OldVel = self.Vel
-
-		if SERVER then
-			print(" ")
-			print(" ")
-			print(" ")
-
-			print(
-				"V%",
-				math.Round(self.Vel:Length() / W(1), 2),
-				"A%",
-				math.Round(self.Acc:Length() / C(0.1), 2)
-			)
-		end
 	elseif maneuverType == "ALIGN" then
 		local targetAngle = maneuverData.TargetAngle
 
