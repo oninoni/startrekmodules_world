@@ -55,9 +55,9 @@ function Star_Trek.World:TerminateEntity(id)
 	return true
 end
 
-function Star_Trek.World:Think(deltaT)
+function Star_Trek.World:Think(sysTime, deltaT)
 	for _, ent in ipairs(self.Entities) do
-		ent:Think(deltaT)
+		ent:Think(sysTime, deltaT)
 
 		if SERVER and ent.Updated then
 			ent:Update()
@@ -81,5 +81,5 @@ hook.Add("Think", "Star_Trek.World.Think", function()
 	local deltaT = sysTime - lastTime
 	lastTime = sysTime
 
-	Star_Trek.World:Think(deltaT)
+	Star_Trek.World:Think(sysTime, deltaT)
 end)

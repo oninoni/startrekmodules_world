@@ -43,12 +43,14 @@ function Star_Trek.World:LoadStarSystem(leaf)
 				entPos = parent:GetOrbit(entData.OrbitRadius)
 			end
 		end
-
+		entPos = entPos + Vector(0, 0, KM(math.random(-10000, 10000)))
 
 		local success, worldEnt = Star_Trek.World:LoadEntity(entData.Id, entData.Class, entPos, entData.Ang or Angle(), entData.Model, entData.Diameter, spin)
 		if not success then
 			return false, worldEnt
 		end
+
+		worldEnt.Name = entData.Name
 	end
 
 	table.insert(self.LoadedLeafs, leaf)
@@ -180,25 +182,16 @@ end
 hook.Add("InitPostEntity", "Star_Trek.World.LoadGalaxy", function() Star_Trek.World:ReLoadGalaxy() end)
 hook.Add("PostCleanupMap", "Star_Trek.World.LoadGalaxy", function() Star_Trek.World:ReLoadGalaxy() end)
 
-function flyToVulcan(warpFactor, callback)
-	warpFactor = warpFactor or 2
-
+function flyToVulcan()
 	local ship = Star_Trek.World.Entities[1]
-	--local targetPos = WorldVector(0, 0, 0, LY(-0.6162192048), LY(-12.8379001), 0)
-	--local vulcan = Star_Trek.World.Entities[15]
-	--if vulcan then
-	--	targetPos = vulcan.Pos
-	--end
+	local moon = Star_Trek.World.Entities[10]
 
-	local mars = Star_Trek.World.Entities[3]
-	local targetPos = mars:GetStandardOrbit()
+	local targetPos = moon:GetStandardOrbit()
 
-	local maneuverData1 = ship:CreateAlignManeuverAt(ship.Pos, ship.Ang, targetPos)
-	ship:TriggerManeuver(maneuverData1, function(_)
-		print("A")
-		local maneuverData2 = ship:CreateWarpManeuver(ship.Pos, 0, targetPos, 0, W(warpFactor))
-		ship:TriggerManeuver(maneuverData2, function(_)
-			print("B")
-		end)
+	local course = ship:PlotCourse(targetPos)
+	print("Nodes: ", #course)
+
+	ship:ExecuteCourse(course, function()
+		print("We There!")
 	end)
 end

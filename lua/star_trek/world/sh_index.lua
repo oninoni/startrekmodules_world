@@ -42,6 +42,7 @@ if SERVER then
 	include("util/sh_quadtree.lua")
 	include("sh_entities.lua")
 
+	include("util/sv_path.lua")
 	include("net/sv_net.lua")
 	include("sv_entities.lua")
 
