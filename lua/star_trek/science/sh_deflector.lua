@@ -68,9 +68,9 @@ function Deflector:Cease()
     self.CurrParticle = nil
     self.ParticleName = nil
     self.FiringType = nil
-    self.ActiveDish = nil
+    self:SetDish("Main")
 
-    if IsValid(self.InterfaceEnt) then
+    if IsValid(self.InterfaceEnt) and self.LoopId ~= nil then
          self.InterfaceEnt:StopLoopingSound(self.LoopId)
     end
 
