@@ -16,10 +16,10 @@ Deflector.__index = Deflector
 function Deflector:new(tbl)
 
     local o = {
-        Dishes = tbl.Dishes or {},
-        CurrParticle = tbl.CurrParticle or {},
-        ParticleName = tbl.ParticleName or {},
-        ActiveDish = tbl.ActiveDish or {},
+        Dishes = tbl.Dishes or nil,
+        CurrParticle = tbl.CurrParticle or nil,
+        ParticleName = tbl.ParticleName or nil,
+        ActiveDish = tbl.ActiveDish or nil,
         FiringType = tbl.FiringType or nil,
         InterfaceEnt = tbl.InterfaceEnt or nil,
         TimerName = tbl.TimerName or nil,

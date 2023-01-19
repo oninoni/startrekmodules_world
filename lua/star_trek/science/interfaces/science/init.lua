@@ -171,10 +171,11 @@ function SELF:Open(ent)
 			return
 		end
 
-		if deflector.CurrParticle == nil or self:GetActiveEmitButton() == nil then
+		if deflector.CurrParticle == nil or self:GetActiveEmitButton() == nil or deflector.ParticleName == nil then
 			ent:EmitSound("star_trek.lcars_error")
 			return
 		end
+
 
 		Star_Trek.Logs:AddEntry(ent, ply, "Activating " .. deflector.ParticleName .. " " .. self:GetActiveEmitButton().Name .. "!" , Star_Trek.LCARS.ColorRed, TEXT_ALIGN_RIGHT)
 		deflector:Fire()
