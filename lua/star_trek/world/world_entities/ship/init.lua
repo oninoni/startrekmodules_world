@@ -23,7 +23,7 @@ local SELF = ENT
 -- Degree per second.
 local TURN_SPEED = 20
 -- Maximum Acceleration / Decceleration
-local MAX_ACCEL = C(0.1)
+local MAX_ACCEL = C(0.5)
 -- Minimum Warp Speed
 local MIN_WARP = C(1)
 
@@ -74,6 +74,7 @@ function SELF:ExecuteCourseStep()
 		self.Course = nil
 		self.CourseStep = nil
 		self.CourseCallback = nil
+		self.CourseTargetSpeed = nil
 
 		return
 	end
@@ -83,17 +84,18 @@ function SELF:ExecuteCourseStep()
 	-- Execute Course Segment
 	local maneuverData1 = self:CreateAlignManeuverAt(startPos, self.Ang, endPos)
 	self:TriggerManeuver(maneuverData1, function(_)
-		local maneuverData2 = self:CreateWarpManeuver(startPos, endPos, W(1)) -- TODO: Set Speed
+		local maneuverData2 = self:CreateWarpManeuver(startPos, endPos, self.CourseTargetSpeed) -- TODO: Set Speed
 		self:TriggerManeuver(maneuverData2, function(_)
 			self:ExecuteCourseStep()
 		end)
 	end)
 end
 
-function SELF:ExecuteCourse(course, callback)
+function SELF:ExecuteCourse(course, targetSpeed, callback)
 	self.Course = course
 	self.CourseStep = 1
 	self.CourseCallback = callback
+	self.CourseTargetSpeed = targetSpeed
 
 	self:ExecuteCourseStep()
 end
