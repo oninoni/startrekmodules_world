@@ -49,7 +49,7 @@ function Deflector:Fire()
         self.LoopId = self.InterfaceEnt:StartLoopingSound("star_trek.world.deflector_loop")
     end
 
-    if timer.Exists(sef.TimerName) then
+    if timer.Exists(self.TimerName) then
         --If you fire a new particle while a pulse is already being fired
         timer.Stop(self.TimerName)
     end
