@@ -185,7 +185,7 @@ function SELF:Open(ent)
 	end)
 
 	cancelRow = deflectorWindow2:CreateMainButtonRow(32)
-	deflectorWindow2:AddButtonToRow(cancelRow, "Cancel", nil, Star_Trek.LCARS.ColorOrange, nil, false, false, function(ply)
+	deflectorWindow2:AddButtonToRow(cancelRow, "Disable", nil, Star_Trek.LCARS.ColorOrange, nil, false, false, function(ply)
 
 		if deflector.CurrParticle == nil or deflector.FiringType == nil then
 			ent:EmitSound("star_trek.lcars_error")
