@@ -23,9 +23,14 @@ local SELF = ENT
 -- Degree per second.
 local TURN_SPEED = 20
 -- Maximum Acceleration / Decceleration
-local MAX_ACCEL = C(0.5)
+local MAX_ACCEL = C(10)
+-- Minimum time the ship will take to accelerate to full speed.
+local MIN_ACCEL_TIME = 10
+
 -- Minimum Warp Speed
-local MIN_WARP = C(1)
+local MIN_WARP = W(1)
+-- Maximum Warp Speed
+local MAX_WARP = W(9.99)
 
 function SELF:Init(pos, ang, model, diameter)
 	SELF.Base.Init(self, pos, ang, model, diameter)
@@ -115,7 +120,7 @@ end
 -- @param Number targetSpeed
 -- @return Table maneuverData
 function SELF:CreateWarpManeuver(startPos, endPos, targetSpeed)
-	targetSpeed = math.max(MIN_WARP, targetSpeed)
+	targetSpeed = math.min(MAX_WARP, math.max(MIN_WARP, targetSpeed))
 
 	local maneuverData = {
 		Type = "WARP",
@@ -128,8 +133,11 @@ function SELF:CreateWarpManeuver(startPos, endPos, targetSpeed)
 	local diff = endPos - startPos
 	local distance = diff:Length()
 
+	-- Determine Acceleration
+	local acceleration = math.min(MAX_ACCEL, targetSpeed / MIN_ACCEL_TIME)
+
 	-- Prep Distances and times.
-	local accelDuration = targetSpeed / MAX_ACCEL
+	local accelDuration = targetSpeed / acceleration
 	local accelDistance = targetSpeed * accelDuration / 2
 
 	local coastDistance = distance - 2 * accelDistance
