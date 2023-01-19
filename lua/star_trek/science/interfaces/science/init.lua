@@ -175,11 +175,7 @@ function SELF:Open(ent)
 			ent:EmitSound("star_trek.lcars_error")
 			return
 		end
-		if deflector.ActiveDish == "Main" then
-			name = "Main"
-		else
-			name = "Secondary"
-		end
+
 		Star_Trek.Logs:AddEntry(ent, ply, "Activating " .. deflector.ParticleName .. " " .. self:GetActiveEmitButton().Name .. "!" , Star_Trek.LCARS.ColorRed, TEXT_ALIGN_RIGHT)
 		deflector:Fire()
 	end)
