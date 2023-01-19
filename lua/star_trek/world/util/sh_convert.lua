@@ -84,7 +84,7 @@ function MtoLY(m) return Star_Trek.World:LightyearToMeter(m) end
 -- Return the units in the skybox representing the meters given.
 -- 
 -- @param Number m
--- @return Number sU
+-- @return Number skybox
 function Star_Trek.World:MeterToSkybox(m)
 	return self:MeterToUnits(m) / SKYBOX_SCALE
 end
@@ -98,7 +98,7 @@ function SBtoM(skybox) return Star_Trek.World:SkyboxToMeter(skybox) end
 -- Return the units in the skybox representing the kilometers given.
 -- 
 -- @param Number m
--- @return Number sU
+-- @return Number skybox
 function Star_Trek.World:KilometerToSkybox(km)
 	return self:MeterToSkybox(km * 1000)
 end
@@ -112,7 +112,7 @@ function SBtoKM(skybox) return Star_Trek.World:SkyboxToKiloMeter(skybox) end
 -- Return the units in the skybox representing the astronomical units given.
 -- 
 -- @param Number au
--- @return Number sU
+-- @return Number skybox
 function Star_Trek.World:AstronomicalUnitToSkybox(au)
 	return self:MeterToUnits(self:AstronomicalUnitToMeter(au)) / SKYBOX_SCALE
 end
@@ -126,7 +126,7 @@ function SBtoAU(skybox) return Star_Trek.World:SkyboxToAstronomicalUnit(skybox) 
 -- Return the units in the skybox representing the lightyears given.
 -- 
 -- @param Number au
--- @return Number sU
+-- @return Number skybox
 function Star_Trek.World:LightyearToSkybox(ly)
 	return self:MeterToUnits(self:LightyearToMeter(ly)) / SKYBOX_SCALE
 end
@@ -141,46 +141,60 @@ function SBtoLY(skybox) return Star_Trek.World:SkyboxToLightyear(skybox) end
 -- Warp Scale --
 ----------------
 
-local METER_PER_SECOND_C = 	299792458
+local METER_PER_SECOND_C = 299792458
 
 -- Get light speed in skybox units per second.
 --
 -- @param Number c
--- @return Number sU
-function Star_Trek.World:GetLightSpeed(c)
+-- @return Number skybox
+function Star_Trek.World:LightSpeedToSkybox(c)
 	return self:MeterToSkybox(METER_PER_SECOND_C * c)
 end
-function C(c) return Star_Trek.World:GetLightSpeed(c) end
+function C(c) return Star_Trek.World:LightSpeedToSkybox(c) end
 
-local A = 0.00264320
-local N = 2.87926700
-local F1 = 0.06274120
-local F2 = 0.32574600
+function Star_Trek.World:SkyboxToLightSpeed(skybox)
+	return self:SkyboxToMeter(skybox) / METER_PER_SECOND_C
+end
+function SBtoC(skybox) return Star_Trek.World:SkyboxToLightSpeed(skybox) end
+
+local F1 = 42
+local E1 = 1.1
 
 -- Return the multiples of c for a given warp factor.
 -- 
 -- @param Number warpFactor
 -- @return Number c
 function Star_Trek.World:WarpToC(warpFactor)
-	if warpFactor <= 9 then
-		return math.pow(warpFactor, 10 / 3)
-	else
-		return math.pow(warpFactor,
-			10 / 3
-			+ A * math.pow(-math.log(10 - warpFactor), N)
-			+ F1 * math.pow(warpFactor - 9, 5)
-			+ F2 * math.pow(warpFactor - 9, 11)
-		)
+	local c = math.pow(warpFactor, 10 / 3)
+
+	if warpFactor > 9 then
+		c = self.Warp9C +
+		F1 / math.pow(10 - warpFactor, E1)
 	end
+
+	return c
 end
+
+Star_Trek.World.Warp9C = Star_Trek.World:WarpToC(9)
 
 -- Get warp factor in skybox units per second.
 --
 -- @param Number warpFactor
 -- @return Number sU
-function Star_Trek.World:Warp(warpFactor)
+function Star_Trek.World:WarpToSkybox(warpFactor)
 	local c = self:WarpToC(warpFactor)
 
-	return self:GetLightSpeed(c)
+	return self:LightSpeedToSkybox(c)
 end
-function W(warpFactor) return Star_Trek.World:Warp(warpFactor) end
+function W(warpFactor) return Star_Trek.World:WarpToSkybox(warpFactor) end
+
+function Star_Trek.World:SkyboxToWarp(skybox)
+	local c = SBtoC(skybox)
+
+	if c > self.Warp9C then
+		return 10 - math.pow(F1 / (c - self.Warp9C), 1/E1)
+	else
+		return math.pow(c, 3 / 10)
+	end
+end
+function SBtoW(skybox) return Star_Trek.World:SkyboxToWarp(skybox) end
