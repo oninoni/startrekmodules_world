@@ -41,6 +41,7 @@ hook.Add("InitPostEntity", "Star_Trek.Science.SetupChair", function()
         end
     end
 
+
 end)
 
 hook.Add("PostCleanupMap", "Star_Trek.Science.SetupChair", function()
@@ -51,6 +52,7 @@ hook.Add("PostCleanupMap", "Star_Trek.Science.SetupChair", function()
             chairClampLeft = ent:GetAngles() + Angle(0, 90, 0)
         end
     end
+
 end)
 
 hook.Add("Think", "Star_Trek.Science.ChairThink", function()

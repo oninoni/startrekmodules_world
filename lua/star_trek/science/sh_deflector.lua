@@ -21,6 +21,11 @@ function Deflector:new(tbl)
         ParticleName = tbl.ParticleName or {},
         ActiveDish = tbl.ActiveDish or {},
         FiringType = tbl.FiringType or nil,
+        InterfaceEnt = tbl.InterfaceEnt or nil,
+        TimerName = tbl.TimerName or nil,
+        Strength = nil,
+        Time = nil,
+        TimeModifier = nil
     }
     setmetatable(o, Deflector)
 
@@ -28,7 +33,7 @@ function Deflector:new(tbl)
 
 end
 
-function Deflector:Fire(ent)
+function Deflector:Fire()
 
     local color = self.CurrParticle.Color
     local particle = self.CurrParticle
@@ -40,13 +45,20 @@ function Deflector:Fire(ent)
         net.WriteTable(activeDish)
     net.Broadcast()
 
-    --ent:EmitSound("star_trek.world.deflector_loop")
+    if IsValid(self.InterfaceEnt) then
+        self.LoopId = self.InterfaceEnt:StartLoopingSound("star_trek.world.deflector_loop")
+    end
 
-    --sound = CreateSound(ent ,"star_trek.world.deflector_loop")
-    --sound:SetSoundLevel( 0 )
-    --sound:Play()
+    if timer.Exists(sef.TimerName) then
+        --If you fire a new particle while a pulse is already being fired
+        timer.Stop(self.TimerName)
+    end
 
-    --ent:StartLoopingSound("star_trek.world.deflector_loop")
+    if self.FiringType == "Pulse" then
+        timer.Create(self.TimerName, self.Time * self.TimeModifier, 1, function()
+            self:Cease()
+        end)
+    end
 end
 
 
@@ -57,12 +69,20 @@ function Deflector:Cease()
     self.ParticleName = nil
     self.FiringType = nil
     self.ActiveDish = nil
+
+    if IsValid(self.InterfaceEnt) then
+         self.InterfaceEnt:StopLoopingSound(self.LoopId)
+    end
+
+    if timer.Exists(self.TimerName) then
+        timer.Stop(self.TimerName)
+    end
+
 end
 
 function Deflector:SetDish(dishName)
     self.ActiveDish = self.Dishes[dishName]
 end
-
 
 if SERVER then
     util.AddNetworkString("Star_Trek.Deflector.Fire")
@@ -111,3 +131,7 @@ if CLIENT then
         end
     end)
 end
+
+
+-- Create a timer for pulses.
+-- The time is based off of the strength of the beam, but the more strength the shorter the time

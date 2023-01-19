@@ -55,8 +55,8 @@ sound.Add({
 sound.Add({
 	name = "star_trek.world.deflector_loop",
 	channel = CHAN_AUTO,
-	volume = 3,
-	level = 70,
+	volume = 1,
+	level = 80,
 	pitch = 100,
 	sound = "oninoni/startrek/world/deflector_loop.wav",
 })

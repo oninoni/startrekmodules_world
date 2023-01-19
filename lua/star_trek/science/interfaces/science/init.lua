@@ -38,6 +38,7 @@ local d = {
 local data = {
 			Dishes = d,
 			ActiveDish = d[Main],
+			TimerName = "Star_Trek.Science.SerenityDeflector",
 		}
 
 local deflector = Deflector:new(data)
@@ -49,6 +50,11 @@ function SELF:Open(ent)
 	local offsetPos = Vector(0, 0, 0)
 	local offsetAngle = Angle(0, 90, 0)
 
+
+	deflector.InterfaceEnt = ent
+	deflector:SetDish("Main") -- Resets the selected dish everytime the interface is reopened. Is there a way to just have the interface set the selector to deflector.ActiveDish on open so they aren't mislead about the current set dish?
+	deflector.Time = 10
+	deflector.TimeModifier = 1
 
 	-----------------------------
 	---      Main Window      ---
@@ -69,8 +75,6 @@ function SELF:Open(ent)
 		count = count + 1
 
 	end
-
-	deflector:SetDish("Main") -- Resets the selected dish everytime the interface is reopened. Is there a way to just have the interface set the selector to deflector.ActiveDish on open so they aren't mislead about the current set dish?
 
 	-- I sat down and had to document what axis went where in order to plot it in my mind
 	--x -/+: conferencerm/readyrm
@@ -138,28 +142,34 @@ function SELF:Open(ent)
 
 	frequencyRow = deflectorWindow2:CreateMainButtonRow(32)
 	deflectorWindow2:AddSelectorToRow(frequencyRow, "Strength", {
-		{Name = "1", Data = 1},
-		{Name = "5", Data = 2},
-		{Name = "10", Data = 3},
-		{Name = "50", Data = 4},
-		{Name = "100", Data = 5},
+		{Name = "1", Data = 100},
+		{Name = "5", Data = 50},
+		{Name = "10", Data = 10},
+		{Name = "50", Data = 5},
+		{Name = "100", Data = 1},
 	}, 3, function(ply, buttonData, valueData)
-		--None rn
+		deflector.Time = valueData.Data
 	end)
 
 	unitRow = deflectorWindow2:CreateMainButtonRow(32)
 	deflectorWindow2:AddSelectorToRow(unitRow, "Units", {
-		{Name = "Hz", Data = 1},
+		{Name = "Hz", Data = 3},
 		{Name = "Mhz", Data = 2},
-		{Name = "Ghz", Data = 3},
+		{Name = "Ghz", Data = 1},
 	}, 3, function(ply, buttonData, valueData)
-		--None rn
+		deflector.TimeModifier = valueData.Data
 	end)
 
 	buffer2 = deflectorWindow2:CreateMainButtonRow(32)
 
 	fireRow = deflectorWindow2:CreateMainButtonRow(32)
 	deflectorWindow2:AddButtonToRow(fireRow, "Activate", nil, Star_Trek.LCARS.ColorRed, nil, false, false, function(ply)
+
+		if Star_Trek.World.Entities[1].Course ~= nil then
+			ent:EmitSound("star_trek.lcars_error")
+			Star_Trek.Logs:AddEntry(ent, ply, "Attempted to activate Deflector Dish during warp.")
+			return
+		end
 
 		if deflector.CurrParticle == nil or self:GetActiveEmitButton() == nil then
 			ent:EmitSound("star_trek.lcars_error")
@@ -171,7 +181,7 @@ function SELF:Open(ent)
 			name = "Secondary"
 		end
 		Star_Trek.Logs:AddEntry(ent, ply, "Activating " .. deflector.ParticleName .. " " .. self:GetActiveEmitButton().Name .. "!" , Star_Trek.LCARS.ColorRed, TEXT_ALIGN_RIGHT)
-		deflector:Fire(ent)
+		deflector:Fire()
 	end)
 
 	cancelRow = deflectorWindow2:CreateMainButtonRow(32)
@@ -333,7 +343,3 @@ function SELF:SelectByName(name, windows)
 		end
 	end
 end
-
---[[TODO]]--
-
--- Why is the sound file not looping at the set loop points?
