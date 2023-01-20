@@ -1,5 +1,5 @@
 local engineeringchair = nil
-local chairClampRight = nil 
+local chairClampRight = nil
 local chairClampLeft = nil
 
 hook.Add("InitPostEntity", "Star_Trek.Engineering.SetupChair", function()
@@ -15,16 +15,17 @@ end)
 
 hook.Add("PostCleanupMap", "Star_Trek.Engineering.SetupChair", function()
     for i, ent in pairs(ents.FindByClass("prop_vehicle_prisoner_pod")) do
-        if ent:GetPos() == Star_Trek.Science.ChairPos then
-            sciencechair = ent
+        if ent:GetPos() == Star_Trek.Engineering.ChairPos and IsValid(ent) then
+            engineeringchair = ent
             chairClampRight = ent:GetAngles() - Angle(0, 90, 0)
             chairClampLeft = ent:GetAngles() + Angle(0, 90, 0)
         end
     end
 end)
 
+
 hook.Add("Think", "Star_Trek.Engineering.ChairThink", function()
-    if engineeringchair == nil or engineeringchair:GetPassenger(1) == NULL then return end
+    if not IsValid(engineeringchair) or not IsValid(engineeringchair:GetPassenger(1)) or engineeringchair:GetPassenger(1) == NULL then return end
     local ply = engineeringchair:GetPassenger(1)
     if ply:KeyDown(IN_MOVELEFT) then
         local newAngle = engineeringchair:GetAngles() + Angle(0, 1, 0)
@@ -35,7 +36,7 @@ hook.Add("Think", "Star_Trek.Engineering.ChairThink", function()
         if newAngle.yaw <= chairClampRight.yaw then return end
         engineeringchair:SetAngles(newAngle)
     end
-    
+
 end)
 
 

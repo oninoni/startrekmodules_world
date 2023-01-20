@@ -46,7 +46,7 @@ end)
 
 hook.Add("PostCleanupMap", "Star_Trek.Science.SetupChair", function()
     for i, ent in pairs(ents.FindByClass("prop_vehicle_prisoner_pod")) do
-        if ent:GetPos() == Star_Trek.Science.ChairPos then
+        if ent:GetPos() == Star_Trek.Science.ChairPos and IsValid(ent) then
             sciencechair = ent
             chairClampRight = ent:GetAngles() - Angle(0, 90, 0)
             chairClampLeft = ent:GetAngles() + Angle(0, 90, 0)
@@ -55,8 +55,9 @@ hook.Add("PostCleanupMap", "Star_Trek.Science.SetupChair", function()
 
 end)
 
+
 hook.Add("Think", "Star_Trek.Science.ChairThink", function()
-    if sciencechair == nil or sciencechair:GetPassenger(1) == NULL then return end
+    if sciencechair == nil or not IsValid(sciencechair:GetPassenger(1)) or sciencechair:GetPassenger(1) == NULL then return end
 
     local ply = sciencechair:GetPassenger(1)
     if ply:KeyDown(IN_MOVELEFT) then
