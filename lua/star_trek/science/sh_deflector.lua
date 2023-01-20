@@ -124,8 +124,10 @@ if CLIENT then
     hook.Add("PreDrawTranslucentRenderables", "TestBeam", function()
         if active then
             render.SetMaterial(Material("sprites/tp_beam001"))
+            --render.SetMaterial(Material("dev/dev_blendmeasure"))
             render.DrawBeam(startPos, endPos, width, 1, 1, color)
             if additionalStart ~= nil and additionalEnd ~= nil then -- This is only used for drawing the realspace beam of the secondary deflector.
+                --render.SetMaterial(Material("dev/dev_measuregeneric01b"))
                 render.DrawBeam(additionalStart, additionalEnd, additionalWidth, 1, 1, color)
             end
         end

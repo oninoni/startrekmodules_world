@@ -28,10 +28,10 @@ local d = {
 	Secondary = {
 		startPos = Vector(-7.03124, 0, 15359.341),
 		endPos = Vector(-1014, 0, 15359.341),
-		width = 1.1,
-		additionalStart = Vector(-4000, 0, -700), -- these are entirely optional. They are used for the beam created in real space for the secondary deflector.
-		additionalEnd = Vector(-7133, 0, -700),
-		additionalWidth = 1100
+		width = 1,
+		additionalWidth = 1024,
+		additionalStart = Vector(-4000, 0, -703.5), -- these are entirely optional. They are used for the beam created in real space for the secondary deflector.
+		additionalEnd = Vector(-7168, 0, -704),
 	}
 }
 
