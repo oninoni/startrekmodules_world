@@ -40,12 +40,10 @@ Star_Trek.World.StandardOrbitMultiplier = 2
 Star_Trek.World.MinimumOrbitMultiplier = 1.2
 
 -- Scales the distances between planets (Changes Astrometrical Units Calculation)
--- Default / Real Value: 149597870700
 local REAL_M_PER_AU = 149597870700
 Star_Trek.World.MetersPerAstrometricalUnit = REAL_M_PER_AU
 
 -- Scales the distances between systems (Changes Lightyears Calculation)
--- Default / Real Value: 9460730472580800
 local REAL_M_PER_LY = 9460730472580800
 Star_Trek.World.MetersPerLightyear = REAL_M_PER_LY / 100
 
