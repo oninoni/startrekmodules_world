@@ -1,3 +1,21 @@
+---------------------------------------
+---------------------------------------
+--         Star Trek Modules         --
+--                                   --
+--            Created by             --
+--       Jan 'Oninoni' Ziegler       --
+--                                   --
+-- This software can be used freely, --
+--    but only distributed by me.    --
+--                                   --
+--    Copyright © 2022 Jan Ziegler   --
+---------------------------------------
+---------------------------------------
+
+---------------------------------------
+--        Deflector | Shared         --
+---------------------------------------
+
 Deflector = {}
 Deflector.__index = Deflector
 
@@ -131,7 +149,3 @@ if CLIENT then
         end
     end)
 end
-
-
--- Create a timer for pulses.
--- The time is based off of the strength of the beam, but the more strength the shorter the time
