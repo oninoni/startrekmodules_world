@@ -2,7 +2,7 @@ local sciencechair = nil
 local chairClampRight = nil
 local chairClampLeft = nil
 
-Star_Trek.Science.ChairPos = Star_Trek.Science.ChairPos or Vector(-212, -236, 13328)
+Star_Trek.Science.ChairPos = Vector(-212, -236, 13328)
 
 hook.Add("Star_Trek.LCARS.PreOpenInterface", "Star_Trek.Navigation.BlockView", function(ent, interfaceName)
     if interfaceName ~= "basic" then return end
@@ -71,3 +71,7 @@ hook.Add("Think", "Star_Trek.Science.ChairThink", function()
     end
 
 end)
+
+-- Change chairs to use map creation ID
+-- Use a config file for assigning chairs
+-- Create Star_Trek.Chairs:EnableRotation(ent, dir, min, max, offset)

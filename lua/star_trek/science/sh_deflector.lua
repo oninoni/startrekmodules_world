@@ -16,15 +16,15 @@ Deflector.__index = Deflector
 function Deflector:new(tbl)
 
     local o = {
-        Dishes = tbl.Dishes or nil,
-        CurrParticle = tbl.CurrParticle or nil,
-        ParticleName = tbl.ParticleName or nil,
-        ActiveDish = tbl.ActiveDish or nil,
-        FiringType = tbl.FiringType or nil,
-        InterfaceEnt = tbl.InterfaceEnt or nil,
-        TimerName = tbl.TimerName or nil,
+        Dishes = tbl.Dishes,
+        CurrParticle = tbl.CurrParticle,
+        ParticleName = tbl.ParticleName,
+        ActiveDish = tbl.ActiveDish,
+        FiringType = tbl.FiringType,
+        InterfaceEnt = tbl.InterfaceEnt,
+        TimerName = tbl.TimerName,
         Strength = nil,
-        Time = nil,
+        Time = nil,            -- These are just here just so I know they exist
         TimeModifier = nil
     }
     setmetatable(o, Deflector)
@@ -102,6 +102,7 @@ if CLIENT then
     local additionalStart
     local additionalEnd
     local additionalWidth
+    local color
     net.Receive("Star_Trek.Deflector.Fire", function()
         color = net.ReadColor()
         particle = net.ReadTable()
@@ -113,7 +114,6 @@ if CLIENT then
         additionalStart = dish.additionalStart
         additionalEnd = dish.additionalEnd
         additionalWidth = dish.additionalWidth
-        color = particle.Color
     end)
 
 
@@ -124,10 +124,8 @@ if CLIENT then
     hook.Add("PreDrawTranslucentRenderables", "TestBeam", function()
         if active then
             render.SetMaterial(Material("sprites/tp_beam001"))
-            --render.SetMaterial(Material("dev/dev_blendmeasure"))
             render.DrawBeam(startPos, endPos, width, 1, 1, color)
             if additionalStart ~= nil and additionalEnd ~= nil then -- This is only used for drawing the realspace beam of the secondary deflector.
-                --render.SetMaterial(Material("dev/dev_measuregeneric01b"))
                 render.DrawBeam(additionalStart, additionalEnd, additionalWidth, 1, 1, color)
             end
         end
