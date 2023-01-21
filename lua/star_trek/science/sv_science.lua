@@ -90,6 +90,7 @@ hook.Add("Think", "Star_Trek.Science.ChairThink", function()
 
 end)
 
+-- TODO
 -- Change chairs to use map creation ID
 -- Use a config file for assigning chairs
 -- Create Star_Trek.Chairs:EnableRotation(ent, dir, min, max, offset)

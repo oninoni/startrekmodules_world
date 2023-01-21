@@ -105,11 +105,10 @@ function SELF:Open(ent)
 	local success3, deflectorWindow = Star_Trek.LCARS:CreateWindow("button_list", deflectorSelectionWindowPos, deflectorSelectionWindowAng, nil, 300, 325,
 	function(windowData, interfaceData, ply, buttonId, buttonData)
 		self:SetSelectedParticle(buttonData)
-	end, buttons,"Deflector", "DFLCTR", false )
+	end, buttons,"Deflector", "DFLCTR", false, nil, nil, 225)
 	if not success3 then
 		return false, deflectorWindow
 	end
-
 	table.insert(windows, deflectorWindow)
 
 

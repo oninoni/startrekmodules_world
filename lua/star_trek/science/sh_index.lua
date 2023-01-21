@@ -19,7 +19,7 @@
 Star_Trek:RequireModules("lcars")
 
 Star_Trek.Science = Star_Trek.Science or {}
-Star_Trek.Science.Particles = {
+Star_Trek.Science.Particles = { -- TODO make this a config
 
 	["Nadion"] = {Color = Color(255, 143, 5)},
 	["Tachyon"] = {Color = Color(14, 207, 203)},
@@ -48,11 +48,9 @@ if SERVER then
 	include("sv_science.lua")
 	include("sh_deflector.lua")
 	AddCSLuaFile("sh_deflector.lua")
-	AddCSLuaFile("cl_science.lua")
 end
 
 if CLIENT then
-	include("cl_science.lua")
 	include("sh_deflector.lua")
 	return
 end
