@@ -45,18 +45,13 @@ function Star_Trek.World:RenderThink()
 	shipId = LocalPlayer():GetNWInt("Star_Trek.World.ShipId", 1)
 	local shipEnt = self.Entities[shipId]
 	if shipEnt then
-		shipPos = shipEnt.Pos
-		shipAng = shipEnt.Ang
+		shipPos, shipAng = LocalToWorldBig(Vector(1.255, 0, 1.015), Angle(0, 180, 0), shipEnt.Pos, shipEnt.Ang)
 	else
 		-- Disable rendering if ship is not valid.
 		shipId = nil
+
 		return
 	end
-
-	-- Apply World Correction Offset
-	-- Compensates Offset between Skybox and Map Model of Intrepid
-	shipPos = shipPos + Vector(1.255, 0, 1.015)
-	shipAng = shipAng + Angle(0, 180, 0)
 
 	self:RenderSort()
 	for id, ent in ipairs(self.RenderEntities) do
@@ -68,8 +63,10 @@ end
 
 local eyePos, eyeAngles
 hook.Add("PreDrawSkyBox", "Star_Trek.World.Draw", function()
-	eyePos, eyeAngles = EyePos(), EyeAngles()
-	eyeAngles = LocalPlayer():EyeAngles()
+	local ply = LocalPlayer()
+
+	eyePos = ply:EyePos()
+	eyeAngles = ply:EyeAngles()
 end)
 
 function Star_Trek.World:Draw()

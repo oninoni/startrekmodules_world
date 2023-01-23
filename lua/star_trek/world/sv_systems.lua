@@ -118,13 +118,16 @@ end)
 -- @return Boolean success
 -- @return String error
 function Star_Trek.World:AddMapShip()
-	local success, mapShip = Star_Trek.World:LoadEntity(1, "ship", self.Entities[4]:GetStandardOrbit(), Angle(), "models/kingpommes/startrek/intrepid/intrepid_sky_1024.mdl", 1)
+	local success, mapShip = Star_Trek.World:LoadEntity(1, "ship", self.Entities[4]:GetStandardOrbit(), Angle(), "models/kingpommes/startrek/intrepid/intrepid_sky_1024.mdl")
 
 	if not success then
-		return false, worldEnt
+		return false, mapShip
 	end
 
 	self.MapShip = mapShip
+
+	Star_Trek.World:LoadEntity(100, "base_attached", WorldVector(0, 0, 0, M(140), 0, M(6)), Angle(), "models/squad/sf_bars/sf_bar25x25x8.mdl", M(500), 1)
+	Star_Trek.World:LoadEntity(101, "base_attached", WorldVector(0, 0, 0, M(20), 0, -M(20)), Angle(), "models/squad/sf_bars/sf_bar25x25x8.mdl", M(1000), 1)
 
 	return true
 end

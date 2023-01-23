@@ -24,8 +24,9 @@ function SELF:Init(pos, ang, model, diameter)
 	self.Pos = pos or WorldVector()
 	self.Ang = ang or Angle()
 
-	self.Diameter = diameter or 1
-	self.Scale = self.Diameter / Star_Trek.World:GetModelDiameter(model)
+	local modelDiameter = Star_Trek.World:GetModelDiameter(model)
+	self.Diameter = diameter or modelDiameter
+	self.Scale = self.Diameter / modelDiameter
 
 	self.Model = model or "models/hunter/blocks/cube4x4x4.mdl"
 end

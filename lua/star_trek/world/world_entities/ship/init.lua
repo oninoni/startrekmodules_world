@@ -96,7 +96,7 @@ function SELF:ExecuteCourse(course, targetSpeed, callback)
 end
 
 function SELF:PlotCourse(targetPos)
-	return Star_Trek.World:PlotCourse(self.Pos, targetPos)
+	return Star_Trek.World:PlotCourse(self.Id, self.Pos, targetPos)
 end
 
 --------------------------------

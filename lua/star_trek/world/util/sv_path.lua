@@ -18,11 +18,12 @@
 
 -- Plots a course through the loaded entities and loaded systems.
 -- 
+-- @param Number shipId
 -- @param WorldVector startPos
 -- @param WorldVector endPos
 -- @param Number depth
 -- @return Table course
-function Star_Trek.World:PlotCourse(startPos, endPos, depth)
+function Star_Trek.World:PlotCourse(shipId, startPos, endPos, depth)
 	depth = depth or 10
 
 	if depth == 0 then
@@ -32,7 +33,8 @@ function Star_Trek.World:PlotCourse(startPos, endPos, depth)
 	local fullDistance = startPos:Distance(endPos)
 	local halfDistance = fullDistance / 2
 	for id, ent in pairs(self.Entities) do
-		if id == 1 then continue end
+		if id == shipId then continue end
+		if not ent.Solid then continue end
 
 		local pos = ent.Pos
 		local distance = pos:Distance(startPos)
@@ -72,8 +74,8 @@ function Star_Trek.World:PlotCourse(startPos, endPos, depth)
 		local segmentPoint = pos + n * h2
 
 		-- Recursion
-		local p1 = self:PlotCourse(startPos, segmentPoint, depth - 1)
-		local p2 = self:PlotCourse(segmentPoint, endPos, depth - 1)
+		local p1 = self:PlotCourse(shipId, startPos, segmentPoint, depth - 1)
+		local p2 = self:PlotCourse(shipId, segmentPoint, endPos, depth - 1)
 		assert(p1[#p1] == p2[1], "Oh shit!")
 
 		for i = 2, #p2 do

@@ -24,6 +24,8 @@ SELF.BaseClass = "base"
 
 SELF.Dynamic = true
 
+SELF.Solid = false
+
 function SELF:Think(sysTime, deltaT)
 	local parentEnt = self.ParentEnt
 	if not istable(parentEnt) then return end

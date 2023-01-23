@@ -24,6 +24,8 @@ SELF.BaseClass = "base"
 
 SELF.Dynamic = true
 
+SELF.Solid = true
+
 function SELF:Think(sysTime, deltaT)
 	self.Pos = self.Pos + (self.Vel * deltaT)
 	self.Ang = self.Ang + (self.AngVel * deltaT)

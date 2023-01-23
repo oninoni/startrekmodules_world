@@ -56,7 +56,7 @@ function Star_Trek.World:TerminateEntity(id)
 end
 
 function Star_Trek.World:Think(sysTime, deltaT)
-	for _, ent in ipairs(self.Entities) do
+	for _, ent in pairs(self.Entities) do
 		ent:Think(sysTime, deltaT)
 
 		if SERVER and ent.Updated then

@@ -24,6 +24,8 @@ SELF.BaseClass = nil
 
 SELF.Dynamic = false
 
+SELF.Solid = true
+
 function SELF:Think(sysTime, deltaT)
 end
 

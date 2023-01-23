@@ -21,7 +21,7 @@ if not istable(ENT) then Star_Trek:LoadAllModules() return end
 local SELF = ENT
 
 function SELF:Init(pos, ang, model, diameter, parentId)
-	SELF.Base.Init(self, Vector(), Angle(), model, diameter)
+	SELF.Base.Init(self, WorldVector(), Angle(), model, diameter)
 
 	self.OffsetPos = pos:ToVector()
 	self.OffsetAng = ang
