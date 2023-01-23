@@ -36,18 +36,8 @@ function SELF:Init(pos, ang, model, diameter)
 	SELF.Base.Init(self, pos, ang, model, diameter)
 end
 
-function SELF:Think(sysTime, deltaT)
-	SELF.Base.Think(self, sysTime, deltaT)
-
-	-- Think hook for executing maneuvers.
-	local maneuverData = self.ActiveManeuver
-	if maneuverData then
-		self:ManeuverThink(sysTime, deltaT, maneuverData)
-	end
-end
-
-function SELF:GetClientDynData(clientData)
-	SELF.Base.GetClientDynData(self, clientData)
+function SELF:GetClientData(clientData)
+	SELF.Base.GetClientData(self, clientData)
 
 	clientData.ActiveManeuver = self.ActiveManeuver
 	clientData.ManeuverStart = self.ManeuverStart

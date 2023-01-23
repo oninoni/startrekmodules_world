@@ -24,6 +24,16 @@ SELF.BaseClass = "base_acc"
 
 SELF.Dynamic = true
 
+function SELF:Think()
+	SELF.Base.Think(self, sysTime, deltaT)
+
+	-- Think hook for executing maneuvers.
+	local maneuverData = self.ActiveManeuver
+	if maneuverData then
+		self:ManeuverThink(sysTime, deltaT, maneuverData)
+	end
+end
+
 function SELF:ResetManeuver()
 	self.ActiveManeuver = nil
 	self.ManeuverStart = nil

@@ -14,7 +14,7 @@
 
 ---------------------------------------
 --            World Entity           --
---           Ship | Client           --
+--       Base Attached | Client      --
 ---------------------------------------
 
 if not istable(ENT) then Star_Trek:LoadAllModules() return end
@@ -24,28 +24,19 @@ function SELF:Init(clientData)
 	SELF.Base.Init(self, clientData)
 end
 
-function SELF:FixManeuverData(activeManeuver)
-	if activeManeuver.Type == "WARP" then
-		WorldVectorFromTable(activeManeuver.StartPos)
-		WorldVectorFromTable(activeManeuver.EndPos)
-		WorldVectorFromTable(activeManeuver.AccelPos)
-		WorldVectorFromTable(activeManeuver.DeccelPos)
-	--elseif activeManeuver.Type == "ALIGN" then
-		-- No Conversion Needed.
-	--elseif maneuverType == "IMPULSE" then
-		-- TODO
-	end
+function SELF:SetData(clientData)
+	self.Model = clientData.Model
+	self.Diameter = clientData.Diameter
+	self.Scale = clientData.Scale
+
+	self.Pos = WorldVectorFromTable(clientData.Pos)
+	self.Ang = clientData.Ang
+
+	self.OffsetPos = clientData.OffsetPos
+	self.OffsetAng = clientData.OffsetAng
+
+	self.ParentEnt = Star_Trek.World.Entities[clientData.ParentId]
 end
 
-function SELF:SetData(clientData)
-	SELF.Base.SetData(self, clientData)
-
-	local activeManeuver = clientData.ActiveManeuver
-	self.ManeuverStart = clientData.ManeuverStart
-
-	if istable(activeManeuver) then
-		self:FixManeuverData(activeManeuver)
-	end
-
-	self.ActiveManeuver = activeManeuver
+function SELF:SetDynData(clientData)
 end

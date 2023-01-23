@@ -14,41 +14,19 @@
 
 ---------------------------------------
 --            World Entity           --
---       Base Velocity | Server      --
+--       Base Attached | Shared      --
 ---------------------------------------
 
 if not istable(ENT) then Star_Trek:LoadAllModules() return end
 local SELF = ENT
 
-function SELF:Init(pos, ang, model, diameter, vel, angVel)
-	SELF.Base.Init(self, pos, ang, model, diameter)
+SELF.BaseClass = "base"
 
-	self.Vel = vel or Vector()
-	self.AngVel = angVel or Angle()
-end
+SELF.Dynamic = true
 
-function SELF:GetClientData(clientData)
-	clientData.Model = self.Model
-	clientData.Diameter = self.Diameter
-	clientData.Scale = self.Scale
+function SELF:Think(sysTime, deltaT)
+	local parentEnt = self.ParentEnt
+	if not istable(parentEnt) then return end
 
-	clientData.Vel = self.Vel
-	clientData.AngVel = self.AngVel
-end
-
-function SELF:GetClientDynData(clientData)
-	clientData.Pos = self.Pos
-	clientData.Ang = self.Ang
-end
-
-function SELF:SetVelocity(vel)
-	self.Vel = vel
-
-	self.Updated = true
-end
-
-function SELF:SetAngularVelocity(angVel)
-	self.AngVel = angVel
-
-	self.Updated = true
+	self.Pos, self.Ang = LocalToWorldBig(self.OffsetPos, self.OffsetAng, parentEnt.Pos, parentEnt.Ang)
 end

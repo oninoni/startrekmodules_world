@@ -348,6 +348,16 @@ function WorldToLocalBig(pos, ang, newSystemOrigin, newSystemAngles)
 	return WorldToLocal(offsetPos:ToVector(), ang, Vector(), newSystemAngles)
 end
 
+function LocalToWorldBig(localPos, localAng, originPos, originAng)
+	if IsWorldVector(localPos) then
+		localPos = localPos:ToVector()
+	end
+
+	local pos, ang = LocalToWorld(localPos, localAng, Vector(), originAng)
+
+	return originPos + pos, ang
+end
+
 function net.ReadWorldVector()
 	local bx = net.ReadDouble()
 	local by = net.ReadDouble()

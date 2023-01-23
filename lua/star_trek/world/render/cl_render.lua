@@ -16,9 +16,8 @@
 --       World Render | Client       --
 ---------------------------------------
 
-Star_Trek.World.RenderEntities = {}
+Star_Trek.World.RenderEntities = Star_Trek.World.RenderEntities or {}
 
-local VECTOR_MAX = Star_Trek.World.Vector_Max or 131071
 local SKY_CAM_SCALE = Star_Trek.World.Skybox_Scale or (1 / 1024)
 local SORT_DELAY = Star_Trek.World.SortDelay or 0.5
 
@@ -63,27 +62,7 @@ function Star_Trek.World:RenderThink()
 	for id, ent in ipairs(self.RenderEntities) do
 		if ent.Id == shipId then continue end
 
-		local pos, ang = WorldToLocalBig(ent.Pos, ent.Ang, shipPos, shipAng)
-
-		local realEnt = ent.ClientEntity
-
-		-- Apply scaling
-		local modelScale = ent.Scale or 1
-
-		local distance = pos:Length()
-		ent.Distance = distance
-		if distance > VECTOR_MAX then
-			pos = Vector(pos)
-			pos:Normalize()
-			pos = pos * VECTOR_MAX
-
-			realEnt:SetModelScale(modelScale * (VECTOR_MAX / distance))
-		else
-			realEnt:SetModelScale(modelScale)
-		end
-
-		realEnt:SetPos(pos)
-		realEnt:SetAngles(ang)
+		ent:RenderThink(shipPos, shipAng)
 	end
 end
 
@@ -114,7 +93,7 @@ function Star_Trek.World:Draw()
 			local ent = renderEntities[i]
 			if ent.Id == shipId then continue end
 
-			ent.ClientEntity:DrawModel()
+			ent:Draw()
 		end
 		cam.IgnoreZ(false)
 	cam.End3D()

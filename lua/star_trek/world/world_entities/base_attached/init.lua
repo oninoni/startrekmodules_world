@@ -14,17 +14,19 @@
 
 ---------------------------------------
 --            World Entity           --
---     Base Acceleration | Server    --
+--       Base Attached | Server      --
 ---------------------------------------
 
 if not istable(ENT) then Star_Trek:LoadAllModules() return end
 local SELF = ENT
 
-function SELF:Init(pos, ang, model, diameter, vel, angVel, acc, angAcc)
-	SELF.Base.Init(self, pos, ang, model, diameter, vel, angVel)
+function SELF:Init(pos, ang, model, diameter, parentId)
+	SELF.Base.Init(self, Vector(), Angle(), model, diameter)
 
-	self.Acc = acc or Vector()
-	self.AngAcc = angAcc or Angle()
+	self.OffsetPos = pos:ToVector()
+	self.OffsetAng = ang
+
+	self:SetParentId(parentId)
 end
 
 function SELF:GetClientData(clientData)
@@ -32,26 +34,44 @@ function SELF:GetClientData(clientData)
 	clientData.Diameter = self.Diameter
 	clientData.Scale = self.Scale
 
-	clientData.Acc = self.Acc
-	clientData.AngAcc = self.AngAcc
-end
-
-function SELF:GetClientDynData(clientData)
 	clientData.Pos = self.Pos
 	clientData.Ang = self.Ang
 
-	clientData.Vel = self.Vel
-	clientData.AngVel = self.AngVel
+	clientData.OffsetPos = self.OffsetPos
+	clientData.OffsetAng = self.OffsetAng
+
+	clientData.ParentId = self.ParentId
 end
 
-function SELF:SetAcceleration(acc)
-	self.Acc = acc
+function SELF:GetClientDynData(clientData)
+end
+
+function SELF:SetPos(pos)
+	self.OffsetPos = pos
 
 	self.Updated = true
 end
 
-function SELF:SetAngularAcceleration(angAcc)
-	self.AngAcc = angAcc
+function SELF:SetAngles(ang)
+	self.OffsetAng = ang
 
 	self.Updated = true
+end
+
+function SELF:SetParentId(parentId)
+	if not isnumber(parentId) then return end
+
+	local parentEnt = Star_Trek.World.Entities[parentId]
+	if not istable(parentEnt) then return end
+
+	self.ParentId = parentId
+	self.ParentEnt = parentEnt
+
+	self.Updated = true
+end
+
+function SELF:SetParent(parentEnt)
+	if not istable(parentEnt) then return end
+
+	self:SetParentId(parentEnt.Id)
 end
