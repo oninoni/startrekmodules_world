@@ -24,7 +24,7 @@ SELF.BaseClass = "base_acc"
 
 SELF.Dynamic = true
 
-function SELF:Think()
+function SELF:Think(sysTime, deltaT)
 	SELF.Base.Think(self, sysTime, deltaT)
 
 	-- Think hook for executing maneuvers.
