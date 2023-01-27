@@ -45,9 +45,6 @@ function SELF:GetClientData(clientData)
 	clientData.ParentId = self.ParentId
 end
 
-function SELF:GetClientDynData(clientData)
-end
-
 function SELF:SetPos(pos)
 	self.OffsetPos = pos or Vector()
 

@@ -126,18 +126,8 @@ function Star_Trek.World:AddMapShip()
 
 	self.MapShip = mapShip
 
-	local _, b1 = Star_Trek.World:LoadEntity(100, "base_attached", WorldVector(0, 0, 0, M(140), 0, M(6)), Angle(), "models/squad/sf_bars/sf_bar25x25x8.mdl", M(500), 1)
-	local _, b2 = Star_Trek.World:LoadEntity(101, "base_attached", WorldVector(0, 0, 0, M(20), 0, -M(20)), Angle(), "models/squad/sf_bars/sf_bar25x25x8.mdl", M(1000), 1)
-	b1:SetMaterial("phoenix_storms/wire/pcb_green")
-	b2:SetMaterial("phoenix_storms/wire/pcb_red")
-
-	timer.Simple(5, function()
-		b2:SetMaterial("phoenix_storms/wire/pcb_blue")
-
-		b1:SetMaterial()
-		b1:SetModel("models/Gibs/HGIBS_spine.mdl")
-		b1:SetDiameter(M(1))
-	end)
+	Star_Trek.World:LoadEntity(100, "beam", WorldVector(0, 0, 0, M(145), 0, M(8.5)), Angle(), KM(10), 1, "sprites/tp_beam001", Color(255, 0, 0, 127), 0.4, 4, 0.5)
+	Star_Trek.World:LoadEntity(101, "beam", WorldVector(0, 0, 0, M(20), 0, -M(15)),  Angle(), KM(10), 1, "sprites/tp_beam001", Color(0, 255, 0, 127), 0.6, 8, -0.5)
 
 	return true
 end

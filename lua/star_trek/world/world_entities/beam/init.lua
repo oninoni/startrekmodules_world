@@ -14,24 +14,28 @@
 
 ---------------------------------------
 --            World Entity           --
---       Base Attached | Client      --
+--           Beam | Server           --
 ---------------------------------------
 
 if not istable(ENT) then Star_Trek:LoadAllModules() return end
 local SELF = ENT
 
-function SELF:SetData(clientData)
-	self.Model = clientData.Model
-	self.Material = clientData.Material
+function SELF:Init(pos, ang, length, parentId, material, color, width, tiling, stream)
+	SELF.Base.Init(self, pos, ang, "models/squad/sf_bars/sf_bar25x25x8.mdl", length, parentId)
 
-	self.Diameter = clientData.Diameter
-	self.Scale = clientData.Scale
+	self.Color = color or Color(255, 255, 255, 127)
+	self.Width = width or 1
+	self.Tiling = tiling or 512
+	self.Stream = -stream or 0
 
-	self.Pos = WorldVectorFromTable(clientData.Pos)
-	self.Ang = clientData.Ang
+	self:SetMaterial(material)
+end
 
-	self.OffsetPos = clientData.OffsetPos
-	self.OffsetAng = clientData.OffsetAng
+function SELF:GetClientData(clientData)
+	SELF.Base.GetClientData(self, clientData)
 
-	self.ParentEnt = Star_Trek.World.Entities[clientData.ParentId]
+	clientData.Color = self.Color
+	clientData.Width = self.Width
+	clientData.Tiling = self.Tiling
+	clientData.Stream = self.Stream
 end

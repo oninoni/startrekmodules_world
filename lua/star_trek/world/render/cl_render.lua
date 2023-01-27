@@ -75,7 +75,6 @@ function Star_Trek.World:SkyboxDraw()
 	local eyeAngles = ply:EyeAngles()
 
 	render.SuppressEngineLighting(true)
-	render.SetColorModulation(1, 1, 1)
 
 	local mat = Matrix()
 	mat:SetAngles(shipAng)
@@ -108,9 +107,8 @@ function Star_Trek.World:NearbyDraw()
 	if not shipId then return end
 
 	render.SuppressEngineLighting(true)
-	render.SetColorModulation(1, 1, 1)
 
-	cam.Start3D(nil, nil, nil, nil, nil, nil, nil, nil, nil)
+	cam.Start3D()
 		local renderEntities = self.RenderEntities
 		for i = 1, #renderEntities do
 			local ent = renderEntities[i]
@@ -123,6 +121,8 @@ function Star_Trek.World:NearbyDraw()
 	render.SuppressEngineLighting(false)
 end
 
-hook.Add("PostDrawTranslucentRenderables", "Star_Trek.World.Draw", function()
+hook.Add("PostDrawTranslucentRenderables", "Star_Trek.World.Draw", function(bDrawingDepth, bDrawingSkybox, isDraw3DSkybox)
+	if bDrawingSkybox or isDraw3DSkybox then return end
+
 	Star_Trek.World:NearbyDraw()
 end)

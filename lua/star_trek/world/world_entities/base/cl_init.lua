@@ -20,6 +20,10 @@
 if not istable(ENT) then Star_Trek:LoadAllModules() return end
 local SELF = ENT
 
+local SKY_CAM_SCALE = Star_Trek.World.Skybox_Scale or (1 / 1024)
+local NEARBY_MAX = 12
+local VECTOR_MAX = Star_Trek.World.Vector_Max or 131071
+
 function SELF:Init(clientData)
 	self:SetData(clientData)
 	self:SetDynData(clientData)
@@ -59,17 +63,19 @@ function SELF:Update()
 	local material = self.Material
 
 	local nearbyEntity = self.NearbyEntity
-	nearbyEntity:SetModel(model)
-	nearbyEntity:SetModelScale(modelScale * 1024)
-	nearbyEntity:SetMaterial(material)
+	if IsValid(nearbyEntity) then
+		nearbyEntity:SetModel(model)
+		nearbyEntity:SetModelScale(modelScale / SKY_CAM_SCALE)
+		nearbyEntity:SetMaterial(material)
+	end
 
 	local skyboxEntity = self.SkyboxEntity
-	skyboxEntity:SetModel(model)
-	skyboxEntity:SetMaterial(material)
+	if IsValid(skyboxEntity) then
+		skyboxEntity:SetModel(model)
+		skyboxEntity:SetMaterial(material)
+	end
 end
 
-local NEARBY_MAX = 12
-local VECTOR_MAX = Star_Trek.World.Vector_Max or 131071
 function SELF:RenderThink(shipPos, shipAng)
 	local pos, ang = WorldToLocalBig(self.Pos, self.Ang, shipPos, shipAng)
 	local distance = pos:Length()
@@ -79,7 +85,7 @@ function SELF:RenderThink(shipPos, shipAng)
 	if distance < NEARBY_MAX then
 		self.RenderNearby = true
 
-		nearbyEntity:SetPos(pos * 1024)
+		nearbyEntity:SetPos(pos / SKY_CAM_SCALE)
 		nearbyEntity:SetAngles(ang)
 	else
 		self.RenderNearby = false
@@ -110,10 +116,12 @@ end
 
 function SELF:DrawSkybox()
 	if not self.RenderSkybox then return end
+
 	self.SkyboxEntity:DrawModel()
 end
 
 function SELF:DrawNearby()
 	if not self.RenderNearby then return end
+
 	self.NearbyEntity:DrawModel()
 end

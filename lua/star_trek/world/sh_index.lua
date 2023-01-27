@@ -24,6 +24,7 @@ if SERVER then
 	AddCSLuaFile("sh_config.lua")
 	AddCSLuaFile("sh_loaders.lua")
 
+	AddCSLuaFile("util/sh_intersect.lua")
 	AddCSLuaFile("util/sh_convert.lua")
 	AddCSLuaFile("util/sh_vector.lua")
 	AddCSLuaFile("util/sh_quadtree.lua")
@@ -37,6 +38,7 @@ if SERVER then
 	include("sh_config.lua")
 	include("sh_loaders.lua")
 
+	include("util/sh_intersect.lua")
 	include("util/sh_convert.lua")
 	include("util/sh_vector.lua")
 	include("util/sh_quadtree.lua")
@@ -53,6 +55,7 @@ if CLIENT then
 	include("sh_config.lua")
 	include("sh_loaders.lua")
 
+	include("util/sh_intersect.lua")
 	include("util/sh_convert.lua")
 	include("util/sh_vector.lua")
 	include("util/sh_quadtree.lua")

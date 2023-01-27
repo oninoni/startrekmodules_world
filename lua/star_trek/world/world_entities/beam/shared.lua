@@ -14,24 +14,14 @@
 
 ---------------------------------------
 --            World Entity           --
---       Base Attached | Client      --
+--           Beam | Shared           --
 ---------------------------------------
 
 if not istable(ENT) then Star_Trek:LoadAllModules() return end
 local SELF = ENT
 
-function SELF:SetData(clientData)
-	self.Model = clientData.Model
-	self.Material = clientData.Material
+SELF.BaseClass = "base_attached"
 
-	self.Diameter = clientData.Diameter
-	self.Scale = clientData.Scale
+SELF.Dynamic = true
 
-	self.Pos = WorldVectorFromTable(clientData.Pos)
-	self.Ang = clientData.Ang
-
-	self.OffsetPos = clientData.OffsetPos
-	self.OffsetAng = clientData.OffsetAng
-
-	self.ParentEnt = Star_Trek.World.Entities[clientData.ParentId]
-end
+SELF.Solid = false
