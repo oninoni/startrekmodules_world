@@ -21,26 +21,8 @@ Star_Trek.World.RenderEntities = Star_Trek.World.RenderEntities or {}
 local SKY_CAM_SCALE = Star_Trek.World.Skybox_Scale or (1 / 1024)
 local SORT_DELAY = Star_Trek.World.SortDelay or 0.5
 
-function Star_Trek.World:GenerateRenderEntities()
-	self.RenderEntities = {}
-
-	for _, otherEnt in SortedPairsByMemberValue(self.Entities, "Distance", true) do
-		table.insert(self.RenderEntities, otherEnt)
-	end
-end
-
-local nextSort = CurTime()
-function Star_Trek.World:RenderSort()
-	local curTime = CurTime()
-	if curTime < nextSort then
-		return
-	end
-	nextSort = curTime + SORT_DELAY
-
-	table.SortByMember(self.RenderEntities, "Distance")
-end
-
 local shipId, shipPos, shipAng
+local nextSort = CurTime()
 function Star_Trek.World:RenderThink()
 	shipId = LocalPlayer():GetNWInt("Star_Trek.World.ShipId", 1)
 	local shipEnt = self.Entities[shipId]
@@ -53,12 +35,36 @@ function Star_Trek.World:RenderThink()
 		return
 	end
 
-	self:RenderSort()
-	for id, ent in ipairs(self.RenderEntities) do
+	-- Regenerate Render Entities if something changed.
+	if self.ShouldGenRender then
+		self.ShouldGenRender = nil
+		self.RenderEntities = {}
+
+		for _, ent in SortedPairsByMemberValue(self.Entities, "Distance", true) do
+			ent:RenderThink(shipPos, shipAng)
+
+			table.insert(self.RenderEntities, ent)
+		end
+
+		nextSort = CurTime() + SORT_DELAY
+		return
+	end
+
+	local renderEntities = self.RenderEntities
+	for i = 1, #renderEntities do
+		local ent = renderEntities[i]
 		if ent.Id == shipId then continue end
 
 		ent:RenderThink(shipPos, shipAng)
 	end
+
+	local curTime = CurTime()
+	if curTime < nextSort then
+		return
+	end
+	nextSort = curTime + SORT_DELAY
+
+	table.SortByMember(renderEntities, "Distance")
 end
 
 local eyePos, eyeAngles
