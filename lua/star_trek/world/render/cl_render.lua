@@ -69,13 +69,14 @@ end
 
 local eyePos, eyeAngles
 hook.Add("PreDrawSkyBox", "Star_Trek.World.Draw", function()
-	local ply = LocalPlayer()
+	if not shipId then return end
 
+	local ply = LocalPlayer()
 	eyePos = ply:EyePos()
 	eyeAngles = ply:EyeAngles()
 end)
 
-function Star_Trek.World:Draw()
+function Star_Trek.World:SkyboxDraw()
 	if not shipId then return end
 
 	render.SuppressEngineLighting(true)
@@ -86,7 +87,7 @@ function Star_Trek.World:Draw()
 	mat:Rotate(eyeAngles)
 
 	cam.Start3D(Vector(), mat:GetAngles(), nil, nil, nil, nil, nil, 0.5, 2)
-		self:DrawBackground()
+		Star_Trek.World:DrawBackground()
 	cam.End3D()
 
 	cam.Start3D(eyePos * SKY_CAM_SCALE, eyeAngles, nil, nil, nil, nil, nil, 0.0005, 10000000)
@@ -96,7 +97,7 @@ function Star_Trek.World:Draw()
 			local ent = renderEntities[i]
 			if ent.Id == shipId then continue end
 
-			ent:Draw()
+			ent:DrawSkybox()
 		end
 		cam.IgnoreZ(false)
 	cam.End3D()
@@ -105,5 +106,28 @@ function Star_Trek.World:Draw()
 end
 
 hook.Add("PostDraw2DSkyBox", "Star_Trek.World.Draw", function()
-	Star_Trek.World:Draw()
+	Star_Trek.World:SkyboxDraw()
+end)
+
+function Star_Trek.World:NearbyDraw()
+	if not shipId then return end
+
+	render.SuppressEngineLighting(true)
+	render.SetColorModulation(1, 1, 1)
+
+	cam.Start3D(nil, nil, nil, nil, nil, nil, nil, nil, nil)
+		local renderEntities = self.RenderEntities
+		for i = 1, #renderEntities do
+			local ent = renderEntities[i]
+			if ent.Id == shipId then continue end
+
+			ent:DrawNearby()
+		end
+	cam.End3D()
+
+	render.SuppressEngineLighting(false)
+end
+
+hook.Add("PostDrawTranslucentRenderables", "Star_Trek.World.Draw", function()
+	Star_Trek.World:NearbyDraw()
 end)

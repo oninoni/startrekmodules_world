@@ -24,14 +24,20 @@ function SELF:Init(clientData)
 	self:SetData(clientData)
 	self:SetDynData(clientData)
 
-	local ent = ClientsideModel(self.Model, RENDERGROUP_BOTH)
-	ent:SetNoDraw(true)
+	local modelScale = self.Scale or 1
+	local skyboxEntity = ClientsideModel(self.Model, RENDERGROUP_BOTH)
+	skyboxEntity:SetNoDraw(true)
+	skyboxEntity:SetModelScale(modelScale)
+	self.SkyboxEntity = skyboxEntity
 
-	self.ClientEntity = ent
+	local nearbyEntity = ClientsideModel(self.Model, RENDERGROUP_BOTH)
+	nearbyEntity:SetNoDraw(true)
+	nearbyEntity:SetModelScale(modelScale * 1024)
+	self.NearbyEntity = nearbyEntity
 end
 
 function SELF:Terminate()
-	SafeRemoveEntity(self.ClientEntity)
+	SafeRemoveEntity(self.SkyboxEntity)
 end
 
 function SELF:SetData(clientData)
@@ -46,13 +52,29 @@ end
 function SELF:SetDynData(clientData)
 end
 
+local NEARBY_MAX = 12
 local VECTOR_MAX = Star_Trek.World.Vector_Max or 131071
 function SELF:RenderThink(shipPos, shipAng)
-	local realEnt = self.ClientEntity
-
 	local pos, ang = WorldToLocalBig(self.Pos, self.Ang, shipPos, shipAng)
 	local distance = pos:Length()
 	self.Distance = distance
+
+	local nearbyEntity = self.NearbyEntity
+	if distance < NEARBY_MAX then
+		self.RenderNearby = true
+
+		nearbyEntity:SetPos(pos * 1024)
+		nearbyEntity:SetAngles(ang)
+	else
+		self.RenderNearby = false
+	end
+	if distance + self.Diameter < NEARBY_MAX then
+		self.RenderSkybox = false
+	else
+		self.RenderSkybox = true
+	end
+
+	local skyboxEntity = self.SkyboxEntity
 
 	-- Apply scaling
 	local modelScale = self.Scale or 1
@@ -61,15 +83,21 @@ function SELF:RenderThink(shipPos, shipAng)
 		pos:Normalize()
 		pos = pos * VECTOR_MAX
 
-		realEnt:SetModelScale(modelScale * (VECTOR_MAX / distance))
+		skyboxEntity:SetModelScale(modelScale * (VECTOR_MAX / distance))
 	else
-		realEnt:SetModelScale(modelScale)
+		skyboxEntity:SetModelScale(modelScale)
 	end
 
-	realEnt:SetPos(pos)
-	realEnt:SetAngles(ang)
+	skyboxEntity:SetPos(pos)
+	skyboxEntity:SetAngles(ang)
 end
 
-function SELF:Draw()
-	self.ClientEntity:DrawModel()
+function SELF:DrawSkybox()
+	if not self.RenderSkybox then return end
+	self.SkyboxEntity:DrawModel()
+end
+
+function SELF:DrawNearby()
+	if not self.RenderNearby then return end
+	self.NearbyEntity:DrawModel()
 end
