@@ -67,17 +67,12 @@ function Star_Trek.World:RenderThink()
 	table.SortByMember(renderEntities, "Distance")
 end
 
-local eyePos, eyeAngles
-hook.Add("PreDrawSkyBox", "Star_Trek.World.Draw", function()
+function Star_Trek.World:SkyboxDraw()
 	if not shipId then return end
 
 	local ply = LocalPlayer()
-	eyePos = ply:EyePos()
-	eyeAngles = ply:EyeAngles()
-end)
-
-function Star_Trek.World:SkyboxDraw()
-	if not shipId then return end
+	local eyePos = ply:EyePos()
+	local eyeAngles = ply:EyeAngles()
 
 	render.SuppressEngineLighting(true)
 	render.SetColorModulation(1, 1, 1)
