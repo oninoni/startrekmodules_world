@@ -23,12 +23,14 @@ local SELF = ENT
 function SELF:Init(pos, ang, model, diameter, vel, angVel, acc, angAcc)
 	SELF.Base.Init(self, pos, ang, model, diameter, vel, angVel)
 
-	self.Acc = acc or Vector()
-	self.AngAcc = angAcc or Angle()
+	self:SetAcceleration(acc)
+	self:SetAngularAcceleration(angAcc)
 end
 
 function SELF:GetClientData(clientData)
 	clientData.Model = self.Model
+	clientData.Material = self.Material
+
 	clientData.Diameter = self.Diameter
 	clientData.Scale = self.Scale
 
@@ -45,13 +47,13 @@ function SELF:GetClientDynData(clientData)
 end
 
 function SELF:SetAcceleration(acc)
-	self.Acc = acc
+	self.Acc = acc or Vector()
 
 	self.Updated = true
 end
 
 function SELF:SetAngularAcceleration(angAcc)
-	self.AngAcc = angAcc
+	self.AngAcc = angAcc or Angle()
 
 	self.Updated = true
 end

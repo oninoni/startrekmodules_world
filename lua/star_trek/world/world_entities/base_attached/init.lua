@@ -23,14 +23,16 @@ local SELF = ENT
 function SELF:Init(pos, ang, model, diameter, parentId)
 	SELF.Base.Init(self, WorldVector(), Angle(), model, diameter)
 
-	self.OffsetPos = pos:ToVector()
-	self.OffsetAng = ang
+	self:SetPos(pos:ToVector())
+	self:SetAngles(ang)
 
 	self:SetParentId(parentId)
 end
 
 function SELF:GetClientData(clientData)
 	clientData.Model = self.Model
+	clientData.Material = self.Material
+
 	clientData.Diameter = self.Diameter
 	clientData.Scale = self.Scale
 
@@ -47,13 +49,13 @@ function SELF:GetClientDynData(clientData)
 end
 
 function SELF:SetPos(pos)
-	self.OffsetPos = pos
+	self.OffsetPos = pos or Vector()
 
 	self.Updated = true
 end
 
 function SELF:SetAngles(ang)
-	self.OffsetAng = ang
+	self.OffsetAng = ang or Angle()
 
 	self.Updated = true
 end
@@ -66,6 +68,9 @@ function SELF:SetParentId(parentId)
 
 	self.ParentId = parentId
 	self.ParentEnt = parentEnt
+
+	-- Initial Values for Pos, Ang
+	self.Pos, self.Ang = LocalToWorldBig(self.OffsetPos, self.OffsetAng, parentEnt.Pos, parentEnt.Ang)
 
 	self.Updated = true
 end

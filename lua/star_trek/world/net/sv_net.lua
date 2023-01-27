@@ -37,6 +37,7 @@ end
 -- Network a newly loaded world entity to the clients.
 function Star_Trek.World:NetworkLoad(ent)
 	local clientData = Star_Trek.World:GetClientData(ent)
+	ent.Updated = nil
 
 	net.Start("Star_Trek.World.Load")
 		Star_Trek.Util:WriteNetTable(clientData)
@@ -75,6 +76,7 @@ end
 util.AddNetworkString("Star_Trek.World.Update")
 function Star_Trek.World:NetworkUpdate(ent)
 	local clientData = Star_Trek.World:GetClientData(ent, true)
+	ent.Updated = nil
 
 	net.Start("Star_Trek.World.Update")
 		Star_Trek.Util:WriteNetTable(clientData)

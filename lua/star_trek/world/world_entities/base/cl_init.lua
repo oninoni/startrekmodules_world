@@ -24,16 +24,15 @@ function SELF:Init(clientData)
 	self:SetData(clientData)
 	self:SetDynData(clientData)
 
-	local modelScale = self.Scale or 1
 	local skyboxEntity = ClientsideModel(self.Model, RENDERGROUP_BOTH)
 	skyboxEntity:SetNoDraw(true)
-	skyboxEntity:SetModelScale(modelScale)
 	self.SkyboxEntity = skyboxEntity
 
 	local nearbyEntity = ClientsideModel(self.Model, RENDERGROUP_BOTH)
 	nearbyEntity:SetNoDraw(true)
-	nearbyEntity:SetModelScale(modelScale * 1024)
 	self.NearbyEntity = nearbyEntity
+
+	self:Update()
 end
 
 function SELF:Terminate()
@@ -45,11 +44,28 @@ function SELF:SetData(clientData)
 	self.Ang = clientData.Ang
 
 	self.Model = clientData.Model
+	self.Material = clientData.Material
+
 	self.Diameter = clientData.Diameter
 	self.Scale = clientData.Scale
 end
 
 function SELF:SetDynData(clientData)
+end
+
+function SELF:Update()
+	local model = self.Model
+	local modelScale = self.Scale or 1
+	local material = self.Material
+
+	local nearbyEntity = self.NearbyEntity
+	nearbyEntity:SetModel(model)
+	nearbyEntity:SetModelScale(modelScale * 1024)
+	nearbyEntity:SetMaterial(material)
+
+	local skyboxEntity = self.SkyboxEntity
+	skyboxEntity:SetModel(model)
+	skyboxEntity:SetMaterial(material)
 end
 
 local NEARBY_MAX = 12
