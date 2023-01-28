@@ -20,6 +20,8 @@ Star_Trek:RequireModules()
 
 Star_Trek.World = Star_Trek.World or {}
 
+if game.GetMap() ~= "rp_intrepid_v1" then return end
+
 if SERVER then
 	AddCSLuaFile("sh_config.lua")
 	AddCSLuaFile("sh_loaders.lua")

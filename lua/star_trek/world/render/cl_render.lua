@@ -21,6 +21,18 @@ Star_Trek.World.RenderEntities = Star_Trek.World.RenderEntities or {}
 local SKY_CAM_SCALE = Star_Trek.World.Skybox_Scale or (1 / 1024)
 local SORT_DELAY = Star_Trek.World.SortDelay or 0.5
 
+Star_Trek.World.HullEntities = Star_Trek.World.HullEntities or {}
+local function initHull()
+	Star_Trek.World.HullEntities = {}
+
+	for _, ent in pairs(ents.FindByModel("models/kingpommes/startrek/intrepid/exterior_*")) do
+		ent:SetNoDraw(true)
+		table.insert(Star_Trek.World.HullEntities, ent)
+	end
+end
+hook.Add("PostCleanupMap", "Star_Trek.World.InitHull", initHull)
+hook.Add("InitPostEntity", "Star_Trek.World.InitHull", initHull)
+
 local shipId, shipPos, shipAng
 local nextSort = CurTime()
 function Star_Trek.World:RenderThink()
@@ -75,6 +87,15 @@ function Star_Trek.World:SkyboxDraw()
 	local eyeAngles = ply:EyeAngles()
 
 	render.SuppressEngineLighting(true)
+	render.ResetModelLighting(0.0005, 0.0005, 0.0005)
+	render.SetLocalModelLights({
+		{
+			type    = MATERIAL_LIGHT_POINT,
+			color   = Vector(2,2,2),
+			pos     = self.Entities[11].SkyboxEntity:GetPos(),
+			range   = 0,
+		}
+	})
 
 	local mat = Matrix()
 	mat:SetAngles(shipAng)
@@ -107,8 +128,24 @@ function Star_Trek.World:NearbyDraw()
 	if not shipId then return end
 
 	render.SuppressEngineLighting(true)
+	render.ResetModelLighting(0.0005, 0.0005, 0.0005)
+	render.SetLocalModelLights({
+		{
+			type    = MATERIAL_LIGHT_POINT,
+			color   = Vector(2,2,2),
+			pos     = self.Entities[11].SkyboxEntity:GetPos() * (1 / SKY_CAM_SCALE),
+			range   = 0,
+		}
+	})
 
 	cam.Start3D()
+		local hullEntities = self.HullEntities
+		for i = 1, #hullEntities do
+			local ent = hullEntities[i]
+
+			ent:DrawModel()
+		end
+
 		local renderEntities = self.RenderEntities
 		for i = 1, #renderEntities do
 			local ent = renderEntities[i]
