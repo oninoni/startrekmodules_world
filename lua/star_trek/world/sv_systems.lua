@@ -144,7 +144,6 @@ function Star_Trek.World:ReLoadGalaxy()
 	local override = hook.Run("Star_Trek.World.LoadGalaxy", self.QuadTree)
 	if override then return end
 
-	--[[
 	local solLeaf = self.QuadTree:CreateLeaf(LY(0), LY(0), {Name = "Sol System", Entities = {
 		{Id = 11, OrbitRadius = AU(0), Name = "Sol", Class = "planet", Model = "models/planets/sun.mdl", Diameter = KM(1392700)},
 		{Id = 2, OrbitRadius = AU(0.39), Name = "Mercury", Class = "planet", Model = "models/planets/mercury.mdl", Diameter = KM(4880)},
@@ -178,28 +177,6 @@ function Star_Trek.World:ReLoadGalaxy()
 
 		{Id = 21, OrbitRadius = AU(1.5), Name = "Tellar", Class = "planet", Model = "models/planets/earth.mdl", Diameter = KM(12142)},
 	}})
-	]]
-
-	local entities = {
-		{Id = 11, OrbitRadius = AU(0), Name = "Sol", Class = "planet", Model = "models/planets/sun.mdl", Diameter = KM(1392700)},
-		{Id = 2, OrbitRadius = AU(0.39), Name = "Mercury", Class = "planet", Model = "models/planets/mercury.mdl", Diameter = KM(4880)},
-		{Id = 3, OrbitRadius = AU(0.72), Name = "Venus", Class = "planet", Model = "models/planets/venus.mdl", Diameter = KM(12104)},
-		{Id = 4, OrbitRadius = AU(1), Name = "Earth", Class = "planet", Model = "models/planets/earth.mdl", Diameter = KM(12142)},
-		{Id = 5, OrbitRadius = AU(1.52), Name = "Mars", Class = "planet", Model = "models/planets/mars.mdl", Diameter = KM(6780)},
-		{Id = 6, OrbitRadius = AU(5.20), Name = "Jupiter", Class = "planet", Model = "models/planets/jupiter.mdl", Diameter = KM(139822)},
-		{Id = 7, OrbitRadius = AU(9.58), Name = "Saturn", Class = "planet", Model = "models/planets/saturn.mdl", Diameter = KM(116464)},
-		{Id = 8, OrbitRadius = AU(19.20), Name = "Uranus", Class = "planet", Model = "models/planets/uranus.mdl", Diameter = KM(50724)},
-		{Id = 9, OrbitRadius = AU(30.05), Name = "Neptun", Class = "planet", Model = "models/planets/neptune.mdl", Diameter = KM(29244)},
-
-		-- Earth Orbit
-		{Id = 10, ParentId = 4, OrbitRadius = KM(385000), Name = "Luna", Class = "planet", Model = "models/planets/luna_big.mdl", Diameter = KM(math.Rand(1000, 10000))},
-	}
-
-	for i = 0, 100 do
-		table.insert(entities, {Id = 100 + i, ParentId = 4, OrbitRadius = KM(math.Rand(1000, 300000)), Name = "Luna", Class = "planet", Model = "models/planets/luna_big.mdl", Diameter = KM(3474.8)})
-	end
-
-	local solLeaf = self.QuadTree:CreateLeaf(LY(0), LY(0), {Name = "Sol System", Entities = entities})
 
 	Star_Trek.World:LoadStarSystem(solLeaf)
 	Star_Trek.World:AddMapShip()

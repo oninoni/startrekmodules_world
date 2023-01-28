@@ -161,15 +161,13 @@ end
 -- @param Angle targetAngle
 -- @return Table maneuverData
 function SELF:CreateAlignManeuver(startAngle, targetAngle)
-	targetAngle.p = -targetAngle.p
-
 	local maneuverData = {
 		Type = "ALIGN",
 		StartAngle = startAngle,
 		TargetAngle = targetAngle,
 	}
 
-	local diffAng = startAngle - targetAngle
+	local diffAng = targetAngle - startAngle
 	diffAng:Normalize()
 
 	local maxAng = math.max(math.abs(diffAng.y), math.abs(diffAng.p), math.abs(diffAng.r))
