@@ -23,22 +23,6 @@ local SELF = ENT
 local SKY_CAM_SCALE = Star_Trek.World.Skybox_Scale or (1 / 1024)
 local NEARBY_MAX = 12
 
-function SELF:Init(clientData)
-	self:SetData(clientData)
-	self:SetDynData(clientData)
-
-	self:Update()
-end
-
-function SELF:SetData(clientData)
-	SELF.Base.SetData(self, clientData)
-
-	self.Color = clientData.Color
-	self.Width = clientData.Width
-	self.Tiling = clientData.Tiling
-	self.Stream = clientData.Stream
-end
-
 function SELF:Update()
 	self.WidthNearby = self.Width / SKY_CAM_SCALE
 end

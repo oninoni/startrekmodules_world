@@ -218,6 +218,10 @@ end
 -- @param Table worldVector
 -- @return WorldVector worldVector
 function WorldVectorFromTable(worldVector)
+	if IsWorldVector(worldVector) then
+		return worldVector
+	end
+
 	setmetatable(worldVector, metaTable)
 	worldVector:FixValue()
 

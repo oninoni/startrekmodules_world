@@ -44,20 +44,17 @@ function SELF:Terminate()
 end
 
 function SELF:SetData(clientData)
-	self.Pos = WorldVectorFromTable(clientData.Pos)
-	self.Ang = clientData.Ang
-
-	self.Model = clientData.Model
-	self.Material = clientData.Material
-
-	self.Diameter = clientData.Diameter
-	self.Scale = clientData.Scale
+	for key, value in pairs(clientData) do
+		self[key] = value
+	end
 end
 
 function SELF:SetDynData(clientData)
 end
 
 function SELF:Update()
+	WorldVectorFromTable(self.Pos)
+
 	local model = self.Model
 	local modelScale = self.Scale or 1
 	local material = self.Material

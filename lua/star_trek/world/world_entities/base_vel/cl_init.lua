@@ -20,21 +20,6 @@
 if not istable(ENT) then Star_Trek:LoadAllModules() return end
 local SELF = ENT
 
-function SELF:Init(clientData)
-	SELF.Base.Init(self, clientData)
-end
-
-function SELF:SetData(clientData)
-	self.Model = clientData.Model
-	self.Material = clientData.Material
-
-	self.Diameter = clientData.Diameter
-	self.Scale = clientData.Scale
-
-	self.Vel = clientData.Vel
-	self.AngVel = clientData.AngVel
-end
-
 function SELF:SetDynData(clientData)
 	self.Pos = WorldVectorFromTable(clientData.Pos)
 	self.Ang = clientData.Ang
