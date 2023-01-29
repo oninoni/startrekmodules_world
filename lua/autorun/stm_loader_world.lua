@@ -23,4 +23,4 @@ Star_Trek.Modules["world"] = false
 
 Star_Trek.Modules["operations"] = true
 Star_Trek.Modules["tactical"] = true
-Star_Trek.Modules["conn"] = true
+Star_Trek.Modules["conn"] = false
