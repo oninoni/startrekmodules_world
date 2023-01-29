@@ -81,17 +81,19 @@ function SELF:RenderThink(shipPos, shipAng)
 	local nearbyEntity = self.NearbyEntity
 	if distance < NEARBY_MAX then
 		self.RenderNearby = true
+		self.RenderSkybox = false
 
 		nearbyEntity:SetPos(pos / SKY_CAM_SCALE)
 		nearbyEntity:SetAngles(ang)
 	else
 		self.RenderNearby = false
-	end
-	if distance + self.Diameter < NEARBY_MAX then
-		self.RenderSkybox = false
-	else
 		self.RenderSkybox = true
 	end
+	--if distance + self.Diameter < NEARBY_MAX then
+	--	self.RenderSkybox = false
+	--else
+	--	self.RenderSkybox = true
+	--end
 
 	local skyboxEntity = self.SkyboxEntity
 
