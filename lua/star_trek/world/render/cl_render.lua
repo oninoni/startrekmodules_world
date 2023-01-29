@@ -20,6 +20,7 @@ Star_Trek.World.RenderEntities = Star_Trek.World.RenderEntities or {}
 
 local SKY_CAM_SCALE = Star_Trek.World.Skybox_Scale or (1 / 1024)
 local SORT_DELAY = Star_Trek.World.SortDelay or 0.5
+local VECTOR_MAX = Star_Trek.World.Vector_Max or 131071
 
 Star_Trek.World.HullEntities = Star_Trek.World.HullEntities or {}
 local function initHull()
@@ -105,7 +106,7 @@ function Star_Trek.World:SkyboxDraw()
 		Star_Trek.World:DrawBackground()
 	cam.End3D()
 
-	cam.Start3D(eyePos * SKY_CAM_SCALE, eyeAngles, nil, nil, nil, nil, nil, 0.0005, 10000000)
+	cam.Start3D(eyePos * SKY_CAM_SCALE, eyeAngles, nil, nil, nil, nil, nil, 1, VECTOR_MAX)
 		cam.IgnoreZ(true)
 		local renderEntities = self.RenderEntities
 		for i = 1, #renderEntities do
