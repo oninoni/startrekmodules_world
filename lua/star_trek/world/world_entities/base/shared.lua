@@ -34,10 +34,12 @@ function SELF:GetOrbit(r, d)
 		d = math.random(0, 360)
 	end
 
-	local dir = Angle(d, 0, 0):Forward()
-	local worldDir = WorldVector(0, 0, 0, dir.x, dir.z, 0)
+	local pos = self.Pos
+	if isvector(self.OrbitOffset) or IsWorldVector(self.OrbitOffset) then
+		pos = LocalToWorldBig(self.OrbitOffset, Angle(), self.Pos, self.Ang)
+	end
 
-	return self.Pos + worldDir * r
+	return LocalToWorldBig(Vector(r, 0, 0), Angle(), pos, Angle(0, d, 0))
 end
 
 function SELF:GetStandardOrbit(d)

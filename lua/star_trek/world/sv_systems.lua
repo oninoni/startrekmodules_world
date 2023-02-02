@@ -118,21 +118,14 @@ end)
 -- @return Boolean success
 -- @return String error
 function Star_Trek.World:AddMapShip()
-	local _, mapShip = Star_Trek.World:LoadEntity(1, "ship", self.Entities[4]:GetStandardOrbit(), Angle(), "models/kingpommes/startrek/intrepid/intrepid_sky_1024.mdl")
+	local dir = Angle(0, math.random(0, 360), 0)
+
+	local _, station = Star_Trek.World:LoadEntity(100, "base", self.Entities[4]:GetStandardOrbit(), dir, "models/crazycanadian/star_trek/stations/spacedock.mdl", KM(5))
+	station.OrbitOffset = Vector(0, 0, KM(4.2))
+	self.Stattion = station
+
+	local _, mapShip = Star_Trek.World:LoadEntity(1, "ship", station:GetStandardOrbit(), Angle(), "models/kingpommes/startrek/intrepid/intrepid_sky_1024.mdl")
 	self.MapShip = mapShip
-
-	local pos, ang = LocalToWorldBig(WorldVector(0, 0, 0, 0, KM(0.5), 0), Angle(), mapShip.Pos, mapShip.Ang)
-	local _, mapShip2 = Star_Trek.World:LoadEntity(100, "ship", pos, ang, "models/kingpommes/startrek/intrepid/intrepid_sky_1024.mdl")
-	self.MapShip2 = mapShip2
-	mapShip2:SetAngularVelocity(Angle(math.Rand(-5, 5), math.Rand(-5, 5), math.Rand(-5, 5)))
-
-	pos, ang = LocalToWorldBig(WorldVector(0, 0, 0, 0, KM(1), 0), Angle(), mapShip.Pos, mapShip.Ang)
-	local _, mapShip3 = Star_Trek.World:LoadEntity(101, "ship", pos, ang, "models/kingpommes/startrek/intrepid/intrepid_sky_1024.mdl")
-	self.MapShip3 = mapShip3
-	mapShip3:SetAngularVelocity(Angle(math.Rand(-5, 5), math.Rand(-5, 5), math.Rand(-5, 5)))
-
-	--Star_Trek.World:LoadEntity(100, "beam", WorldVector(0, 0, 0, M(145), 0, M(8.5)), Angle(0, 0, 0), KM(10), 1, "sprites/tp_beam001", Color(255, 0, 0, 127), 0.4, 4, 1)
-	--Star_Trek.World:LoadEntity(101, "beam", WorldVector(0, 0, 0, M(20), 0, -M(15)),  Angle(0, 0, 0), KM(10), 1, "sprites/hydraspinalcord", Color(0, 255, 0, 127), 0.6, 8, 1)
 end
 
 -- Setup the galaxy.

@@ -78,39 +78,33 @@ function SELF:RenderThink(shipPos, shipAng)
 	local distance = pos:Length()
 	self.Distance = distance
 
-	local nearbyEntity = self.NearbyEntity
-	if distance < NEARBY_MAX then
-		self.RenderNearby = true
+	if distance / SKY_CAM_SCALE < VECTOR_MAX and distance - self.Diameter < NEARBY_MAX then
 		self.RenderSkybox = false
+		self.RenderNearby = true
 
+		local nearbyEntity = self.NearbyEntity
 		nearbyEntity:SetPos(pos / SKY_CAM_SCALE)
 		nearbyEntity:SetAngles(ang)
 	else
-		self.RenderNearby = false
 		self.RenderSkybox = true
-	end
-	--if distance + self.Diameter < NEARBY_MAX then
-	--	self.RenderSkybox = false
-	--else
-	--	self.RenderSkybox = true
-	--end
+		self.RenderNearby = false
 
-	local skyboxEntity = self.SkyboxEntity
+		local modelScale = self.Scale or 1
+		local skyboxEntity = self.SkyboxEntity
+		if distance > VECTOR_MAX then
+			pos = Vector(pos)
+			pos:Normalize()
+			pos = pos * VECTOR_MAX
 
-	-- Apply scaling
-	local modelScale = self.Scale or 1
-	if distance > VECTOR_MAX then
-		pos = Vector(pos)
-		pos:Normalize()
-		pos = pos * VECTOR_MAX
+			skyboxEntity:SetModelScale(modelScale * (VECTOR_MAX / distance))
+		else
+			skyboxEntity:SetModelScale(modelScale)
+		end
 
-		skyboxEntity:SetModelScale(modelScale * (VECTOR_MAX / distance))
-	else
-		skyboxEntity:SetModelScale(modelScale)
+		skyboxEntity:SetPos(pos)
+		skyboxEntity:SetAngles(ang)
 	end
 
-	skyboxEntity:SetPos(pos)
-	skyboxEntity:SetAngles(ang)
 end
 
 function SELF:DrawSkybox()
