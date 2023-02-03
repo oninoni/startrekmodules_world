@@ -76,12 +76,10 @@ function SELF:RenderThink(shipPos, shipAng)
 	self.GlowDir = -self.LocalDir
 
 	self.GlowColor = self.LightColor
-	local limit = diameter * 16
+	local limit = diameter * 32
 	if distance < limit then
-		local factor = distance / limit
-		diameter = diameter * factor
-
-		self.GlowColor = ColorAlpha(self.GlowColor, factor * 255)
+		local factor = math.max(0, (distance / limit) * 1.2 - 0.2)
+		self.GlowColor = ColorAlpha(self.LightColor, factor * 255)
 	end
 
 	if distance >= VECTOR_MAX then
