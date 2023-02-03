@@ -21,7 +21,7 @@ if not istable(ENT) then Star_Trek:LoadAllModules() return end
 local SELF = ENT
 
 local SKY_CAM_SCALE = Star_Trek.World.Skybox_Scale or (1 / 1024)
-local NEARBY_MAX = 12
+local NEARBY_MAX = Star_Trek.World.NearbyRenderMax or 16
 
 function SELF:Update()
 	self.WidthNearby = self.Width / SKY_CAM_SCALE

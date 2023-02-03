@@ -19,7 +19,10 @@
 local SKY_CAM_SCALE = Star_Trek.World.Skybox_Scale or (1 / 1024)
 local SORT_DELAY = Star_Trek.World.SortDelay or 0.5
 local VECTOR_MAX = Star_Trek.World.Vector_Max or 131071
-local AMBIENT_LIGHT = 0.0005
+local AMBIENT_LIGHT = Star_Trek.World.AmbientLight
+if AMBIENT_LIGHT == nil then
+	AMBIENT_LIGHT = 0.0005
+end
 
 Star_Trek.World.HullEntities = Star_Trek.World.HullEntities or {}
 local function initHull()
