@@ -72,6 +72,13 @@ end
 
 function SELF:RenderThink(shipPos, shipAng)
 	local pos, ang = WorldToLocalBig(self.Pos, self.Ang, shipPos, shipAng)
+	self.LocalPos = pos
+	self.LocalAng = ang
+
+	local dir = Vector(pos)
+	dir:Normalize()
+	self.LocalDir = dir
+
 	local distance = pos:Length()
 	self.Distance = distance
 
@@ -89,9 +96,7 @@ function SELF:RenderThink(shipPos, shipAng)
 		local modelScale = self.Scale or 1
 		local skyboxEntity = self.SkyboxEntity
 		if distance >= VECTOR_MAX then
-			pos = Vector(pos)
-			pos:Normalize()
-			pos = pos * VECTOR_MAX
+			pos = dir * VECTOR_MAX
 
 			skyboxEntity:SetModelScale(modelScale * (VECTOR_MAX / distance))
 		else
@@ -101,6 +106,8 @@ function SELF:RenderThink(shipPos, shipAng)
 		skyboxEntity:SetPos(pos)
 		skyboxEntity:SetAngles(ang)
 	end
+
+	self.ProjectedPos = pos
 end
 
 function SELF:ApplyModel(ent, modelData)

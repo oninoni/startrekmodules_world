@@ -146,7 +146,7 @@ function Star_Trek.World:ReLoadGalaxy()
 	if override then return end
 
 	local solLeaf = self.QuadTree:CreateLeaf(LY(0), LY(0), {Name = "Sol System", Entities = {
-		{Id = 11, OrbitRadius = AU(0), Name = "Sol", Class = "sun", Diameter = KM(1392700), LightColor = Vector(1, 1, 1)},
+		{Id = 11, OrbitRadius = AU(0), Name = "Sol", Class = "sun", Model = {Model = "models/crazycanadian/star_trek/planets/star.mdl", Skin = 2}, Diameter = KM(1392700), LightColor = Vector(1.3, 1.2, 1)},
 		{Id = 2, OrbitRadius = AU(0.39), Name = "Mercury", Class = "planet", Model = "models/planets/mercury.mdl", Diameter = KM(4880)},
 		{Id = 3, OrbitRadius = AU(0.72), Name = "Venus", Class = "planet", Model = "models/planets/venus.mdl", Diameter = KM(12104)},
 		{Id = 4, OrbitRadius = AU(1), Name = "Earth", Class = "planet", Model = nil, Diameter = KM(12142)},
@@ -188,7 +188,7 @@ hook.Add("PostCleanupMap", "Star_Trek.World.LoadGalaxy", function() Star_Trek.Wo
 
 function flyToVulcan()
 	local ship = Star_Trek.World.Entities[1]
-	local moon = Star_Trek.World.Entities[10]
+	local moon = Star_Trek.World.Entities[11]
 
 	local targetPos = moon:GetStandardOrbit()
 	--targetPos = WorldVector(0, 0, 0, LY(100), 0, 0)
@@ -196,7 +196,7 @@ function flyToVulcan()
 	local course = ship:PlotCourse(targetPos)
 	print("Nodes: ", #course)
 
-	ship:ExecuteCourse(course, W(0.5), function()
+	ship:ExecuteCourse(course, W(4), function()
 		print("We There!")
 	end)
 end
