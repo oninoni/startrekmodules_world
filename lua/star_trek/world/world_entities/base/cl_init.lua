@@ -21,20 +21,15 @@ if not istable(ENT) then Star_Trek:LoadAllModules() return end
 local SELF = ENT
 
 local SKY_CAM_SCALE = Star_Trek.World.Skybox_Scale or (1 / 1024)
-local NEARBY_MAX = 12
+local NEARBY_MAX = 16
 local VECTOR_MAX = Star_Trek.World.Vector_Max or 131071
 
 function SELF:Init(clientData)
 	self:SetData(clientData)
 	self:SetDynData(clientData)
 
-	local skyboxEntity = ClientsideModel(self.Model, RENDERGROUP_BOTH)
-	skyboxEntity:SetNoDraw(true)
-	self.SkyboxEntity = skyboxEntity
-
-	local nearbyEntity = ClientsideModel(self.Model, RENDERGROUP_BOTH)
-	nearbyEntity:SetNoDraw(true)
-	self.NearbyEntity = nearbyEntity
+	self.SkyboxEntity = self:CreateClientsideModel(self.Model)
+	self.NearbyEntity = self:CreateClientsideModel(self.Model)
 
 	self:Update()
 end
@@ -52,23 +47,57 @@ end
 function SELF:SetDynData(clientData)
 end
 
+function SELF:ApplyModel(ent, modelData)
+	local model = modelData
+	if istable(modelData) then
+		model = modelData.Model
+	end
+
+	ent:SetModel(model)
+
+	if istable(modelData) then
+		local skinId = modelData.Skin
+		if isnumber(skinId) then
+			ent:SetSkin(skinId)
+		end
+
+		local bodygroupData = modelData.Bodygroups
+		if istable(bodygroupData) then
+			for i, v in pairs(bodygroupData) do
+				ent:SetBodygroup(i, v)
+			end
+		end
+	end
+end
+
+function SELF:CreateClientsideModel(modelData)
+	local ent = ClientsideModel("models/hunter/blocks/cube1x1x1.mdl", RENDERGROUP_BOTH)
+	ent:SetNoDraw(true)
+
+	self:ApplyModel(ent, modelData)
+
+	return ent
+end
+
 function SELF:Update()
 	WorldVectorFromTable(self.Pos)
 
-	local model = self.Model
+	local modelData = self.Model
 	local modelScale = self.Scale or 1
 	local material = self.Material
 
 	local nearbyEntity = self.NearbyEntity
 	if IsValid(nearbyEntity) then
-		nearbyEntity:SetModel(model)
+		self:ApplyModel(nearbyEntity, modelData)
+
 		nearbyEntity:SetModelScale(modelScale / SKY_CAM_SCALE)
 		nearbyEntity:SetMaterial(material)
 	end
 
 	local skyboxEntity = self.SkyboxEntity
 	if IsValid(skyboxEntity) then
-		skyboxEntity:SetModel(model)
+		self:ApplyModel(skyboxEntity, modelData)
+
 		skyboxEntity:SetMaterial(material)
 	end
 end

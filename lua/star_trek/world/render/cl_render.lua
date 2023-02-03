@@ -106,7 +106,7 @@ function Star_Trek.World:SkyboxDraw()
 		Star_Trek.World:DrawBackground()
 	cam.End3D()
 
-	cam.Start3D(eyePos * SKY_CAM_SCALE, eyeAngles, nil, nil, nil, nil, nil, 1, VECTOR_MAX)
+	cam.Start3D(eyePos * SKY_CAM_SCALE, eyeAngles, nil, nil, nil, nil, nil, 8, VECTOR_MAX)
 		cam.IgnoreZ(true)
 		local renderEntities = self.RenderEntities
 		for i = 1, #renderEntities do

@@ -62,8 +62,31 @@ function SELF:SetAngles(ang)
 end
 SELF.SetAng = SELF.SetAngles
 
+function SELF:ApplySize()
+	local diameter = self.Diameter or 1
+
+	local model = self.Model
+	if istable(model) then
+		model = model.Model
+	end
+
+	local modelDiameter = Star_Trek.World:GetModelDiameter(model)
+
+	self.Scale = diameter / modelDiameter
+
+	self.Updated = true
+end
+
 function SELF:SetModel(model)
 	self.Model = model or "models/hunter/blocks/cube4x4x4.mdl"
+	self:ApplySize()
+
+	self.Updated = true
+end
+
+function SELF:SetDiameter(diameter)
+	self.Diameter = diameter or 1
+	self:ApplySize()
 
 	self.Updated = true
 end
@@ -72,11 +95,4 @@ function SELF:SetMaterial(material)
 	self.Material = material
 
 	self.Updated = true
-end
-
-function SELF:SetDiameter(diameter)
-	local modelDiameter = Star_Trek.World:GetModelDiameter(self.Model)
-
-	self.Diameter = diameter or modelDiameter
-	self.Scale = self.Diameter / modelDiameter
 end

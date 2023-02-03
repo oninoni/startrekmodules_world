@@ -22,6 +22,10 @@ local SELF = ENT
 
 function SELF:Init(pos, ang, model, diameter, spin)
 	model = model or "models/planets/earth.mdl"
+	diameter = diameter or KM(100)
+	if spin == nil then
+		spin = 0.1
+	end
 
 	SELF.Base.Init(self, pos, ang, model, diameter, Vector(), Angle(0, spin, 0))
 end

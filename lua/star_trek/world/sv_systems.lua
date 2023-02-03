@@ -45,7 +45,7 @@ function Star_Trek.World:LoadStarSystem(leaf)
 		end
 		entPos = entPos + Vector(0, 0, KM(math.random(-10000, 10000)))
 
-		local success, worldEnt = Star_Trek.World:LoadEntity(entData.Id, entData.Class, entPos, entData.Ang or Angle(), entData.Model, entData.Diameter, spin)
+		local success, worldEnt = Star_Trek.World:LoadEntity(entData.Id, entData.Class, entPos, entData.Ang or Angle(), entData.Model, entData.Diameter)
 		if not success then
 			return false, worldEnt
 		end
@@ -126,6 +126,11 @@ function Star_Trek.World:AddMapShip()
 
 	local _, mapShip = Star_Trek.World:LoadEntity(1, "ship", station:GetStandardOrbit(), Angle(), "models/kingpommes/startrek/intrepid/intrepid_sky_1024.mdl")
 	self.MapShip = mapShip
+
+	for i = 1, 10 do
+		local pos = LocalToWorldBig(Vector(-M(i * 100), M(i * 100), -M(i * 100)), Angle(), mapShip.Pos, mapShip.Ang)
+		Star_Trek.World:LoadEntity(100 + i, "ship", pos, ang, "models/hunter/blocks/cube4x4x4.mdl", M(50))
+	end
 end
 
 -- Setup the galaxy.
@@ -144,7 +149,7 @@ function Star_Trek.World:ReLoadGalaxy()
 		{Id = 11, OrbitRadius = AU(0), Name = "Sol", Class = "planet", Model = "models/planets/sun.mdl", Diameter = KM(1392700)},
 		{Id = 2, OrbitRadius = AU(0.39), Name = "Mercury", Class = "planet", Model = "models/planets/mercury.mdl", Diameter = KM(4880)},
 		{Id = 3, OrbitRadius = AU(0.72), Name = "Venus", Class = "planet", Model = "models/planets/venus.mdl", Diameter = KM(12104)},
-		{Id = 4, OrbitRadius = AU(1), Name = "Earth", Class = "planet", Model = "models/immigrant/starwars/planet.mdl", Diameter = KM(12142)},
+		{Id = 4, OrbitRadius = AU(1), Name = "Earth", Class = "planet", Model = nil, Diameter = KM(12142)},
 		{Id = 5, OrbitRadius = AU(1.52), Name = "Mars", Class = "planet", Model = "models/planets/mars.mdl", Diameter = KM(6780)},
 		{Id = 6, OrbitRadius = AU(5.20), Name = "Jupiter", Class = "planet", Model = "models/planets/jupiter.mdl", Diameter = KM(139822)},
 		{Id = 7, OrbitRadius = AU(9.58), Name = "Saturn", Class = "planet", Model = "models/planets/saturn.mdl", Diameter = KM(116464)},
