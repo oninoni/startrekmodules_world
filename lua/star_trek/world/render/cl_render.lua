@@ -16,11 +16,10 @@
 --       World Render | Client       --
 ---------------------------------------
 
-Star_Trek.World.RenderEntities = Star_Trek.World.RenderEntities or {}
-
 local SKY_CAM_SCALE = Star_Trek.World.Skybox_Scale or (1 / 1024)
 local SORT_DELAY = Star_Trek.World.SortDelay or 0.5
 local VECTOR_MAX = Star_Trek.World.Vector_Max or 131071
+local AMBIENT_LIGHT = 0.0005
 
 Star_Trek.World.HullEntities = Star_Trek.World.HullEntities or {}
 local function initHull()
@@ -33,6 +32,9 @@ local function initHull()
 end
 hook.Add("PostCleanupMap", "Star_Trek.World.InitHull", initHull)
 hook.Add("InitPostEntity", "Star_Trek.World.InitHull", initHull)
+
+Star_Trek.World.RenderEntities = Star_Trek.World.RenderEntities or {}
+Star_Trek.World.LightSources = Star_Trek.World.LightSources or {}
 
 local shipId, shipPos, shipAng
 local nextSort = CurTime()
@@ -53,10 +55,25 @@ function Star_Trek.World:RenderThink()
 		self.ShouldGenRender = nil
 		self.RenderEntities = {}
 
+		local j = 1
+		local lightSources = {{},{},{},{}}
+		self.LightSources = lightSources
+
 		for _, ent in SortedPairsByMemberValue(self.Entities, "Distance", true) do
-			ent:RenderThink(shipPos, shipAng)
+			if ent.Id == shipId then continue end
 
 			table.insert(self.RenderEntities, ent)
+
+			ent:RenderThink(shipPos, shipAng)
+
+			if ent.LightSource then
+				lightSources[j] = ent.LightTable
+
+				j = j + 1
+				if j >= 4 then
+					break
+				end
+			end
 		end
 
 		nextSort = CurTime() + SORT_DELAY
@@ -64,20 +81,29 @@ function Star_Trek.World:RenderThink()
 	end
 
 	local renderEntities = self.RenderEntities
-	for i = 1, #renderEntities do
-		local ent = renderEntities[i]
-		if ent.Id == shipId then continue end
-
-		ent:RenderThink(shipPos, shipAng)
-	end
 
 	local curTime = CurTime()
-	if curTime < nextSort then
-		return
-	end
-	nextSort = curTime + SORT_DELAY
+	if curTime >= nextSort then
+		nextSort = curTime + SORT_DELAY
 
-	table.SortByMember(renderEntities, "Distance")
+		-- Render Sorting.
+		table.SortByMember(renderEntities, "Distance")
+	end
+
+	-- Light sources.
+	local lightCount = 1
+	local lightSources = self.LightSources
+
+	for i = 1, #renderEntities do
+		local ent = renderEntities[i]
+
+		ent:RenderThink(shipPos, shipAng)
+
+		if ent.LightSource and lightCount < 4 then
+			lightSources[lightCount] = ent.LightTable
+			lightCount = lightCount + 1
+		end
+	end
 end
 
 function Star_Trek.World:SkyboxDraw()
@@ -88,23 +114,18 @@ function Star_Trek.World:SkyboxDraw()
 	local eyeAngles = ply:EyeAngles()
 
 	render.SuppressEngineLighting(true)
-	render.ResetModelLighting(0.0005, 0.0005, 0.0005)
-	render.SetLocalModelLights({
-		{
-			type    = MATERIAL_LIGHT_POINT,
-			color   = Vector(2,2,2),
-			pos     = self.Entities[11].SkyboxEntity:GetPos(),
-			range   = 0,
-		}
-	})
 
 	local mat = Matrix()
 	mat:SetAngles(shipAng)
 	mat:Rotate(eyeAngles)
 
 	cam.Start3D(Vector(), mat:GetAngles(), nil, nil, nil, nil, nil, 0.5, 2)
-		Star_Trek.World:DrawBackground()
+		self:DrawBackground()
 	cam.End3D()
+
+	render.ResetModelLighting(AMBIENT_LIGHT, AMBIENT_LIGHT, AMBIENT_LIGHT)
+	render.SetLocalModelLights()
+	render.SetLocalModelLights(self.LightSources)
 
 	cam.Start3D(eyePos * SKY_CAM_SCALE, eyeAngles, nil, nil, nil, nil, nil, 8, VECTOR_MAX)
 		cam.IgnoreZ(true)
@@ -129,15 +150,10 @@ function Star_Trek.World:NearbyDraw()
 	if not shipId then return end
 
 	render.SuppressEngineLighting(true)
-	render.ResetModelLighting(0.0005, 0.0005, 0.0005)
-	render.SetLocalModelLights({
-		{
-			type    = MATERIAL_LIGHT_POINT,
-			color   = Vector(2,2,2),
-			pos     = self.Entities[11].SkyboxEntity:GetPos() * (1 / SKY_CAM_SCALE),
-			range   = 0,
-		}
-	})
+
+	render.ResetModelLighting(AMBIENT_LIGHT, AMBIENT_LIGHT, AMBIENT_LIGHT)
+	render.SetLocalModelLights()
+	render.SetLocalModelLights(self.LightSources)
 
 	cam.Start3D()
 		local hullEntities = self.HullEntities

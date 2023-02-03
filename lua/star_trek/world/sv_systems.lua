@@ -45,7 +45,7 @@ function Star_Trek.World:LoadStarSystem(leaf)
 		end
 		entPos = entPos + Vector(0, 0, KM(math.random(-10000, 10000)))
 
-		local success, worldEnt = Star_Trek.World:LoadEntity(entData.Id, entData.Class, entPos, entData.Ang or Angle(), entData.Model, entData.Diameter)
+		local success, worldEnt = Star_Trek.World:LoadEntity(entData.Id, entData.Class, entPos, entData.Ang or Angle(), entData.Model, entData.Diameter, entData.Spin, entData.LightColor)
 		if not success then
 			return false, worldEnt
 		end
@@ -146,7 +146,7 @@ function Star_Trek.World:ReLoadGalaxy()
 	if override then return end
 
 	local solLeaf = self.QuadTree:CreateLeaf(LY(0), LY(0), {Name = "Sol System", Entities = {
-		{Id = 11, OrbitRadius = AU(0), Name = "Sol", Class = "planet", Model = "models/planets/sun.mdl", Diameter = KM(1392700)},
+		{Id = 11, OrbitRadius = AU(0), Name = "Sol", Class = "sun", Diameter = KM(1392700), LightColor = Vector(1, 1, 1)},
 		{Id = 2, OrbitRadius = AU(0.39), Name = "Mercury", Class = "planet", Model = "models/planets/mercury.mdl", Diameter = KM(4880)},
 		{Id = 3, OrbitRadius = AU(0.72), Name = "Venus", Class = "planet", Model = "models/planets/venus.mdl", Diameter = KM(12104)},
 		{Id = 4, OrbitRadius = AU(1), Name = "Earth", Class = "planet", Model = nil, Diameter = KM(12142)},
@@ -160,21 +160,21 @@ function Star_Trek.World:ReLoadGalaxy()
 		{Id = 10, ParentId = 4, OrbitRadius = KM(385000), Name = "Luna", Class = "planet", Model = "models/planets/luna_big.mdl", Diameter = KM(3474.8)},
 	}})
 	self.QuadTree:CreateLeaf(LY(-0.6162192048), LY(-12.8379001), {Name = "Vulcan System", Entities = {
-		{Id = 12, OrbitRadius = AU(0), Name = "40 Eridiani A", Class = "planet", Model = "models/planets/sun.mdl", Diameter = KM(1130872.4)},
-		{Id = 13, OrbitRadius = AU(0.3), Name = "40 Eridiani B", Class = "planet", Model = "models/planets/sun.mdl", Diameter = KM(19497.8)},
-		{Id = 14, OrbitRadius = AU(0.2), Name = "40 Eridiani C", Class = "planet", Model = "models/planets/sun.mdl", Diameter = KM(431737)},
+		{Id = 12, OrbitRadius = AU(0), Name = "40 Eridiani A", Class = "sun", Diameter = KM(1130872.4), LightColor = Vector(1, 1, 1)},
+		{Id = 13, OrbitRadius = AU(0.3), Name = "40 Eridiani B", Class = "sun", Diameter = KM(19497.8), LightColor = Vector(1, 1, 1)},
+		{Id = 14, OrbitRadius = AU(0.2), Name = "40 Eridiani C", Class = "sun", Diameter = KM(431737), LightColor = Vector(1, 1, 1)},
 
 		{Id = 15, OrbitRadius = AU(0.9), Name = "Vulcan", Class = "planet", Model = "models/planets/mars.mdl", Diameter = KM(12142)},
 	}})
 	self.QuadTree:CreateLeaf(LY(6.264895249), LY(-9.756804077), {Name = "Andoria System", Entities = {
-		{Id = 16, OrbitRadius = AU(0), Name = "Procyon A", Class = "planet", Model = "models/planets/sun.mdl", Diameter = KM(2855035)},
-		{Id = 17, OrbitRadius = AU(0.3), Name = "Procyon B", Class = "planet", Model = "models/planets/sun.mdl", Diameter = KM(16712.4)},
+		{Id = 16, OrbitRadius = AU(0), Name = "Procyon A", Class = "sun", Diameter = KM(2855035), LightColor = Vector(1, 1, 1)},
+		{Id = 17, OrbitRadius = AU(0.3), Name = "Procyon B", Class = "sun", Diameter = KM(16712.4), LightColor = Vector(1, 1, 1)},
 
 		{Id = 18, OrbitRadius = AU(2), Name = "Andor", Class = "planet", Model = "models/planets/earth.mdl", Diameter = KM(12142)},
 	}})
 	self.QuadTree:CreateLeaf(LY(-11.86221969), LY(1.386493211), {Name = "Tellar System", Entities = {
-		{Id = 19, OrbitRadius = AU(0), Name = "61 Cygni A", Class = "planet", Model = "models/planets/sun.mdl", Diameter = KM(926145.5)},
-		{Id = 20, OrbitRadius = AU(0.2), Name = "61 Cygni B", Class = "planet", Model = "models/planets/sun.mdl", Diameter = KM(828656.5)},
+		{Id = 19, OrbitRadius = AU(0), Name = "61 Cygni A", Class = "sun", Diameter = KM(926145.5), LightColor = Vector(1, 1, 1)},
+		{Id = 20, OrbitRadius = AU(0.2), Name = "61 Cygni B", Class = "sun", Diameter = KM(828656.5), LightColor = Vector(1, 1, 1)},
 
 		{Id = 21, OrbitRadius = AU(1.5), Name = "Tellar", Class = "planet", Model = "models/planets/earth.mdl", Diameter = KM(12142)},
 	}})

@@ -47,38 +47,6 @@ end
 function SELF:SetDynData(clientData)
 end
 
-function SELF:ApplyModel(ent, modelData)
-	local model = modelData
-	if istable(modelData) then
-		model = modelData.Model
-	end
-
-	ent:SetModel(model)
-
-	if istable(modelData) then
-		local skinId = modelData.Skin
-		if isnumber(skinId) then
-			ent:SetSkin(skinId)
-		end
-
-		local bodygroupData = modelData.Bodygroups
-		if istable(bodygroupData) then
-			for i, v in pairs(bodygroupData) do
-				ent:SetBodygroup(i, v)
-			end
-		end
-	end
-end
-
-function SELF:CreateClientsideModel(modelData)
-	local ent = ClientsideModel("models/hunter/blocks/cube1x1x1.mdl", RENDERGROUP_BOTH)
-	ent:SetNoDraw(true)
-
-	self:ApplyModel(ent, modelData)
-
-	return ent
-end
-
 function SELF:Update()
 	WorldVectorFromTable(self.Pos)
 
@@ -120,7 +88,7 @@ function SELF:RenderThink(shipPos, shipAng)
 
 		local modelScale = self.Scale or 1
 		local skyboxEntity = self.SkyboxEntity
-		if distance > VECTOR_MAX then
+		if distance >= VECTOR_MAX then
 			pos = Vector(pos)
 			pos:Normalize()
 			pos = pos * VECTOR_MAX
@@ -133,7 +101,38 @@ function SELF:RenderThink(shipPos, shipAng)
 		skyboxEntity:SetPos(pos)
 		skyboxEntity:SetAngles(ang)
 	end
+end
 
+function SELF:ApplyModel(ent, modelData)
+	local model = modelData
+	if istable(modelData) then
+		model = modelData.Model
+	end
+
+	ent:SetModel(model)
+
+	if istable(modelData) then
+		local skinId = modelData.Skin
+		if isnumber(skinId) then
+			ent:SetSkin(skinId)
+		end
+
+		local bodygroupData = modelData.Bodygroups
+		if istable(bodygroupData) then
+			for i, v in pairs(bodygroupData) do
+				ent:SetBodygroup(i, v)
+			end
+		end
+	end
+end
+
+function SELF:CreateClientsideModel(modelData)
+	local ent = ClientsideModel("models/hunter/blocks/cube1x1x1.mdl", RENDERGROUP_BOTH)
+	ent:SetNoDraw(true)
+
+	self:ApplyModel(ent, modelData)
+
+	return ent
 end
 
 function SELF:DrawSkybox()
