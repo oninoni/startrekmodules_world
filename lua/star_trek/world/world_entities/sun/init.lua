@@ -20,22 +20,22 @@
 if not istable(ENT) then Star_Trek:LoadAllModules() return end
 local SELF = ENT
 
-function SELF:Init(pos, ang, model, diameter, spin, lightColor)
+function SELF:Init(pos, ang, model, diameter, spin, lightColorVector)
 	model = model or "models/crazycanadian/star_trek/planets/star.mdl"
 
 	SELF.Base.Init(self, pos, ang, model, diameter, spin)
 
-	self:SetLightColor(lightColor)
+	self:SetLightColorVector(lightColorVector)
 end
 
 function SELF:GetClientData(clientData)
 	SELF.Base.GetClientData(self, clientData)
 
-	clientData.LightColor = self.LightColor
+	clientData.LightColorVector = self.LightColorVector
 end
 
-function SELF:SetLightColor(lightColor)
-	self.LightColor = lightColor
+function SELF:SetLightColorVector(lightColorVector)
+	self.LightColorVector = lightColorVector
 
 	self.Updated = true
 end

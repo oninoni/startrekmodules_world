@@ -38,18 +38,18 @@ function SELF:Update()
 		linearFalloff = 0,
 		constantFalloff = 1,
 
-		color = self.LightColor,
+		color = self.LightColorVector,
 	}
 
-	local color = self.LightColor
-	local maxValue = math.max(color.x, color.y, color.z)
-	self.ConvertedColor = Color(
-		color.x / maxValue * 255,
-		color.y / maxValue * 255,
-		color.z / maxValue * 255
+	local colorVector = self.LightColorVector
+	local maxValue = math.max(colorVector.x, colorVector.y, colorVector.z)
+	self.LightColor = Color(
+		colorVector.x / maxValue * 255,
+		colorVector.y / maxValue * 255,
+		colorVector.z / maxValue * 255
 	)
 
-	self.FlareMaterial = Material("sprites/glow04_noz")
+	self.GlowMaterial = Material("sprites/glow04_noz")
 end
 
 function SELF:RenderThink(shipPos, shipAng)
@@ -71,24 +71,24 @@ function SELF:RenderThink(shipPos, shipAng)
 		lightTable.dir = nil
 	end
 
-	self.FlarePos = dir * VECTOR_MAX * 0.9
+	self.GlowPos = dir * VECTOR_MAX * 0.9
 	local diameter = self.Diameter or 1
 
-	self.FlareDir = -self.LocalDir
+	self.GlowDir = -self.LocalDir
 
-	self.FlareColor = self.ConvertedColor
+	self.GlowColor = self.LightColor
 	local limit = diameter * 16
 	if distance < limit then
 		local factor = distance / limit
 		diameter = diameter * factor
 
-		self.FlareColor = ColorAlpha(self.FlareColor, factor * 255)
+		self.GlowColor = ColorAlpha(self.GlowColor, factor * 255)
 	end
 
 	if distance >= VECTOR_MAX then
 		diameter = diameter * (VECTOR_MAX / distance)
 	end
-	self.FlareScale = diameter * 2
+	self.GlowScale = diameter * 2
 end
 
 function SELF:DrawSkybox()
@@ -96,15 +96,15 @@ function SELF:DrawSkybox()
 
 	self.Base.DrawSkybox(self)
 
-	render.SetMaterial(self.FlareMaterial)
+	render.SetMaterial(self.GlowMaterial)
 
-	local scale = self.FlareScale
+	local scale = self.GlowScale
 	render.DrawQuadEasy(
-		self.FlarePos,
-		self.FlareDir,
+		self.GlowPos,
+		self.GlowDir,
 		scale,
 		scale,
-		self.FlareColor,
+		self.GlowColor,
 		self.Id
 	)
 end
