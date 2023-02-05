@@ -31,6 +31,14 @@ local function initHull()
 	for _, ent in pairs(ents.FindByModel("models/kingpommes/startrek/intrepid/exterior_*")) do
 		ent:SetNoDraw(true)
 		table.insert(Star_Trek.World.HullEntities, ent)
+
+		local materials = ent:GetMaterials()
+		for _, materialName in pairs(materials) do
+			if materialName == "models/kingpommes/startrek/intrepid/glass_exterior" then continue end
+
+			local material = Material(materialName)
+			material:SetVector("$envmaptint", Vector(0, 0, 0))
+		end
 	end
 end
 hook.Add("PostCleanupMap", "Star_Trek.World.InitHull", initHull)
@@ -131,7 +139,7 @@ function Star_Trek.World:SkyboxDraw()
 	render.SetLocalModelLights(self.LightSources)
 
 	cam.Start3D(eyePos * SKY_CAM_SCALE, eyeAngles, nil, nil, nil, nil, nil, 8, VECTOR_MAX)
-		cam.IgnoreZ(true)
+		--cam.IgnoreZ(true)
 		local renderEntities = self.RenderEntities
 		for i = 1, #renderEntities do
 			local ent = renderEntities[i]
@@ -139,7 +147,7 @@ function Star_Trek.World:SkyboxDraw()
 
 			ent:DrawSkybox()
 		end
-		cam.IgnoreZ(false)
+		--cam.IgnoreZ(false)
 	cam.End3D()
 
 	render.SuppressEngineLighting(false)
@@ -151,6 +159,8 @@ end)
 
 function Star_Trek.World:NearbyDraw()
 	if not shipId then return end
+
+	local ply = LocalPlayer()
 
 	render.SuppressEngineLighting(true)
 
@@ -164,6 +174,16 @@ function Star_Trek.World:NearbyDraw()
 			local ent = hullEntities[i]
 
 			ent:DrawModel()
+		end
+
+		if ply:FlashlightIsOn() then
+			render.PushFlashlightMode(true)
+				for i = 1, #hullEntities do
+					local ent = hullEntities[i]
+
+					ent:DrawModel()
+				end
+			render.PopFlashlightMode()
 		end
 
 		local renderEntities = self.RenderEntities
