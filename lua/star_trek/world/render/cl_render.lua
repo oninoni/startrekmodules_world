@@ -62,7 +62,7 @@ function Star_Trek.World:RenderThink()
 		local lightSources = {{},{},{},{}}
 		self.LightSources = lightSources
 
-		for _, ent in SortedPairsByMemberValue(self.Entities, "Distance", true) do
+		for _, ent in SortedPairsByMemberValue(self.Entities, "Sort", true) do
 			if ent.Id == shipId then continue end
 
 			table.insert(self.RenderEntities, ent)
@@ -90,7 +90,7 @@ function Star_Trek.World:RenderThink()
 		nextSort = curTime + SORT_DELAY
 
 		-- Render Sorting.
-		table.SortByMember(renderEntities, "Distance")
+		table.SortByMember(renderEntities, "Sort")
 	end
 
 	-- Light sources.

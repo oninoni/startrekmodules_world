@@ -147,6 +147,7 @@ function Star_Trek.World:ReLoadGalaxy()
 
 	local solLeaf = self.QuadTree:CreateLeaf(LY(0), LY(0), {Name = "Sol System", Entities = {
 		{Id = 11, OrbitRadius = AU(0), Name = "Sol", Class = "sun", Model = {Model = "models/crazycanadian/star_trek/planets/star.mdl", Skin = 2}, Diameter = KM(1392700), LightColor = Vector(1.3, 1.2, 1)},
+		{Id = 1001, OrbitRadius = AU(0), Name = "Sol", Class = "planet", Model = "models/crazycanadian/star_trek/stations/destroyed_dysonsphere.mdl", Diameter = KM(1800000)},
 		{Id = 2, OrbitRadius = AU(0.39), Name = "Mercury", Class = "planet", Model = "models/planets/mercury.mdl", Diameter = KM(4880)},
 		{Id = 3, OrbitRadius = AU(0.72), Name = "Venus", Class = "planet", Model = "models/planets/venus.mdl", Diameter = KM(12104)},
 		{Id = 4, OrbitRadius = AU(1), Name = "Earth", Class = "planet", Model = nil, Diameter = KM(12142)},

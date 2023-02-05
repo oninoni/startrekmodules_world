@@ -31,7 +31,7 @@ function Star_Trek.World:LoadEntity(clientData)
 		return false, ent
 	end
 
-	ent.Distance = math.huge
+	ent.Sort = math.huge
 
 	self.ShouldGenRender = true
 

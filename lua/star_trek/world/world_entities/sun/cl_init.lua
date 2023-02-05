@@ -55,18 +55,18 @@ function SELF:RenderThink(shipPos, shipAng)
 	SELF.Base.RenderThink(self, shipPos, shipAng)
 
 	local lightTable = self.LightTable
-	lightTable.pos = self.ProjectedPos or self.LocalPos
 
 	local dir = self.LocalDir
-
 	local distance = self.Distance
 	if distance >= VECTOR_MAX then
 		lightTable.type = MATERIAL_LIGHT_DIRECTIONAL
 
+		lightTable.pos = Vector()
 		lightTable.dir = -dir
 	else
 		lightTable.type = MATERIAL_LIGHT_POINT
 
+		lightTable.pos = self.ProjectedPos or self.LocalPos
 		lightTable.dir = nil
 	end
 

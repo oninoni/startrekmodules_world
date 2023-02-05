@@ -82,7 +82,11 @@ function SELF:RenderThink(shipPos, shipAng)
 	local distance = pos:Length()
 	self.Distance = distance
 
-	if distance / SKY_CAM_SCALE < VECTOR_MAX and distance - self.Diameter < NEARBY_MAX then
+	local diameter = self.Diameter
+	local sort = distance - diameter / 2
+	self.Sort = sort
+
+	if distance / SKY_CAM_SCALE < VECTOR_MAX and sort < NEARBY_MAX then
 		self.RenderSkybox = false
 		self.RenderNearby = true
 
