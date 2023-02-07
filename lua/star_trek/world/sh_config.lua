@@ -54,7 +54,7 @@ Star_Trek.World.MetersPerAstrometricalUnit = REAL_M_PER_AU
 
 -- Scales the distances between systems (Changes Lightyears Calculation)
 local REAL_M_PER_LY = 9460730472580800
-Star_Trek.World.MetersPerLightyear = REAL_M_PER_LY / 100
+Star_Trek.World.MetersPerLightyear = REAL_M_PER_LY / 500
 
 -- Radius of the world in Lightyears (Max Distance from origin for objects)
 -- The Milkyway galaxy has a radius of ~52000 LY
