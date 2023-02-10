@@ -111,7 +111,10 @@ function Star_Trek.World:RenderThink()
 		ent:RenderThink(shipPos, shipAng)
 
 		if ent.LightSource and lightCount < 4 then
-			lightSources[lightCount] = ent.LightTable
+			local lightTable = ent.LightTable
+			if lightTable.type == MATERIAL_LIGHT_DISABLE then continue end
+
+			lightSources[lightCount] = lightTable
 			lightCount = lightCount + 1
 		end
 	end

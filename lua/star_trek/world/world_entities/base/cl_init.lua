@@ -139,6 +139,10 @@ end
 
 function SELF:CreateClientsideModel(modelData)
 	local ent = ClientsideModel("models/hunter/blocks/cube1x1x1.mdl", RENDERGROUP_BOTH)
+	if not IsValid(ent) then
+		return false
+	end
+
 	ent:SetNoDraw(true)
 
 	self:ApplyModel(ent, modelData)
@@ -149,11 +153,17 @@ end
 function SELF:DrawSkybox()
 	if not self.RenderSkybox then return end
 
-	self.SkyboxEntity:DrawModel()
+	local skyboxEntity = self.SkyboxEntity
+	if skyboxEntity then
+		skyboxEntity:DrawModel()
+	end
 end
 
 function SELF:DrawNearby()
 	if not self.RenderNearby then return end
 
-	self.NearbyEntity:DrawModel()
+	local nearbyEntity = self.NearbyEntity
+	if nearbyEntity then
+		nearbyEntity:DrawModel()
+	end
 end

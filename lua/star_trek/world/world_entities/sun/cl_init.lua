@@ -21,6 +21,7 @@ if not istable(ENT) then Star_Trek:LoadAllModules() return end
 local SELF = ENT
 
 local VECTOR_MAX = Star_Trek.World.Vector_Max or 131071
+local AU_PRECALC = AU(1)
 
 SELF.LightSource = true
 
@@ -30,13 +31,6 @@ function SELF:Update()
 	-- Initialise basic information.
 	self.LightTable = self.LightTable or {
 		type = MATERIAL_LIGHT_DISABLE,
-
-		-- Point Light parameters only?
-		range = 0,
-		quadraticFalloff = 0,
-		linearFalloff = 0,
-		constantFalloff = 1,
-
 		color = self.LightColorVector,
 	}
 
@@ -54,22 +48,36 @@ end
 function SELF:RenderThink(shipPos, shipAng)
 	SELF.Base.RenderThink(self, shipPos, shipAng)
 
+	-- Handle Light Source.
 	local lightTable = self.LightTable
 
-	local dir = self.LocalDir
 	local distance = self.Distance
-	if distance >= VECTOR_MAX then
-		lightTable.type = MATERIAL_LIGHT_DIRECTIONAL
+	local distanceRelative = distance / AU_PRECALC
+	local brightness = math.min(10, 1 / (distanceRelative * distanceRelative))
+	local lightColor = self.LightColorVector * brightness
+	lightTable.color = lightColor
 
-		lightTable.pos = Vector()
-		lightTable.dir = -dir
+	local dir = self.LocalDir
+	if math.max(lightColor.x, lightColor.y, lightColor.z) > 0.002 then
+		if distance >= VECTOR_MAX then
+			lightTable.type = MATERIAL_LIGHT_DIRECTIONAL
+
+			lightTable.pos = Vector()
+			lightTable.dir = -dir
+		else
+			lightTable.type = MATERIAL_LIGHT_POINT
+
+			lightTable.pos = self.ProjectedPos or self.LocalPos
+			lightTable.dir = nil
+		end
 	else
-		lightTable.type = MATERIAL_LIGHT_POINT
+		lightTable.type = MATERIAL_LIGHT_DISABLE
 
-		lightTable.pos = self.ProjectedPos or self.LocalPos
+		lightTable.pos = nil
 		lightTable.dir = nil
 	end
 
+	-- Handle Glow Decal
 	self.GlowPos = dir * VECTOR_MAX * 0.9
 	local diameter = self.Diameter or 1
 
@@ -93,6 +101,7 @@ function SELF:DrawSkybox()
 
 	self.Base.DrawSkybox(self)
 
+	-- Draw Glow Decal
 	render.SetMaterial(self.GlowMaterial)
 
 	local scale = self.GlowScale
