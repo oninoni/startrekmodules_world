@@ -67,7 +67,7 @@ function Star_Trek.World:RenderThink()
 		self.RenderEntities = {}
 
 		local j = 1
-		local lightSources = {{},{},{},{}}
+		local lightSources = {{}}--,{},{},{}}
 		self.LightSources = lightSources
 
 		for _, ent in SortedPairsByMemberValue(self.Entities, "Sort", true) do
@@ -110,7 +110,7 @@ function Star_Trek.World:RenderThink()
 
 		ent:RenderThink(shipPos, shipAng)
 
-		if ent.LightSource and lightCount < 4 then
+		if ent.LightSource and lightCount < 1 then
 			local lightTable = ent.LightTable
 			if lightTable.type == MATERIAL_LIGHT_DISABLE then continue end
 
@@ -141,16 +141,17 @@ function Star_Trek.World:SkyboxDraw()
 	render.SetLocalModelLights()
 	render.SetLocalModelLights(self.LightSources)
 
+	render.SetColorModulation(1, 1, 1)
+
 	cam.Start3D(eyePos * SKY_CAM_SCALE, eyeAngles, nil, nil, nil, nil, nil, 8, VECTOR_MAX)
-		--cam.IgnoreZ(true)
+		cam.IgnoreZ(true)
 		local renderEntities = self.RenderEntities
 		for i = 1, #renderEntities do
 			local ent = renderEntities[i]
-			if ent.Id == shipId then continue end
 
 			ent:DrawSkybox()
 		end
-		--cam.IgnoreZ(false)
+		cam.IgnoreZ(false)
 	cam.End3D()
 
 	render.SuppressEngineLighting(false)
@@ -163,13 +164,13 @@ end)
 function Star_Trek.World:NearbyDraw()
 	if not shipId then return end
 
-	local ply = LocalPlayer()
-
 	render.SuppressEngineLighting(true)
 
 	render.ResetModelLighting(AMBIENT_LIGHT, AMBIENT_LIGHT, AMBIENT_LIGHT)
-	render.SetLocalModelLights()
 	render.SetLocalModelLights(self.LightSources)
+	render.SetLightingOrigin(Vector())
+
+	render.SetColorModulation(1, 1, 1)
 
 	cam.Start3D()
 		local hullEntities = self.HullEntities
@@ -179,7 +180,7 @@ function Star_Trek.World:NearbyDraw()
 			ent:DrawModel()
 		end
 
-		if ply:FlashlightIsOn() then
+		if LocalPlayer():FlashlightIsOn() then
 			render.PushFlashlightMode(true)
 				for i = 1, #hullEntities do
 					local ent = hullEntities[i]
@@ -192,7 +193,6 @@ function Star_Trek.World:NearbyDraw()
 		local renderEntities = self.RenderEntities
 		for i = 1, #renderEntities do
 			local ent = renderEntities[i]
-			if ent.Id == shipId then continue end
 
 			ent:DrawNearby()
 		end

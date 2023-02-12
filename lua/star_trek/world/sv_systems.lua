@@ -109,6 +109,10 @@ timer.Create("Star_Trek.World.UpdateMap", 10, 0, function()
 		local pos = ship.Pos
 
 		Star_Trek.World:UpdateLocations(pos:GetX(), pos:GetY(), LY(5))
+
+		print("D: ", math.Round(SBtoLY(Star_Trek.World.MapShip.Pos:Length()), 4))
+		print("W: ", math.Round(SBtoW(Star_Trek.World.MapShip.Vel:Length()), 2))
+		print(Star_Trek.World.MapShip.ActiveManeuver.Duration / 60)
 	end)
 end)
 
@@ -127,9 +131,10 @@ function Star_Trek.World:AddMapShip()
 	local _, mapShip = Star_Trek.World:LoadEntity(1, "ship", station:GetStandardOrbit(), Angle(), "models/kingpommes/startrek/intrepid/intrepid_sky_1024.mdl")
 	self.MapShip = mapShip
 
-	for i = 1, 10 do
-		local pos = LocalToWorldBig(Vector(-M(i * 100), M(i * 100), -M(i * 100)), Angle(), mapShip.Pos, mapShip.Ang)
-		Star_Trek.World:LoadEntity(100 + i, "ship", pos, ang, "models/hunter/blocks/cube4x4x4.mdl", M(50))
+	for i = 1, 1 do
+		local pos = LocalToWorldBig(Vector(0, 0, 0), Angle(), mapShip.Pos, mapShip.Ang)
+		local _, block = Star_Trek.World:LoadEntity(100 + i, "ship", pos, ang, "models/hunter/blocks/cube4x4x4.mdl", M(50))
+		block:SetVelocity(Vector(-1, 1, -1))
 	end
 end
 
@@ -191,12 +196,12 @@ function flyToVulcan()
 	local moon = Star_Trek.World.Entities[11]
 
 	local targetPos = moon:GetStandardOrbit()
-	--targetPos = WorldVector(0, 0, 0, LY(100), 0, 0)
+	targetPos = WorldVector(0, 0, 0, LY(-0.6162192048), LY(-12.8379001), 0)
 
 	local course = ship:PlotCourse(targetPos)
 	print("Nodes: ", #course)
 
-	ship:ExecuteCourse(course, W(4), function()
+	ship:ExecuteCourse(course, W(9.975), function()
 		print("We There!")
 	end)
 end

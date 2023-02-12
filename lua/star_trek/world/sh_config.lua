@@ -63,4 +63,4 @@ Star_Trek.World.MaxDistance = 75000
 
 -- Ambient Light brightness in the absense of stars of silimar sources.
 -- Default: 0.0005
-Star_Trek.World.AmbientLight = 0.0005
+Star_Trek.World.AmbientLight = 0.008
