@@ -50,6 +50,7 @@ if SERVER then
 	include("net/sv_net.lua")
 	include("sv_entities.lua")
 
+	include("sv_galaxy.lua")
 	include("sv_systems.lua")
 end
 
