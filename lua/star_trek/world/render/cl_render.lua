@@ -173,21 +173,20 @@ function Star_Trek.World:NearbyDraw()
 	render.SetColorModulation(1, 1, 1)
 
 	cam.Start3D()
+		local flashLight = LocalPlayer():FlashlightIsOn()
+
 		local hullEntities = self.HullEntities
 		for i = 1, #hullEntities do
 			local ent = hullEntities[i]
+			if not IsValid(ent) then continue end
 
 			ent:DrawModel()
-		end
 
-		if LocalPlayer():FlashlightIsOn() then
-			render.PushFlashlightMode(true)
-				for i = 1, #hullEntities do
-					local ent = hullEntities[i]
-
-					ent:DrawModel()
-				end
-			render.PopFlashlightMode()
+			if flashLight then
+				render.PushFlashlightMode(true)
+				ent:DrawModel()
+				render.PopFlashlightMode()
+			end
 		end
 
 		local renderEntities = self.RenderEntities
