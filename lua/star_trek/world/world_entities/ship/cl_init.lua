@@ -25,6 +25,9 @@ function SELF:Update()
 
 	local activeManeuver = self.ActiveManeuver
 	if istable(activeManeuver) then
+		self.ManeuverStart = SysTime() - self.ManeuverOffset
+		self.ManeuverOffset = nil
+
 		self:FixManeuverData(activeManeuver)
 	end
 end

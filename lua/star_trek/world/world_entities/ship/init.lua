@@ -39,8 +39,13 @@ end
 function SELF:GetClientData(clientData)
 	SELF.Base.GetClientData(self, clientData)
 
-	clientData.ActiveManeuver = self.ActiveManeuver
-	clientData.ManeuverStart = self.ManeuverStart
+	local activeManeuver = self.ActiveManeuver
+	if activeManeuver then
+		clientData.ActiveManeuver = activeManeuver
+		clientData.ManeuverOffset = SysTime() - self.ManeuverStart
+	else
+		clientData.ActiveManeuver = false
+	end
 end
 
 -- Perform the given maneuver, ending a current one, if active.
