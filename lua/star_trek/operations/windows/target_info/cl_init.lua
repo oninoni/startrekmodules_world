@@ -48,7 +48,7 @@ function SELF:GetTargetInformation(id)
 			Shield = 0,
 
 			Weapons = false,
-			TargetId = 1,
+			TargetId = 2,
 		}
 	end
 
@@ -60,7 +60,7 @@ function SELF:GetTargetInformation(id)
 		Shield = 100,
 
 		Weapons = 0,
-		TargetId = 2,
+		TargetId = 1,
 	}
 end
 
