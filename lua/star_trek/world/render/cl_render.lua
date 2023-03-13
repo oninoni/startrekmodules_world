@@ -102,20 +102,19 @@ function Star_Trek.World:RenderThink()
 	end
 
 	-- Light sources.
-	local lightCount = 1
+	local lightCount = 0
 	local lightSources = self.LightSources
 
 	for i = 1, #renderEntities do
 		local ent = renderEntities[i]
 
 		ent:RenderThink(shipPos, shipAng)
-
-		if ent.LightSource and lightCount < 1 then
+		if ent.LightSource and lightCount <= 4 then
 			local lightTable = ent.LightTable
 			if lightTable.type == MATERIAL_LIGHT_DISABLE then continue end
 
-			lightSources[lightCount] = lightTable
 			lightCount = lightCount + 1
+			lightSources[lightCount] = lightTable
 		end
 	end
 end
@@ -138,8 +137,8 @@ function Star_Trek.World:SkyboxDraw()
 	cam.End3D()
 
 	render.ResetModelLighting(AMBIENT_LIGHT, AMBIENT_LIGHT, AMBIENT_LIGHT)
-	render.SetLocalModelLights()
 	render.SetLocalModelLights(self.LightSources)
+	--render.SetLightingOrigin(Vector()) Was used to prevent flickering depending on camera angle.
 
 	render.SetColorModulation(1, 1, 1)
 
@@ -168,7 +167,7 @@ function Star_Trek.World:NearbyDraw()
 
 	render.ResetModelLighting(AMBIENT_LIGHT, AMBIENT_LIGHT, AMBIENT_LIGHT)
 	render.SetLocalModelLights(self.LightSources)
-	render.SetLightingOrigin(Vector())
+	--render.SetLightingOrigin(Vector()) Was used to prevent flickering depending on camera angle.
 
 	render.SetColorModulation(1, 1, 1)
 

@@ -59,18 +59,10 @@ function SELF:RenderThink(shipPos, shipAng)
 
 	local dir = self.LocalDir
 	if math.max(lightColor.x, lightColor.y, lightColor.z) > 0.002 then
-		if distance >= VECTOR_MAX then
-			lightTable.type = MATERIAL_LIGHT_DIRECTIONAL
+		lightTable.type = MATERIAL_LIGHT_POINT
 
-			lightTable.pos = nil
-			lightTable.dir = -dir
-		else
-			-- TODO: Point Light might not translate well into nearby Rendering.
-			lightTable.type = MATERIAL_LIGHT_POINT
-
-			lightTable.pos = self.ProjectedPos or self.LocalPos
-			lightTable.dir = nil
-		end
+		lightTable.pos = self.LocalPos
+		lightTable.dir = -dir
 	else
 		lightTable.type = MATERIAL_LIGHT_DISABLE
 
