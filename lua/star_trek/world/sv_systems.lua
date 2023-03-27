@@ -18,6 +18,25 @@
 
 Star_Trek.World.LoadedLeafs = {}
 
+-- Initialize a new star system.
+--
+-- @param String name
+-- @param Number x
+-- @param Number y
+-- @param Table planets
+-- @return Table leaf
+function Star_Trek.World:InitializeStarSystem(name, x, y, planets)
+	local data = {
+		Name = name,
+		Entities = planets,
+	}
+
+	local leaf = self.QuadTree:CreateLeaf(x, y, data)
+	table.insert(self.StarSystems, leaf)
+
+	return leaf
+end
+
 -- Load all objects in a leaf.
 --
 -- @param Table leaf
@@ -43,7 +62,6 @@ function Star_Trek.World:LoadStarSystem(leaf)
 				entPos = parent:GetOrbit(entData.OrbitRadius)
 			end
 		end
-		entPos = entPos + Vector(0, 0, KM(math.random(-10000, 10000)))
 
 		local success, worldEnt = Star_Trek.World:LoadEntity(entData.Id, entData.Class, entPos, entData.Ang or Angle(), entData.Model, entData.Diameter, entData.Spin, entData.LightColor)
 		if not success then
@@ -130,7 +148,9 @@ function Star_Trek.World:ReLoadGalaxy()
 	self.LoadedLeafs = {}
 
 	self.QuadTree = QuadTree(0, 0, LY(self.MaxDistance))
-	local override = hook.Run("Star_Trek.World.LoadGalaxy", self.QuadTree)
+	self.StarSystems = {}
+
+	local override = hook.Run("Star_Trek.World.LoadGalaxy")
 	if override then return end
 
 	self:LoadDefaultGalaxy()
@@ -152,10 +172,10 @@ hook.Add("PostCleanupMap", "Star_Trek.World.LoadGalaxy", function() Star_Trek.Wo
 
 function flyToVulcan()
 	local ship = Star_Trek.World.Entities[1]
-	local moon = Star_Trek.World.Entities[11]
+	local moon = Star_Trek.World.Entities[10]
 
 	local targetPos = moon:GetStandardOrbit()
-	targetPos = WorldVector(0, 0, 0, LY(-0.6162192048), LY(-12.8379001), 0)
+	--targetPos = WorldVector(0, 0, 0, LY(-0.6162192048), LY(-12.8379001), 0)
 
 	local course = ship:PlotCourse(targetPos)
 	print("Nodes: ", #course)

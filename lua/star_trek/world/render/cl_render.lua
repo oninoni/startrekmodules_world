@@ -143,14 +143,14 @@ function Star_Trek.World:SkyboxDraw()
 	render.SetColorModulation(1, 1, 1)
 
 	cam.Start3D(eyePos * SKY_CAM_SCALE, eyeAngles, nil, nil, nil, nil, nil, 8, VECTOR_MAX)
-		cam.IgnoreZ(true)
+		--cam.IgnoreZ(true)
 		local renderEntities = self.RenderEntities
 		for i = 1, #renderEntities do
 			local ent = renderEntities[i]
 
 			ent:DrawSkybox()
 		end
-		cam.IgnoreZ(false)
+		--cam.IgnoreZ(false)
 	cam.End3D()
 
 	render.SuppressEngineLighting(false)

@@ -85,25 +85,13 @@ function SELF:Open(ent)
 	self.EngineControlWindow = engineControlWindow
 
 	self:AddEngineSelectionButtons()
-	self:SelectEngineMode(self.IMPULSE)
+	self:SelectEngineMode(self.WARP)
 
-	local success4, navigationWindow = Star_Trek.LCARS:CreateWindow("button_matrix", navigationPos - utilOffset, navigationAng, scale, middleScreensW / 2, middleScreensH,
-	function(windowData, interfaceData, ply, categoryId, buttonId)
-		-- No Additional Interactivity here.
-	end, "Navigation", "NAV", WINDOW_BORDER_LEFT)
+	-- Create Navigation Screen.
+	local success4, navigationWindow, navigationUtilWindow = self:CreateNavigationScreen(navigationPos, utilOffset, navigationAng, scale, middleScreensW / 2, middleScreensH)
 	if not success4 then
 		return false, navigationWindow
 	end
-	self.NavigationWindow = navigationWindow
-
-	local success4b, navigationUtilWindow = SELF:CreateUtilWindow(navigationPos + utilOffset, navigationAng, scale, middleScreensW / 2, middleScreensH, self.DIRECT)
-	if not success4b then
-		return false, navigationUtilWindow
-	end
-	self.NavigationUtilWindow = navigationUtilWindow
-
-	self:AddNavigationSelectionButtons()
-	self:SelectNavigationMode(self.DIRECT, true)
 
 	local success5, mapWindow = Star_Trek.LCARS:CreateWindow("text_entry", mapScreenPos, mapScreenAng, scale, mapScreenW, mapScreenH,
 	function(windowData, interfaceData, ply, categoryId, buttonId)
