@@ -36,6 +36,17 @@ function SELF:Init(pos, ang, model, diameter)
 	SELF.Base.Init(self, pos, ang, model, diameter)
 end
 
+function SELF:Terminate()
+	SELF.Base.Terminate(self)
+
+	if self.WarpEffectActive then
+		local warpDeactivate = ents.FindByName("warpdeactivate")[1]
+		warpDeactivate:Fire("Trigger")
+
+		self.WarpEffectActive = nil
+	end
+end
+
 function SELF:GetClientData(clientData)
 	SELF.Base.GetClientData(self, clientData)
 
@@ -78,9 +89,27 @@ function SELF:AbortCourse()
 
 		self.Updated = true
 
+		if self.WarpEffectActive then
+			local warpDeactivate = ents.FindByName("warpdeactivate")[1]
+			warpDeactivate:Fire("Trigger")
+
+			self.WarpEffectActive = nil
+		end
+
 		return true
 	end
 end
+
+hook.Add("Star_Trek.WarpCore_Console.Eject", "Star_Trek.World.StopShip", function()
+	local ship = Star_Trek.World:GetEntity(1)
+	if not istable(ship) then return end
+
+	util.ScreenShake(Vector(), 10, 3, 6, 0)
+	Star_Trek.Alert:Enable("red")
+
+	ship.WarpEffectActive = nil
+	ship:AbortCourse()
+end)
 
 function SELF:ExecuteCourseStep()
 	local step = self.CourseStep
@@ -115,8 +144,12 @@ function SELF:ExecuteCourseStep()
 			self.WarpEffectActive = true
 		end
 
-		self:TriggerManeuver(maneuverData2, function(_)
-			self:ExecuteCourseStep()
+		timer.Simple(3, function()
+			if self.Course == nil then return end
+
+			self:TriggerManeuver(maneuverData2, function(_)
+				self:ExecuteCourseStep()
+			end)
 		end)
 	end)
 end

@@ -117,6 +117,14 @@ function SELF:SelectEngineModeWarp()
 			return true
 		end
 
+		local warpCore = ents.FindByName("coremover")[1]
+		if warpCore:GetPos().z < 11000 then
+			self.Ent:EmitSound("star_trek.lcars_error")
+			print("Warp Core Offline")
+
+			return true
+		end
+
 		ship:ExecuteCourse(course, W(selectedSpeed), function()
 			self:SetEngineTarget()
 		end)
@@ -165,18 +173,25 @@ function SELF:SetEngineTargetWarp()
 	engineControlWindow.WarpDurationButton.Disabled = false
 	engineControlWindow.WarpDurationButton.Name = Star_Trek.World:MeasureTime(duration)
 
-	if istable(ship.ActiveManeuver) then
+	local warpCore = ents.FindByName("coremover")[1]
+	if warpCore:GetPos().z < 11000 then
 		engineControlWindow.EngageWarpButton.Disabled = true
-		engineControlWindow.EngageWarpButton.Name = "Warp Drive Active"
+		engineControlWindow.EngageWarpButton.Name = "Warp Core Offline"
 	else
-		if duration < MINIMUM_WARP_TRAVEL_TIME then
+		if istable(ship.ActiveManeuver) then
 			engineControlWindow.EngageWarpButton.Disabled = true
-			engineControlWindow.EngageWarpButton.Name = "Select Lower Warp Factor!"
+			engineControlWindow.EngageWarpButton.Name = "Warp Drive Active"
 		else
-			engineControlWindow.EngageWarpButton.Disabled = false
-			engineControlWindow.EngageWarpButton.Name = "Engage Warp Drive"
+			if duration < MINIMUM_WARP_TRAVEL_TIME then
+				engineControlWindow.EngageWarpButton.Disabled = true
+				engineControlWindow.EngageWarpButton.Name = "Select Lower Warp Factor!"
+			else
+				engineControlWindow.EngageWarpButton.Disabled = false
+				engineControlWindow.EngageWarpButton.Name = "Engage Warp Drive"
+			end
 		end
 	end
+
 
 	engineControlWindow:Update()
 

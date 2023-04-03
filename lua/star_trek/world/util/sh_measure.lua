@@ -22,7 +22,6 @@
 -- @return string timeString
 function Star_Trek.World:MeasureTime(time)
 	local timeTable = string.FormattedTime(time)
-	PrintTable(timeTable)
 
 	if timeTable.h > 0 then
 		return string.format("%02dh %02dm %02ds", timeTable.h, timeTable.m, timeTable.s)

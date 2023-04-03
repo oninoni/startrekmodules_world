@@ -68,10 +68,12 @@ function SELF:AddEngineSelectionButtons()
 
 			local aborted = ship:AbortCourse()
 			if aborted then
-				util.ScreenShake(Vector(), 2, 2, 2, 0)
+				util.ScreenShake(Vector(), 5, 3, 3, 0)
 
 				self.Ent:EmitSound("star_trek.lcars_error") -- TODO: Sounds
 				print("Emergency Stop executed!")
+
+				Star_Trek.Alert:Enable("red")
 
 				return true
 			end

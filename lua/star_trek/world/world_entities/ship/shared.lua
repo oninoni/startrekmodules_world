@@ -62,7 +62,7 @@ function SELF:ManeuverThink(sysTime, deltaT, maneuverData)
 			local warpDeactivate = ents.FindByName("warpdeactivate")[1]
 			warpDeactivate:Fire("Trigger")
 
-			self.WarpEffectActive = false
+			self.WarpEffectActive = nil
 		end
 
 		if time >= maneuverData.Duration then
