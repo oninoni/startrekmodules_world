@@ -159,29 +159,3 @@ end
 
 hook.Add("InitPostEntity", "Star_Trek.World.LoadGalaxy", function() Star_Trek.World:ReLoadGalaxy() end)
 hook.Add("PostCleanupMap", "Star_Trek.World.LoadGalaxy", function() Star_Trek.World:ReLoadGalaxy() end)
-
-
-
-
-
-
-
-
-
-
-
-
-function flyToVulcan()
-	local ship = Star_Trek.World.Entities[1]
-	local moon = Star_Trek.World.Entities[10]
-
-	local targetPos = moon:GetStandardOrbit()
-	--targetPos = WorldVector(0, 0, 0, LY(-0.6162192048), LY(-12.8379001), 0)
-
-	local course = ship:PlotCourse(targetPos)
-	print("Nodes: ", #course)
-
-	ship:ExecuteCourse(course, W(9.975), function()
-		print("We There!")
-	end)
-end

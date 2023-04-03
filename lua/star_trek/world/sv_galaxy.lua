@@ -43,7 +43,7 @@ function Star_Trek.World:LoadDefaultGalaxy()
 		{Id = 4, OrbitRadius = AU(1), Name = "Earth", Class = "planet", Model = nil, Diameter = KM(12142)},
 		{Id = 5, OrbitRadius = AU(1.52), Name = "Mars", Class = "planet", Model = "models/planets/mars.mdl", Diameter = KM(6780)},
 		{Id = 6, OrbitRadius = AU(5.20), Name = "Jupiter", Class = "planet", Model = "models/planets/jupiter.mdl", Diameter = KM(139822)},
-		{Id = 7, OrbitRadius = AU(9.58), Name = "Saturn", Class = "planet", Model = "models/planets/saturn.mdl", Diameter = KM(116464), OrbitOffset = Vector(0, 0, KM(100))},
+		{Id = 7, OrbitRadius = AU(9.58), Name = "Saturn", Class = "planet", Model = "models/planets/saturn.mdl", Diameter = KM(116464), OrbitOffset = Vector(0, 0, KM(1000))},
 		{Id = 8, OrbitRadius = AU(19.20), Name = "Uranus", Class = "planet", Model = "models/planets/uranus.mdl", Diameter = KM(50724)},
 		{Id = 9, OrbitRadius = AU(30.05), Name = "Neptune", Class = "planet", Model = "models/planets/neptune.mdl", Diameter = KM(29244)},
 

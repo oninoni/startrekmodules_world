@@ -54,7 +54,22 @@ function SELF:AddEngineSelectionButtons()
 
 	local stopRow = engineControlWindow:CreateSecondaryButtonRow(32)
 	engineControlWindow:AddButtonToRow(stopRow, "Emergency Stop", nil, Star_Trek.LCARS.ColorRed, nil, false, false, function(ply, buttonData)
-		-- TODO
+		local ship = Star_Trek.World:GetEntity(1)
+		if not istable(ship) then
+			self.Ent:EmitSound("star_trek.lcars_error")
+			print("Ship not found")
+
+			return true
+		end
+
+		local aborted = ship:AbortCourse()
+		if aborted then
+			util.ScreenShake(Vector(), 2, 2, 2, 0)
+
+			self.Ent:EmitSound("star_trek.lcars_error") -- TODO: Sounds
+
+			return true
+		end
 	end)
 end
 

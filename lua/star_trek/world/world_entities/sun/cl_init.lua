@@ -53,7 +53,7 @@ function SELF:RenderThink(shipPos, shipAng)
 
 	local distance = self.Distance
 	local distanceRelative = distance / AU_PRECALC
-	local brightness = math.min(10, 1 / (distanceRelative * distanceRelative))
+	local brightness = math.min(10, 1 / math.pow(distanceRelative, 1))
 	local lightColor = self.LightColorVector * brightness
 	lightTable.color = lightColor
 

@@ -35,8 +35,6 @@ end
 -- @param Vector dir
 -- @return Vector pos
 function SELF:GetOrbitPos(r, dir)
-	print("---", r, dir)
-
 	if not isvector(dir) then
 		local dirAng = Angle(0 , math.random(0, 360), 0)
 		dir = dirAng:Forward()

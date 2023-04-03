@@ -25,7 +25,7 @@ local TURN_SPEED = 20
 -- Maximum Acceleration / Decceleration
 local MAX_ACCEL = C(10)
 -- Minimum time the ship will take to accelerate to full speed.
-local MIN_ACCEL_TIME = 30
+local MIN_ACCEL_TIME = 15
 
 -- Minimum Warp Speed
 local MIN_WARP = W(1)
@@ -58,6 +58,28 @@ function SELF:TriggerManeuver(maneuverData, callback)
 
 	self.ManeuverStart = SysTime()
 	self.Updated = true
+end
+
+function SELF:AbortCourse()
+	if istable(self.Course) then
+		self.Course = nil
+		self.CourseStep = nil
+		self.CourseCallback = nil
+		self.CourseTargetSpeed = nil
+
+		self.ActiveManeuver = nil
+		self.ManeuverCallback = nil
+		self.ManeuverStart = nil
+
+		self.Vel = Vector()
+		self.Acc = Vector()
+		self.AngVel = Angle()
+		self.AngAcc = Angle()
+
+		self.Updated = true
+
+		return true
+	end
 end
 
 function SELF:ExecuteCourseStep()
