@@ -64,7 +64,7 @@ function Star_Trek.World:RenderThink()
 		self.RenderEntities = {}
 
 		local j = 1
-		local lightSources = {{}}--,{},{},{}}
+		local lightSources = {{},{},{},{}}
 		self.LightSources = lightSources
 
 		for _, ent in SortedPairsByMemberValue(self.Entities, "Sort", true) do

@@ -85,10 +85,10 @@ function SELF:SelectEngineModeWarp()
 	local engageRow = engineControlWindow:CreateMainButtonRow(32)
 	engineControlWindow.EngageWarpButton = engineControlWindow:AddButtonToRow(engageRow, "Engage Warp Drive", nil, Star_Trek.LCARS.ColorOrange, nil, true, false, function(ply, buttonData)
 		local selectedSpeed = engineControlWindow.SelectedWarpSpeed or DEFAULT_WARP_SPEED
-		local targetPos = self:GetEngineTargetPos() -- TODO: Radius
-		if not IsWorldVector(targetPos) then
+		local targetPos, targetError = self:GetEngineTargetPos() -- TODO: Radius
+		if not targetPos then
 			self.Ent:EmitSound("star_trek.lcars_error")
-			print("Target not set")
+			print(targetError)
 
 			return true
 		end
@@ -122,7 +122,13 @@ function SELF:SetEngineTargetWarp()
 	local engineControlWindow = self.EngineControlWindow
 	if not istable(engineControlWindow) then return end
 
-	local targetPos = self:GetEngineTargetPos()
+	local targetPos, targetError = self:GetEngineTargetPos()
+	if not targetPos then
+		self.Ent:EmitSound("star_trek.lcars_error")
+		print(targetError)
+
+		return true
+	end
 
 	local ship = Star_Trek.World:GetEntity(1)
 	if not istable(ship) then return end
@@ -144,7 +150,6 @@ function SELF:SetEngineTargetWarp()
 		engineControlWindow.WarpDurationButton.Name = Star_Trek.World:MeasureTime(duration)
 		engineControlWindow.EngageWarpButton.Disabled = false
 	end
-
 
 	engineControlWindow:Update()
 

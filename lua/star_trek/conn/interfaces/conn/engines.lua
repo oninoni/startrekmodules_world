@@ -93,15 +93,15 @@ function SELF:SetEngineTarget(targetPos, entityId)
 
 	local mode = self.EngineControlMode
 	if mode == self.DOCKING then
-		self:SetEngineTargetDocking()
+		return self:SetEngineTargetDocking()
 	elseif mode == self.COMBAT then
-		self:SetEngineTargetCombat()
+		return self:SetEngineTargetCombat()
 	elseif mode == self.IMPULSE then
-		self:SetEngineTargetImpulse()
+		return self:SetEngineTargetImpulse()
 	elseif mode == self.WARP then
-		self:SetEngineTargetWarp()
+		return self:SetEngineTargetWarp()
 	elseif mode == self.SLIPSTREAM then
-		self:SetEngineTargetSlipstream()
+		return self:SetEngineTargetSlipstream()
 	end
 end
 

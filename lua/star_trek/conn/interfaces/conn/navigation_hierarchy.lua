@@ -280,10 +280,11 @@ function SELF:SelectNavigationHierachyMode()
 			buttonData.Disabled = false
 			navigationWindow:Update()
 
-			self.Ent:EmitSound("star_trek.lcars_close") -- TODO: Change	
-
 			print("Setting ", targetPos, planetId)
-			self:SetEngineTarget(targetPos, planetId)
+			local playedSound = self:SetEngineTarget(targetPos, planetId)
+			if not playedSound then
+				self.Ent:EmitSound("star_trek.lcars_close") -- TODO: Change	
+			end
 		end)
 
 		return true
