@@ -106,7 +106,15 @@ function SELF:ExecuteCourseStep()
 	-- Execute Course Segment
 	local maneuverData1 = self:CreateAlignManeuverAt(startPos, self.Ang, endPos)
 	self:TriggerManeuver(maneuverData1, function(_)
-		local maneuverData2 = self:CreateWarpManeuver(startPos, endPos, self.CourseTargetSpeed) -- TODO: Set Speed
+		local maneuverData2 = self:CreateWarpManeuver(startPos, endPos, self.CourseTargetSpeed)
+
+		if self.Id == 1 and maneuverData2.Duration > 10 then
+			local warpActivate = ents.FindByName("warpactivate")[1]
+			warpActivate:Fire("Trigger")
+
+			self.WarpEffectActive = true
+		end
+
 		self:TriggerManeuver(maneuverData2, function(_)
 			self:ExecuteCourseStep()
 		end)

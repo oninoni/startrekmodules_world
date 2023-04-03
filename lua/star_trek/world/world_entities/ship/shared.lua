@@ -58,6 +58,13 @@ function SELF:ManeuverThink(sysTime, deltaT, maneuverData)
 	if maneuverType == "WARP" then
 		local endPos = maneuverData.EndPos
 
+		if SERVER and self.WarpEffectActive and time >= maneuverData.Duration - 3 then
+			local warpDeactivate = ents.FindByName("warpdeactivate")[1]
+			warpDeactivate:Fire("Trigger")
+
+			self.WarpEffectActive = false
+		end
+
 		if time >= maneuverData.Duration then
 			self.Pos = endPos
 			self.Vel = Vector()
