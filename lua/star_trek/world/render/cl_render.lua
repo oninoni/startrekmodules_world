@@ -119,9 +119,9 @@ end
 function Star_Trek.World:SkyboxDraw()
 	if not shipId then return end
 
-	local ply = LocalPlayer()
-	local eyePos = ply:EyePos()
-	local eyeAngles = ply:EyeAngles()
+	local viewSetup = render.GetViewSetup(true)
+	local eyePos = viewSetup.origin
+	local eyeAngles = viewSetup.angles
 
 	render.SuppressEngineLighting(true)
 
