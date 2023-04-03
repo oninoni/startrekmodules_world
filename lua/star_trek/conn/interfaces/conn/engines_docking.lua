@@ -25,3 +25,10 @@ function SELF:SelectEngineModeDocking()
 
 	return -- TODO
 end
+
+function SELF:SetEngineTargetDocking()
+	local engineControlWindow = self.EngineControlWindow
+	if not istable(engineControlWindow) then return end
+
+	return -- TODO
+end

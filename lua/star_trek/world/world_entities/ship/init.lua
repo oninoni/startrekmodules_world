@@ -25,7 +25,7 @@ local TURN_SPEED = 20
 -- Maximum Acceleration / Decceleration
 local MAX_ACCEL = C(10)
 -- Minimum time the ship will take to accelerate to full speed.
-local MIN_ACCEL_TIME = 10
+local MIN_ACCEL_TIME = 30
 
 -- Minimum Warp Speed
 local MIN_WARP = W(1)

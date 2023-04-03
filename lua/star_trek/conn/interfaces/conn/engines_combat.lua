@@ -25,3 +25,10 @@ function SELF:SelectEngineModeCombat()
 
 	return -- TODO
 end
+
+function SELF:SetEngineTargetCombat()
+	local engineControlWindow = self.EngineControlWindow
+	if not istable(engineControlWindow) then return end
+
+	return -- TODO
+end

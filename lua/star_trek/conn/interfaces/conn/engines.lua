@@ -83,8 +83,52 @@ function SELF:SelectEngineMode(mode)
 	end
 end
 
-function SELF:SetEngineTarget()
+-- Set the target position for the engines.
+-- 
+-- @param Vector targetPos
+-- @param? Number entityId
+function SELF:SetEngineTarget(targetPos, entityId)
+	self.EngineTargetPos = targetPos
+	self.EngineTargetEntityId = entityId
 
+	local mode = self.EngineControlMode
+	if mode == self.DOCKING then
+		self:SetEngineTargetDocking()
+	elseif mode == self.COMBAT then
+		self:SetEngineTargetCombat()
+	elseif mode == self.IMPULSE then
+		self:SetEngineTargetImpulse()
+	elseif mode == self.WARP then
+		self:SetEngineTargetWarp()
+	elseif mode == self.SLIPSTREAM then
+		self:SetEngineTargetSlipstream()
+	end
+end
+
+-- Get the target position for the engines.
+--	
+-- @param? Number radius
+-- @returns Boolean/Vector sucess/pos
+function SELF:GetEngineTargetPos(radius)
+	local targetPos = self.EngineTargetPos
+	if not IsWorldVector(targetPos) then return false, "Invalid Target Pos" end
+
+	local entityId = self.EngineTargetEntityId
+	if not isnumber(entityId) then return targetPos end
+
+	local worldEntity = Star_Trek.World:GetEntity(entityId)
+	if not istable(worldEntity) then return targetPos end
+
+	local ship = Star_Trek.World:GetEntity(1)
+	if not istable(ship) then return false, "Ship Position not found." end
+
+	local dir = ship.Pos - targetPos
+
+	if not radius then
+		return worldEntity:GetStandardOrbit(dir)
+	end
+
+	return worldEntity:GetStandardOrbit(dir, radius)
 end
 
 -- TODO: Hook that recalcs course when a star system is loaded for each mode. IMPORTANT: Should also work, if console is inactive! (Maybe just move to actual ship entity?)

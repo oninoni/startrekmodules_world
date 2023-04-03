@@ -50,13 +50,20 @@ function SELF:SelectEngineModeSlipstream()
 	engineControlWindow:CreateMainButtonRow(32 * 1)
 
 	local targetRow = engineControlWindow:CreateMainButtonRow(32)
-	engineControlWindow:AddButtonToRow(targetRow, "Current Navigation Target: ---", nil, Star_Trek.LCARS.ColorRed, nil, true, false, function(ply, buttonData)
-	end)
-	engineControlWindow:AddButtonToRow(targetRow, "Predicted Travel Time: ---", nil, Star_Trek.LCARS.ColorRed, nil, true, false, function(ply, buttonData)
-	end)
+	engineControlWindow:AddButtonToRow(targetRow, "Navigation Target:", nil, Star_Trek.LCARS.ColorRed, nil, true, false)
+	engineControlWindow:AddButtonToRow(targetRow, "---", nil, Star_Trek.LCARS.ColorRed, nil, true, false)
+	engineControlWindow:AddButtonToRow(targetRow, "Approximate Travel Time:", nil, Star_Trek.LCARS.ColorRed, nil, true, false)
+	engineControlWindow:AddButtonToRow(targetRow, "---", nil, Star_Trek.LCARS.ColorRed, nil, true, false)
 
 	local engageRow = engineControlWindow:CreateMainButtonRow(32)
 	engineControlWindow:AddButtonToRow(engageRow, "Engage Slipstream", nil, Star_Trek.LCARS.ColorOrange, nil, false, false, function(ply, buttonData)
 		-- TODO
 	end)
+end
+
+function SELF:SetEngineTargetSlipstream()
+	local engineControlWindow = self.EngineControlWindow
+	if not istable(engineControlWindow) then return end
+
+	return -- TODO
 end

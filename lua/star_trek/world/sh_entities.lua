@@ -21,6 +21,8 @@ Star_Trek.World.Entities = Star_Trek.World.Entities or {}
 local THINK_DELAY = Star_Trek.World.ThinkDelay or 0.025
 
 function Star_Trek.World:GetEntity(id)
+	if not isnumber(id) then return end
+
 	return self.Entities[id]
 end
 
@@ -67,6 +69,11 @@ function Star_Trek.World:Think(sysTime, deltaT)
 	if CLIENT then
 		self:RenderThink()
 	end
+end
+
+function Star_Trek.World:GetOrbitPos(pos, dir, r)
+	local dirNorm = dir:GetNormalized()
+	return pos + dirNorm * r
 end
 
 local nextThink = SysTime()

@@ -68,3 +68,10 @@ function SELF:SelectEngineModeImpulse()
 		-- TODO
 	end)
 end
+
+function SELF:SetEngineTargetImpulseSpeed(speed)
+	local engineControlWindow = self.EngineControlWindow
+	if not istable(engineControlWindow) then return end
+
+	return -- TODO
+end

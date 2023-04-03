@@ -59,7 +59,8 @@ function Star_Trek.World:LoadStarSystem(leaf)
 		if isnumber(entData.ParentId) then
 			local parent = self.Entities[entData.ParentId]
 			if istable(parent) then
-				entPos = parent:GetOrbit(entData.OrbitRadius)
+				print(entData.Name, entData.OrbitRadius)
+				entPos = parent:GetOrbitPos(entData.OrbitRadius)
 			end
 		end
 

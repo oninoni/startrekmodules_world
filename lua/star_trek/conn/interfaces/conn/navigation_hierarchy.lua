@@ -253,16 +253,24 @@ function SELF:SelectNavigationHierachyMode()
 			starSystem = selectedListButton.Data
 		end
 
-		-- TODO: Determine target position.
+		local targetPos = WorldVector(0, 0, 0, starSystem.X, starSystem.Y, 0)
 
-		self.Ent:EmitSound("star_trek.lcars_close")
+		local planet = Star_Trek.World:GetEntity(planetId)
+		if istable(planet) then
+			targetPos = planet.Pos
+		end
+
+		self.Ent:EmitSound("star_trek.lcars_close") -- TODO: Change
 
 		buttonData.Disabled = true
 		timer.Simple(5, function()
 			buttonData.Disabled = false
 			navigationWindow:Update()
 
-			self:SetEngineTarget() -- TODO
+			self.Ent:EmitSound("star_trek.lcars_close") -- TODO: Change	
+
+			print("Setting ", targetPos, planetId)
+			self:SetEngineTarget(targetPos, planetId)
 		end)
 
 		return true

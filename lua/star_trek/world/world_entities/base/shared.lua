@@ -29,19 +29,31 @@ SELF.Solid = true
 function SELF:Think(sysTime, deltaT)
 end
 
-function SELF:GetOrbit(r, d)
-	if d == nil then
-		d = math.random(0, 360)
+-- Get the position of an entity in orbit around this entity.
+--
+-- @param Number r
+-- @param Vector dir
+-- @return Vector pos
+function SELF:GetOrbitPos(r, dir)
+	print("---", r, dir)
+
+	if not isvector(dir) then
+		local dirAng = Angle(0 , math.random(0, 360), 0)
+		dir = dirAng:Forward()
 	end
 
-	local pos = self.Pos
+	pos = self.Pos
 	if isvector(self.OrbitOffset) or IsWorldVector(self.OrbitOffset) then
 		pos = LocalToWorldBig(self.OrbitOffset, Angle(), self.Pos, self.Ang)
 	end
 
-	return LocalToWorldBig(Vector(r, 0, 0), Angle(), pos, Angle(0, d, 0))
+	return Star_Trek.World:GetOrbitPos(pos, dir, r)
 end
 
-function SELF:GetStandardOrbit(d)
-	return self:GetOrbit(self.Diameter * 0.5 * Star_Trek.World.StandardOrbitMultiplier, d)
+-- Get the position of an entity in standard orbit around this entity.
+--
+-- @param? Vector dir
+-- @return Vector pos
+function SELF:GetStandardOrbit(dir)
+	return self:GetOrbitPos(self.Diameter * 0.5 * Star_Trek.World.StandardOrbitMultiplier, dir)
 end
