@@ -228,14 +228,31 @@ function SELF:SelectNavigationHierachyMode()
 
 	local lockCourse = navigationWindow:CreateMainButtonRow(32)
 	navigationWindow.LockCourseButton = navigationWindow:AddButtonToRow(lockCourse, "Lock Course", nil, Star_Trek.LCARS.ColorOrange, nil, false, true, function(ply, buttonData)
-		local starSystem = self.NavigationStarSystem
-		if not istable(starSystem) then
+		local navigationUtilWindow = self.NavigationUtilWindow
+		if not istable(navigationUtilWindow) then
 			self.Ent:EmitSound("star_trek.lcars_error")
 
 			return true
 		end
 
-		local planetId = self.NavigationPlanetId
+		local selectedListButton = navigationUtilWindow.SelectedListButton
+		if not istable(selectedListButton) then
+			self.Ent:EmitSound("star_trek.lcars_error")
+
+			return true
+		end
+
+		local starSystem = self.NavigationStarSystem
+		local planetId
+		if istable(starSystem) then
+			planetId = self.NavigationPlanetId
+			if not isnumber(planetId) then
+				planetId = selectedListButton.Data
+			end
+		else
+			starSystem = selectedListButton.Data
+		end
+
 		-- TODO: Determine target position.
 
 		self.Ent:EmitSound("star_trek.lcars_close")
