@@ -48,7 +48,7 @@ function Star_Trek.World:LoadDefaultGalaxy()
 		{Id = 9, OrbitRadius = AU(30.05), Name = "Neptune", Class = "planet", Model = "models/planets/neptune.mdl", Diameter = KM(29244)},
 
 		-- Earth Orbit
-		{Id = 10, ParentId = 4, OrbitRadius = KM(385000), Name = "Luna", Class = "planet", Model = "models/crazycanadian/space/sol/luna.mdl", Diameter = KM(3474.8)},
+		{Id = 10, ParentId = 4, OrbitRadius = KM(385000), Name = "Luna", Class = "planet", Model = "models/planets/luna_big.mdl", Diameter = KM(3474.8)},
 		{Id = 22, ParentId = 4, OrbitRadius = KM(10000), Name = "Earth Spacedock", Class = "base", Model = "models/crazycanadian/star_trek/stations/spacedock.mdl", Diameter = KM(5), OrbitOffset = Vector(0, 0, KM(3))},
 	})
 

@@ -110,9 +110,10 @@ function SELF:SelectEngineModeWarp()
 		end
 
 		ship:ExecuteCourse(course, W(selectedSpeed), function()
-			-- TODO: Done
+			self.EnginesActive = nil
 		end)
 
+		self.EnginesActive = true
 		engineControlWindow.EngageWarpButton.Disabled = true
 	end)
 end

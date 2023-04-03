@@ -228,6 +228,19 @@ function SELF:SelectNavigationHierachyMode()
 
 	local lockCourse = navigationWindow:CreateMainButtonRow(32)
 	navigationWindow.LockCourseButton = navigationWindow:AddButtonToRow(lockCourse, "Lock Course", nil, Star_Trek.LCARS.ColorOrange, nil, false, true, function(ply, buttonData)
+		local ship = Star_Trek.World:GetEntity(1)
+		if not istable(ship) then
+			self.Ent:EmitSound("star_trek.lcars_error")
+
+			return true
+		end
+		if istable(ship.ActiveManeuver) then
+			self.Ent:EmitSound("star_trek.lcars_error")
+
+			return true
+		end
+
+
 		local navigationUtilWindow = self.NavigationUtilWindow
 		if not istable(navigationUtilWindow) then
 			self.Ent:EmitSound("star_trek.lcars_error")

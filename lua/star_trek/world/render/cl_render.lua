@@ -26,18 +26,15 @@ end
 
 Star_Trek.World.HullEntities = Star_Trek.World.HullEntities or {}
 local function initHull()
+	Star_Trek.World.Entities = {}
 	Star_Trek.World.HullEntities = {}
 
-	for _, ent in pairs(ents.FindByModel("models/kingpommes/startrek/intrepid/exterior_*")) do
-		ent:SetNoDraw(true)
-		table.insert(Star_Trek.World.HullEntities, ent)
-
-		local materials = ent:GetMaterials()
-		for _, materialName in pairs(materials) do
-			if materialName == "models/kingpommes/startrek/intrepid/glass_exterior" then continue end
-
-			local material = Material(materialName)
-			material:SetVector("$envmaptint", Vector(0, 0, 0))
+	--for _, ent in pairs(ents.FindByModel("models/kingpommes/startrek/intrepid/exterior_*")) do
+	for _, ent in pairs(ents.GetAll()) do
+		local model = ent:GetModel() or ""
+		if string.StartsWith(model, "models/kingpommes/startrek/intrepid/exterior_") then
+			ent:SetNoDraw(true)
+			table.insert(Star_Trek.World.HullEntities, ent)
 		end
 	end
 end
