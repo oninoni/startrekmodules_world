@@ -149,6 +149,7 @@ function SELF:CreateWarpManeuver(startPos, endPos, targetSpeed)
 
 	local diff = endPos - startPos
 	local distance = diff:Length()
+	maneuverData.Distance = distance
 
 	-- Determine Acceleration
 	local acceleration = math.min(MAX_ACCEL, targetSpeed / MIN_ACCEL_TIME)

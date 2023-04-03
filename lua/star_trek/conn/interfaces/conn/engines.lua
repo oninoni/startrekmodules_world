@@ -54,22 +54,40 @@ function SELF:AddEngineSelectionButtons()
 
 	local stopRow = engineControlWindow:CreateSecondaryButtonRow(32)
 	engineControlWindow:AddButtonToRow(stopRow, "Emergency Stop", nil, Star_Trek.LCARS.ColorRed, nil, false, false, function(ply, buttonData)
-		local ship = Star_Trek.World:GetEntity(1)
-		if not istable(ship) then
+		if buttonData.Confirm then
+			buttonData.Confirm = nil
+			buttonData.Name = "Emergency Stop"
+
+			local ship = Star_Trek.World:GetEntity(1)
+			if not istable(ship) then
+				self.Ent:EmitSound("star_trek.lcars_error")
+				print("Ship not found")
+
+				return true
+			end
+
+			local aborted = ship:AbortCourse()
+			if aborted then
+				util.ScreenShake(Vector(), 2, 2, 2, 0)
+
+				self.Ent:EmitSound("star_trek.lcars_error") -- TODO: Sounds
+				print("Emergency Stop executed!")
+
+				return true
+			end
+
 			self.Ent:EmitSound("star_trek.lcars_error")
-			print("Ship not found")
+			print("Ship not moving!")
 
 			return true
 		end
 
-		local aborted = ship:AbortCourse()
-		if aborted then
-			util.ScreenShake(Vector(), 2, 2, 2, 0)
+		self.Ent:EmitSound("star_trek.lcars_error") -- TODO: Sounds
 
-			self.Ent:EmitSound("star_trek.lcars_error") -- TODO: Sounds
+		buttonData.Confirm = true
+		buttonData.Name = "Confirm Emergency Stop"
 
-			return true
-		end
+		return true
 	end)
 end
 

@@ -49,18 +49,19 @@ function SELF:SelectEngineModeWarp()
 	end)
 
 	local distanceSelectorRow = engineControlWindow:CreateMainButtonRow(32)
-	engineControlWindow:AddSelectorToRow(distanceSelectorRow, "Dropout Distance", {
-		{Name =       "100km", Data = 100},
-		{Name =       "500km", Data = 500},
-		{Name =     "1.000km", Data = 1000},
-		{Name =     "5.000km", Data = 5000},
-		{Name =    "10.000km", Data = 10000},
-		{Name =    "50.000km", Data = 50000},
-		{Name =   "100.000km", Data = 100000},
-		{Name =   "500.000km", Data = 500000},
-		{Name = "1.000.000km", Data = 1000000},
-		{Name = "1.000.000km", Data = 5000000},
-	}, 5, function()
+	engineControlWindow:AddSelectorToRow(distanceSelectorRow, "Orbit Radius", {
+		{Name = "Standard Orbit", Data = nil},
+		{Name =          "100km", Data = 100},
+		{Name =          "500km", Data = 500},
+		{Name =        "1.000km", Data = 1000},
+		{Name =        "5.000km", Data = 5000},
+		{Name =       "10.000km", Data = 10000},
+		{Name =       "50.000km", Data = 50000},
+		{Name =      "100.000km", Data = 100000},
+		{Name =      "500.000km", Data = 500000},
+		{Name =    "1.000.000km", Data = 1000000},
+		{Name =    "1.000.000km", Data = 5000000},
+	}, 1, function(ply, buttonData, value)
 		engineControlWindow.SelectedWarpDistance = value.Data
 
 		self:SetEngineTargetWarp()
@@ -77,15 +78,15 @@ function SELF:SelectEngineModeWarp()
 	engineControlWindow:CreateMainButtonRow(32)
 
 	local targetRow = engineControlWindow:CreateMainButtonRow(32)
-	engineControlWindow:AddButtonToRow(targetRow, "Target Distance:", nil, Star_Trek.LCARS.ColorRed, nil, true, false)
+	engineControlWindow:AddButtonToRow(targetRow, "Travel Distance:", nil, Star_Trek.LCARS.ColorRed, nil, true, false)
 	engineControlWindow.WarpDistanceButton = engineControlWindow:AddButtonToRow(targetRow, "---", nil, Star_Trek.LCARS.ColorRed, nil, true, false)
-	engineControlWindow:AddButtonToRow(targetRow, "Approximate Travel Time:", nil, Star_Trek.LCARS.ColorRed, nil, true, false)
+	engineControlWindow:AddButtonToRow(targetRow, "Travel Duration:", nil, Star_Trek.LCARS.ColorRed, nil, true, false)
 	engineControlWindow.WarpDurationButton = engineControlWindow:AddButtonToRow(targetRow, "---", nil, Star_Trek.LCARS.ColorRed, nil, true, false)
 
 	local engageRow = engineControlWindow:CreateMainButtonRow(32)
 	engineControlWindow.EngageWarpButton = engineControlWindow:AddButtonToRow(engageRow, "Engage Warp Drive", nil, Star_Trek.LCARS.ColorOrange, nil, true, false, function(ply, buttonData)
 		local selectedSpeed = engineControlWindow.SelectedWarpSpeed or DEFAULT_WARP_SPEED
-		local targetPos, targetError = self:GetEngineTargetPos() -- TODO: Radius
+		local targetPos, targetError = self:GetEngineTargetPos(engineControlWindow.SelectedWarpDistance) -- TODO: Radius
 		if not targetPos then
 			self.Ent:EmitSound("star_trek.lcars_error")
 			print(targetError)
@@ -101,6 +102,13 @@ function SELF:SelectEngineModeWarp()
 			return true
 		end
 
+		if istable(ship.ActiveManeuver) then
+			self.Ent:EmitSound("star_trek.lcars_error")
+			print("Ship already maneuvering")
+
+			return true
+		end
+
 		local course = ship:PlotCourse(targetPos)
 		if not istable(course) then
 			self.Ent:EmitSound("star_trek.lcars_error")
@@ -110,11 +118,10 @@ function SELF:SelectEngineModeWarp()
 		end
 
 		ship:ExecuteCourse(course, W(selectedSpeed), function()
-			self.EnginesActive = nil
+			self:SetEngineTarget()
 		end)
 
-		self.EnginesActive = true
-		engineControlWindow.EngageWarpButton.Disabled = true
+		self:SetEngineTargetWarp()
 	end)
 end
 
@@ -122,9 +129,9 @@ function SELF:SetEngineTargetWarp()
 	local engineControlWindow = self.EngineControlWindow
 	if not istable(engineControlWindow) then return end
 
-	local targetPos, targetError = self:GetEngineTargetPos()
+	local targetPos, targetError = self:GetEngineTargetPos(engineControlWindow.SelectedWarpDistance)
 	if not targetPos then
-		self.Ent:EmitSound("star_trek.lcars_error")
+		--self.Ent:EmitSound("star_trek.lcars_error")
 		print(targetError)
 
 		return true
@@ -133,22 +140,42 @@ function SELF:SetEngineTargetWarp()
 	local ship = Star_Trek.World:GetEntity(1)
 	if not istable(ship) then return end
 
-	local distance = ship.Pos:Distance(targetPos)
+	self.EngineWarpCourse = ship:PlotCourse(targetPos)
+	if not istable(self.EngineWarpCourse) then return end
 
 	local selectedSpeed = engineControlWindow.SelectedWarpSpeed or DEFAULT_WARP_SPEED
-	local duration = distance / W(selectedSpeed)
+
+	local maneuvers = {}
+	for i = 1, #self.EngineWarpCourse - 1 do
+		local startPos = self.EngineWarpCourse[i]
+		local endPos = self.EngineWarpCourse[i + 1]
+
+		table.insert(maneuvers, ship:CreateWarpManeuver(startPos, endPos, W(selectedSpeed)))
+	end
+
+	local distance = 0
+	local duration = 0
+	for _, maneuverData in ipairs(maneuvers) do
+		distance = distance + maneuverData.Distance
+		duration = duration + maneuverData.Duration
+	end
 
 	engineControlWindow.WarpDistanceButton.Disabled = false
 	engineControlWindow.WarpDistanceButton.Name = Star_Trek.World:MeasureDistance(distance)
+	engineControlWindow.WarpDurationButton.Disabled = false
+	engineControlWindow.WarpDurationButton.Name = Star_Trek.World:MeasureTime(duration)
 
-	if duration < MINIMUM_WARP_TRAVEL_TIME then
-		engineControlWindow.WarpDurationButton.Disabled = false
-		engineControlWindow.WarpDurationButton.Name = "Select Lower Warp Factor!"
+	if istable(ship.ActiveManeuver) then
 		engineControlWindow.EngageWarpButton.Disabled = true
+		engineControlWindow.EngageWarpButton.Name = "Warp Drive Active"
 	else
-		engineControlWindow.WarpDurationButton.Disabled = false
-		engineControlWindow.WarpDurationButton.Name = Star_Trek.World:MeasureTime(duration)
-		engineControlWindow.EngageWarpButton.Disabled = false
+		if duration < MINIMUM_WARP_TRAVEL_TIME then
+			engineControlWindow.EngageWarpButton.Disabled = true
+			engineControlWindow.EngageWarpButton.Name = "Select Lower Warp Factor!"
+		else
+			engineControlWindow.EngageWarpButton.Disabled = false
+			engineControlWindow.EngageWarpButton.Name = "Engage Warp Drive"
+		end
 	end
 
 	engineControlWindow:Update()

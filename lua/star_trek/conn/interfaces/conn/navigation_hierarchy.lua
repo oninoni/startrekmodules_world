@@ -234,12 +234,12 @@ function SELF:SelectNavigationHierachyMode()
 
 			return true
 		end
+
 		if istable(ship.ActiveManeuver) then
 			self.Ent:EmitSound("star_trek.lcars_error")
 
 			return true
 		end
-
 
 		local navigationUtilWindow = self.NavigationUtilWindow
 		if not istable(navigationUtilWindow) then
@@ -268,9 +268,16 @@ function SELF:SelectNavigationHierachyMode()
 
 		local targetPos = WorldVector(0, 0, 0, starSystem.X, starSystem.Y, 0)
 
-		local planet = Star_Trek.World:GetEntity(planetId)
-		if istable(planet) then
-			targetPos = planet.Pos
+		-- Fine tune the target position.
+		if isnumber(planetId) then
+			local planet = Star_Trek.World:GetEntity(planetId)
+			if istable(planet) then
+				targetPos = planet.Pos
+			else
+				self.Ent:EmitSound("star_trek.lcars_error")
+
+				return true
+			end
 		end
 
 		self.Ent:EmitSound("star_trek.lcars_close") -- TODO: Change
