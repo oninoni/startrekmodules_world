@@ -19,6 +19,9 @@
 if not istable(INTERFACE) then Star_Trek:LoadAllModules() return end
 local SELF = INTERFACE
 
+local DEFAULT_WARP_SPEED = 5
+local MINIMUM_WARP_TRAVEL_TIME = 30
+
 function SELF:SelectEngineModeWarp()
 	local engineControlWindow = self.EngineControlWindow
 	if not istable(engineControlWindow) then return end
@@ -41,8 +44,9 @@ function SELF:SelectEngineModeWarp()
 		{Name =  "Warp 9.99", Data = 9.99 , Color = Star_Trek.LCARS.ColorRed},
 	}, 5, function(ply, buttonData, value)
 		engineControlWindow.SelectedWarpSpeed = value.Data
+
+		self:SetEngineTargetWarp()
 	end)
-	engineControlWindow.SelectedWarpSpeed = 5
 
 	local distanceSelectorRow = engineControlWindow:CreateMainButtonRow(32)
 	engineControlWindow:AddSelectorToRow(distanceSelectorRow, "Dropout Distance", {
@@ -56,7 +60,11 @@ function SELF:SelectEngineModeWarp()
 		{Name =   "500.000km", Data = 500000},
 		{Name = "1.000.000km", Data = 1000000},
 		{Name = "1.000.000km", Data = 5000000},
-	}, 5, callback) -- TODO
+	}, 5, function()
+		engineControlWindow.SelectedWarpDistance = value.Data
+
+		self:SetEngineTargetWarp()
+	end) -- TODO
 
 	local autoDropRow = engineControlWindow:CreateMainButtonRow(32)
 	engineControlWindow:AddButtonToRow(autoDropRow, "Enable Auto Drop to Impulse", nil, nil, nil, false, false, function(ply, buttonData)
@@ -69,21 +77,14 @@ function SELF:SelectEngineModeWarp()
 	engineControlWindow:CreateMainButtonRow(32)
 
 	local targetRow = engineControlWindow:CreateMainButtonRow(32)
-	engineControlWindow:AddButtonToRow(targetRow, "Navigation Target:", nil, Star_Trek.LCARS.ColorRed, nil, true, false)
-	engineControlWindow:AddButtonToRow(targetRow, "---", nil, Star_Trek.LCARS.ColorRed, nil, true, false)
+	engineControlWindow:AddButtonToRow(targetRow, "Target Distance:", nil, Star_Trek.LCARS.ColorRed, nil, true, false)
+	engineControlWindow.WarpDistanceButton = engineControlWindow:AddButtonToRow(targetRow, "---", nil, Star_Trek.LCARS.ColorRed, nil, true, false)
 	engineControlWindow:AddButtonToRow(targetRow, "Approximate Travel Time:", nil, Star_Trek.LCARS.ColorRed, nil, true, false)
-	engineControlWindow:AddButtonToRow(targetRow, "---", nil, Star_Trek.LCARS.ColorRed, nil, true, false)
+	engineControlWindow.WarpDurationButton = engineControlWindow:AddButtonToRow(targetRow, "---", nil, Star_Trek.LCARS.ColorRed, nil, true, false)
 
 	local engageRow = engineControlWindow:CreateMainButtonRow(32)
-	engineControlWindow:AddButtonToRow(engageRow, "Engage Warp Drive", nil, Star_Trek.LCARS.ColorOrange, nil, false, false, function(ply, buttonData)
-		local selectedSpeed = engineControlWindow.SelectedWarpSpeed
-		if not isnumber(selectedSpeed) then
-			self.Ent:EmitSound("star_trek.lcars_error")
-			print("Speed not set")
-
-			return true
-		end
-
+	engineControlWindow.EngageWarpButton = engineControlWindow:AddButtonToRow(engageRow, "Engage Warp Drive", nil, Star_Trek.LCARS.ColorOrange, nil, true, false, function(ply, buttonData)
+		local selectedSpeed = engineControlWindow.SelectedWarpSpeed or DEFAULT_WARP_SPEED
 		local targetPos = self:GetEngineTargetPos() -- TODO: Radius
 		if not IsWorldVector(targetPos) then
 			self.Ent:EmitSound("star_trek.lcars_error")
@@ -111,6 +112,8 @@ function SELF:SelectEngineModeWarp()
 		ship:ExecuteCourse(course, W(selectedSpeed), function()
 			-- TODO: Done
 		end)
+
+		engineControlWindow.EngageWarpButton.Disabled = true
 	end)
 end
 
@@ -118,10 +121,31 @@ function SELF:SetEngineTargetWarp()
 	local engineControlWindow = self.EngineControlWindow
 	if not istable(engineControlWindow) then return end
 
-	local targetPos = self.EngineTargetPos
-	-- TODO: Rework Position if planetId is set.
+	local targetPos = self:GetEngineTargetPos()
 
-	self.WarpTargetPos = targetPos
+	local ship = Star_Trek.World:GetEntity(1)
+	if not istable(ship) then return end
 
-	return -- TODO
+	local distance = ship.Pos:Distance(targetPos)
+
+	local selectedSpeed = engineControlWindow.SelectedWarpSpeed or DEFAULT_WARP_SPEED
+	local duration = distance / W(selectedSpeed)
+
+	engineControlWindow.WarpDistanceButton.Disabled = false
+	engineControlWindow.WarpDistanceButton.Name = Star_Trek.World:MeasureDistance(distance)
+
+	if duration < MINIMUM_WARP_TRAVEL_TIME then
+		engineControlWindow.WarpDurationButton.Disabled = false
+		engineControlWindow.WarpDurationButton.Name = "Select Lower Warp Factor!"
+		engineControlWindow.EngageWarpButton.Disabled = true
+	else
+		engineControlWindow.WarpDurationButton.Disabled = false
+		engineControlWindow.WarpDurationButton.Name = Star_Trek.World:MeasureTime(duration)
+		engineControlWindow.EngageWarpButton.Disabled = false
+	end
+
+
+	engineControlWindow:Update()
+
+	return
 end

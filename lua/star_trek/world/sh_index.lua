@@ -29,6 +29,7 @@ if SERVER then
 	AddCSLuaFile("util/sh_intersect.lua")
 	AddCSLuaFile("util/sh_convert.lua")
 	AddCSLuaFile("util/sh_vector.lua")
+	AddCSLuaFile("util/sh_measure.lua")
 	AddCSLuaFile("util/sh_quadtree.lua")
 	AddCSLuaFile("sh_entities.lua")
 
@@ -43,6 +44,7 @@ if SERVER then
 	include("util/sh_intersect.lua")
 	include("util/sh_convert.lua")
 	include("util/sh_vector.lua")
+	include("util/sh_measure.lua")
 	include("util/sh_quadtree.lua")
 	include("sh_entities.lua")
 
@@ -61,6 +63,7 @@ if CLIENT then
 	include("util/sh_intersect.lua")
 	include("util/sh_convert.lua")
 	include("util/sh_vector.lua")
+	include("util/sh_measure.lua")
 	include("util/sh_quadtree.lua")
 	include("sh_entities.lua")
 

@@ -200,18 +200,8 @@ function SELF:SetNavigationCourseDisplay(targetPos)
 
 	local course = targetPos - shipPos
 	local distance = course:Length()
-	local distanceKM = SBtoKM(distance)
-	local distanceAU = SBtoAU(distance)
-	local distanceLY = SBtoLY(distance)
+	currentCourseButton.Distance = Star_Trek.World:MeasureDistance(distance)
 
-	currentCourseButton.Distance = nil
-	if distanceLY >= 1 then
-		currentCourseButton.Distance = string.format("%-8.2fLY", math.Round(distanceLY, 2))
-	elseif distanceAU >= 0.01 then
-		currentCourseButton.Distance = string.format("%-8.2fAU", math.Round(distanceAU, 2))
-	else
-		currentCourseButton.Distance = string.format("%-8.2fKM", math.Round(distanceKM, 2))
-	end
 	buttonText = buttonText .. currentCourseButton.Distance
 
 	currentCourseButton.Disabled = false

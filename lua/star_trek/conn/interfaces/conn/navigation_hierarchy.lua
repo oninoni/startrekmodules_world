@@ -263,7 +263,7 @@ function SELF:SelectNavigationHierachyMode()
 		self.Ent:EmitSound("star_trek.lcars_close") -- TODO: Change
 
 		buttonData.Disabled = true
-		timer.Simple(5, function()
+		timer.Simple(2, function()
 			buttonData.Disabled = false
 			navigationWindow:Update()
 
