@@ -53,3 +53,8 @@ function Star_Trek.World:UnLoadEntity(id)
 
 	return true
 end
+
+-- Reset Entities before map cleanup, since they are respawned afterwards.
+hook.Add("PreCleanupMap", "Star_Trek.World.ResetEntities", function()
+	Star_Trek.World.HullEntities = {}
+end)

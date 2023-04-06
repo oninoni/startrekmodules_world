@@ -26,7 +26,6 @@ end
 
 Star_Trek.World.HullEntities = Star_Trek.World.HullEntities or {}
 local function initHull()
-	Star_Trek.World.Entities = {}
 	Star_Trek.World.HullEntities = {}
 
 	--for _, ent in pairs(ents.FindByModel("models/kingpommes/startrek/intrepid/exterior_*")) do
