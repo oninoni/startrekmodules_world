@@ -16,6 +16,28 @@
 --        Measurement | Shared       --
 ---------------------------------------
 
+-- Get the diameter of a model.
+--
+-- @param string model
+-- @return number diameter
+function Star_Trek.World:GetModelDiameter(model)
+	local ent = ents.Create("prop_physics")
+	ent:SetPos(Vector(0, 0, 0))
+	ent:SetModel(model)
+	ent:Spawn()
+
+	--local min, max = ent:GetModelBounds()
+	local min, max = ent:GetSurroundingBounds()
+	SafeRemoveEntity(ent)
+
+	local scale = max - min
+	return math.max(
+		math.abs(scale.x),
+		math.abs(scale.y),
+		math.abs(scale.z)
+	)
+end
+
 -- Show a human readable time from seconds.
 --
 -- @param number time

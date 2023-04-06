@@ -21,22 +21,6 @@ local UNIT_PER_METER = Star_Trek.World.UnitPerFoot * FOOT_PER_METER
 
 local SKYBOX_SCALE = 1 / Star_Trek.World.Skybox_Scale
 
-function Star_Trek.World:GetModelDiameter(model)
-	local ent = ents.Create("prop_physics")
-	ent:SetModel(model)
-	ent:Spawn()
-
-	local min, max = ent:GetModelBounds()
-	SafeRemoveEntity(ent)
-
-	local scale = max - min
-	return math.max(
-		math.abs(scale.x),
-		math.abs(scale.y),
-		math.abs(scale.z)
-	)
-end
-
 -- Return the units representing the meters given.
 -- 
 -- @param Number m
