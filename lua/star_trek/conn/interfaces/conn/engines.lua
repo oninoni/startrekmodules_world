@@ -29,6 +29,22 @@ include("engines_impulse.lua")
 include("engines_warp.lua")
 include("engines_slipstream.lua")
 
+function SELF:CreateEngineScreen(engineControlPos, engineControlAng, scale, middleScreensW, middleScreensH)
+	local success3, engineControlWindow = Star_Trek.LCARS:CreateWindow("button_matrix", engineControlPos, engineControlAng, scale, middleScreensW, middleScreensH,
+	function(windowData, interfaceData, ply, categoryId, buttonId)
+		-- No Additional Interactivity here.
+	end, "Engine Control", "ENG", WINDOW_BORDER_BOTH)
+	if not success3 then
+		return false, engineControlWindow
+	end
+	self.EngineControlWindow = engineControlWindow
+
+	self:AddEngineSelectionButtons()
+	self:SelectEngineMode(self.WARP)
+
+	return true, engineControlWindow
+end
+
 function SELF:AddEngineSelectionButtons()
 	local engineControlWindow = self.EngineControlWindow
 	if not istable(engineControlWindow) then return end
