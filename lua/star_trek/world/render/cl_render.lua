@@ -17,6 +17,7 @@
 ---------------------------------------
 
 local SKY_CAM_SCALE = Star_Trek.World.Skybox_Scale or (1 / 1024)
+local SKY_CAM_OFFSET = Star_Trek.World.SkyboxOffset or Vector(0, 0, 13250)
 local SORT_DELAY = Star_Trek.World.SortDelay or 0.5
 local VECTOR_MAX = Star_Trek.World.Vector_Max or 131071
 local AMBIENT_LIGHT = Star_Trek.World.AmbientLight
@@ -115,12 +116,24 @@ function Star_Trek.World:RenderThink()
 	end
 end
 
+hook.Add("RenderScene", "Star_Trek.World.PreRenderReset", function()
+	Star_Trek.World.DrawSkybox = false
+end)
+
 function Star_Trek.World:SkyboxDraw()
 	if not shipId then return end
+
+	self.DrawSkybox = true
+	self.DrawOffset = false
 
 	local viewSetup = render.GetViewSetup(true)
 	local eyePos = viewSetup.origin
 	local eyeAngles = viewSetup.angles
+	if eyePos.z > SKY_CAM_OFFSET.z / 2 then
+		eyePos = eyePos - SKY_CAM_OFFSET
+
+		self.DrawOffset = true
+	end
 
 	render.SuppressEngineLighting(true)
 
@@ -159,6 +172,14 @@ end)
 function Star_Trek.World:NearbyDraw()
 	if not shipId then return end
 
+	if not self.DrawSkybox then return end
+
+	local eyePos
+	if self.DrawOffset then
+		local viewSetup = render.GetViewSetup(true)
+		eyePos = viewSetup.origin - SKY_CAM_OFFSET
+	end
+
 	render.SuppressEngineLighting(true)
 
 	render.ResetModelLighting(AMBIENT_LIGHT, AMBIENT_LIGHT, AMBIENT_LIGHT)
@@ -168,19 +189,21 @@ function Star_Trek.World:NearbyDraw()
 	render.SetColorModulation(1, 1, 1)
 
 	cam.Start3D()
-		local flashLight = LocalPlayer():FlashlightIsOn()
+		if not self.DrawOffset then
+			local flashLight = LocalPlayer():FlashlightIsOn()
 
-		local hullEntities = self.HullEntities
-		for i = 1, #hullEntities do
-			local ent = hullEntities[i]
-			if not IsValid(ent) then continue end
+			local hullEntities = self.HullEntities
+			for i = 1, #hullEntities do
+				local ent = hullEntities[i]
+				if not IsValid(ent) then continue end
 
-			ent:DrawModel()
-
-			if flashLight then
-				render.PushFlashlightMode(true)
 				ent:DrawModel()
-				render.PopFlashlightMode()
+
+				if flashLight then
+					render.PushFlashlightMode(true)
+					ent:DrawModel()
+					render.PopFlashlightMode()
+				end
 			end
 		end
 

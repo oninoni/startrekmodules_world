@@ -64,3 +64,7 @@ Star_Trek.World.MaxDistance = 75000
 -- Ambient Light brightness in the absense of stars of silimar sources.
 -- Default: 0.0005
 Star_Trek.World.AmbientLight = 0.008
+
+-- Offset of the skybox to the interior hull.
+-- Default Intrepid: Vector(0, 0, 13250) (Estimated Value)
+Star_Trek.World.SkyboxOffset = Vector(0, 0, 13250)
