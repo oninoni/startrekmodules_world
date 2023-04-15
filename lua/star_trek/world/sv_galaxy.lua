@@ -32,6 +32,9 @@ function Star_Trek.World:AddMapShip(parentId)
 
 	local _, mapShip = Star_Trek.World:LoadEntity(1, "ship", parentEnt:GetStandardOrbit(), Angle(), model, modelSize)
 	self.MapShip = mapShip
+
+	--Star_Trek.World:LoadEntity(-1, "beam", WorldVector(0, 0, 0, M(145), 0, M(8.5)), Angle(), KM(10), 1, "sprites/tp_beam001", Color(255, 0, 0, 127), 0.4, 4, 0.5)
+	--Star_Trek.World:LoadEntity(-2, "beam", WorldVector(0, 0, 0, M(20), 0, -M(15)),  Angle(), KM(10), 1, "sprites/tp_beam001", Color(0, 255, 0, 127), 0.6, 8, -0.5)
 end
 
 -- Load the default galaxy.
