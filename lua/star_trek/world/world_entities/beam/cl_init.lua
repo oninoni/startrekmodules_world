@@ -32,9 +32,12 @@ function SELF:RenderThink(shipPos, shipAng)
 	local distance = pos:Length()
 	self.Distance = distance
 
+	local diameter = self.Diameter
+	local sort = distance - diameter / 2
+	self.Sort = sort
+
 	local norm = ang:Forward()
 
-	local diameter = self.Diameter
 	local endPos = pos + norm * diameter
 
 	local originInside = distance < NEARBY_MAX
