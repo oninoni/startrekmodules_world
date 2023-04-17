@@ -56,5 +56,7 @@ function SELF:CreateViewScreenControl(viewScreenPos, viewScreenAng, scale, sideS
 		end)
 	end
 
+	hook.Run("Star_Trek.Navigation.AddViewscreens", screenWindow, viewScreen)
+
 	return true, screenWindow
 end
