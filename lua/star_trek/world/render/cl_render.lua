@@ -188,7 +188,7 @@ function Star_Trek.World:NearbyDraw()
 
 	render.SetColorModulation(1, 1, 1)
 
-	cam.Start3D()
+	cam.Start3D(eyePos)
 		if not self.DrawOffset then
 			local flashLight = LocalPlayer():FlashlightIsOn()
 
