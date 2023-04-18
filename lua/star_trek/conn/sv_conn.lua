@@ -26,9 +26,12 @@ function Star_Trek.Navigation:ToggleViewscreen(status)
 	if status then
 		Star_Trek.Holodeck:Disintegrate(self.CenterPillar, false, function()
 			viewScreen:SetNoDraw(false)
+
+			if IsValid(self.BlackBack) then
+				self.BlackBack:Remove()
+				self.BlackBack = nil
+			end
 		end)
-		Star_Trek.Holodeck:Disintegrate(self.LeftGrid, false)
-		Star_Trek.Holodeck:Disintegrate(self.RightGrid, false)
 	else
 		viewScreen:SetNoDraw(true)
 
@@ -39,6 +42,7 @@ function Star_Trek.Navigation:ToggleViewscreen(status)
 		end
 
 		local pillar = ents.Create("prop_physics")
+		pillar:SetRenderMode(RENDERMODE_TRANSALPHA)
 		pillar:SetModel("models/kingpommes/startrek/intrepid/holo_beam.mdl")
 		pillar:SetPos(viewScreen:GetPos() - viewScreen:GetForward() * 11 - viewScreen:GetUp() * 2.5)
 		pillar:SetAngles(Angle(0, -90, 0))
@@ -46,6 +50,7 @@ function Star_Trek.Navigation:ToggleViewscreen(status)
 		self.CenterPillar = pillar
 
 		local leftGrid = ents.Create("prop_physics")
+		leftGrid:SetRenderMode(RENDERMODE_TRANSALPHA)
 		leftGrid:SetModel("models/kingpommes/startrek/intrepid/holo_wall.mdl")
 		leftGrid:SetPos(pillar:GetPos() - pillar:GetForward() * 66 - pillar:GetRight() * 20)
 		leftGrid:SetAngles(Angle(0, -105, 0))
@@ -54,6 +59,7 @@ function Star_Trek.Navigation:ToggleViewscreen(status)
 		self.LeftGrid = leftGrid
 
 		local rightGrid = ents.Create("prop_physics")
+		rightGrid:SetRenderMode(RENDERMODE_TRANSALPHA)
 		rightGrid:SetModel("models/kingpommes/startrek/intrepid/holo_wall.mdl")
 		rightGrid:SetPos(pillar:GetPos() + pillar:GetForward() * 66 - pillar:GetRight() * 20)
 		rightGrid:SetAngles(Angle(0, -75, 0))
@@ -69,9 +75,16 @@ function Star_Trek.Navigation:ToggleViewscreen(status)
 		blackBar:SetParent(pillar)
 		blackBar:DrawShadow(false)
 
+		local blackBack = ents.Create("prop_physics")
+		blackBack:SetModel("models/hunter/plates/plate5x16.mdl")
+		blackBack:SetMaterial("models/debug/debugwhite")
+		blackBack:SetColor(Color(0, 0, 0))
+		blackBack:SetPos(viewScreen:GetPos() - viewScreen:GetForward() * 60)
+		blackBack:SetAngles(Angle(90, 0, 0))
+		blackBack:DrawShadow(false)
+		self.BlackBack = blackBack
+
 		Star_Trek.Holodeck:Disintegrate(self.CenterPillar, true)
-		Star_Trek.Holodeck:Disintegrate(self.LeftGrid, true)
-		Star_Trek.Holodeck:Disintegrate(self.RightGrid, true)
 	end
 end
 
