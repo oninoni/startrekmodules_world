@@ -58,5 +58,10 @@ function SELF:CreateViewScreenControl(viewScreenPos, viewScreenAng, scale, sideS
 
 	hook.Run("Star_Trek.Navigation.AddViewscreens", screenWindow, viewScreen)
 
+	local row = screenWindow:CreateSecondaryButtonRow(32)
+	screenWindow:AddButtonToRow(row, "Toggle Screen", nil, Star_Trek.LCARS.ColorOrange, nil, false, false, function(ply, buttonData)
+		Star_Trek.Navigation:ToggleViewscreen()
+	end)
+
 	return true, screenWindow
 end

@@ -16,6 +16,65 @@
 --    Control Navigation | Server    --
 ---------------------------------------
 
+function Star_Trek.Navigation:ToggleViewscreen(status)
+	if status == nil then
+		status = IsValid(self.CenterPillar)
+	end
+
+	local viewScreen = ents.FindByName("viewscreen")[1]
+
+	if status then
+		Star_Trek.Holodeck:Disintegrate(self.CenterPillar, false, function()
+			viewScreen:SetNoDraw(false)
+		end)
+		Star_Trek.Holodeck:Disintegrate(self.LeftGrid, false)
+		Star_Trek.Holodeck:Disintegrate(self.RightGrid, false)
+	else
+		viewScreen:SetNoDraw(true)
+
+		-- Remove the Pillar (Sanity Check)
+		if IsValid(self.CenterPillar) then
+			self.CenterPillar:Remove()
+			self.CenterPillar = nil
+		end
+
+		local pillar = ents.Create("prop_physics")
+		pillar:SetModel("models/kingpommes/startrek/intrepid/holo_beam.mdl")
+		pillar:SetPos(viewScreen:GetPos() - viewScreen:GetForward() * 11 - viewScreen:GetUp() * 2.5)
+		pillar:SetAngles(Angle(0, -90, 0))
+		pillar:DrawShadow(false)
+		self.CenterPillar = pillar
+
+		local leftGrid = ents.Create("prop_physics")
+		leftGrid:SetModel("models/kingpommes/startrek/intrepid/holo_wall.mdl")
+		leftGrid:SetPos(pillar:GetPos() - pillar:GetForward() * 66 - pillar:GetRight() * 20)
+		leftGrid:SetAngles(Angle(0, -105, 0))
+		leftGrid:SetParent(pillar)
+		leftGrid:DrawShadow(false)
+		self.LeftGrid = leftGrid
+
+		local rightGrid = ents.Create("prop_physics")
+		rightGrid:SetModel("models/kingpommes/startrek/intrepid/holo_wall.mdl")
+		rightGrid:SetPos(pillar:GetPos() + pillar:GetForward() * 66 - pillar:GetRight() * 20)
+		rightGrid:SetAngles(Angle(0, -75, 0))
+		rightGrid:SetParent(pillar)
+		rightGrid:DrawShadow(false)
+		self.RightGrid = rightGrid
+
+		local blackBar = ents.Create("prop_physics")
+		blackBar:SetModel("models/hunter/plates/plate1x6.mdl")
+		blackBar:SetMaterial("models/debug/debugwhite")
+		blackBar:SetColor(Color(0, 0, 0))
+		blackBar:SetPos(viewScreen:GetPos() - viewScreen:GetForward() * 20 + viewScreen:GetUp() * 100)
+		blackBar:SetParent(pillar)
+		blackBar:DrawShadow(false)
+
+		Star_Trek.Holodeck:Disintegrate(self.CenterPillar, true)
+		Star_Trek.Holodeck:Disintegrate(self.LeftGrid, true)
+		Star_Trek.Holodeck:Disintegrate(self.RightGrid, true)
+	end
+end
+
 hook.Add("Star_Trek.LCARS.PreOpenInterface", "Star_Trek.Navigation.BlockMap", function(ent, interfaceName)
 	if interfaceName ~= "basic" then return end
 
