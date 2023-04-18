@@ -56,7 +56,6 @@ function Star_Trek.Navigation:ToggleViewscreen(status)
 		leftGrid:SetAngles(Angle(0, -105, 0))
 		leftGrid:SetParent(pillar)
 		leftGrid:DrawShadow(false)
-		self.LeftGrid = leftGrid
 
 		local rightGrid = ents.Create("prop_physics")
 		rightGrid:SetRenderMode(RENDERMODE_TRANSALPHA)
@@ -65,7 +64,6 @@ function Star_Trek.Navigation:ToggleViewscreen(status)
 		rightGrid:SetAngles(Angle(0, -75, 0))
 		rightGrid:SetParent(pillar)
 		rightGrid:DrawShadow(false)
-		self.RightGrid = rightGrid
 
 		local blackBar = ents.Create("prop_physics")
 		blackBar:SetModel("models/hunter/plates/plate1x6.mdl")
