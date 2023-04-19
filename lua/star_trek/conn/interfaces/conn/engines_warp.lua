@@ -68,10 +68,10 @@ function SELF:SelectEngineModeWarp()
 	end) -- TODO
 
 	local autoDropRow = engineControlWindow:CreateMainButtonRow(32)
-	engineControlWindow:AddButtonToRow(autoDropRow, "Enable Auto Drop to Impulse", nil, nil, nil, false, false, function(ply, buttonData)
+	engineControlWindow:AddButtonToRow(autoDropRow, "Enable Auto Drop to Impulse", nil, nil, nil, true, false, function(ply, buttonData)
 		-- TODO
 	end)
-	engineControlWindow:AddButtonToRow(autoDropRow, "Enable Auto Drop to Warp", nil, nil, nil, false, false, function(ply, buttonData)
+	engineControlWindow:AddButtonToRow(autoDropRow, "Enable Auto Drop to Warp", nil, nil, nil, true, false, function(ply, buttonData)
 		-- TODO
 	end)
 
