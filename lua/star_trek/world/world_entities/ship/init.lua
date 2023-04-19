@@ -20,8 +20,9 @@
 if not istable(ENT) then Star_Trek:LoadAllModules() return end
 local SELF = ENT
 
--- Degree per second.
-local TURN_SPEED = 20
+-- Turning Acceleration
+local ANG_ACCEL = 5
+
 -- Maximum Acceleration / Decceleration
 local MAX_ACCEL = C(10)
 -- Minimum time the ship will take to accelerate to full speed.
@@ -239,8 +240,8 @@ function SELF:CreateAlignManeuver(startAngle, targetAngle)
 	local diffAng = targetAngle - startAngle
 	diffAng:Normalize()
 
-	local maxAng = math.max(math.abs(diffAng.y), math.abs(diffAng.p), math.abs(diffAng.r))
-	maneuverData.Duration = maxAng / TURN_SPEED
+	local angDistance = math.max(math.abs(diffAng.y), math.abs(diffAng.p), math.abs(diffAng.r))
+	maneuverData.Duration = math.sqrt(angDistance / ANG_ACCEL)
 
 	return maneuverData
 end
@@ -251,8 +252,8 @@ end
 -- @param Angle startAngle
 -- @param WorldVector targetPos
 -- @return Table maneuverData
-function SELF:CreateAlignManeuverAt(startPos, startAng, targetPos)
+function SELF:CreateAlignManeuverAt(startPos, startAngle, targetPos)
 	local direction = (targetPos - startPos):GetNormalized()
 
-	return self:CreateAlignManeuver(startAng, direction:Angle())
+	return self:CreateAlignManeuver(startAngle, direction:Angle())
 end
