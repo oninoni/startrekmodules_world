@@ -24,7 +24,7 @@ SELF.BaseClass = "base_vel"
 
 SELF.Dynamic = true
 
-SELF.Solid = true
+SELF.Solid = false
 
 function SELF:Think(sysTime, deltaT)
 	self.Vel = self.Vel + (self.Acc * deltaT)

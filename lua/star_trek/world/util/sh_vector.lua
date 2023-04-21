@@ -346,6 +346,10 @@ function vectorMeta:GetFloor()
 	)
 end
 
+function vectorMeta:Cross(b)
+	return self:ToVector():Cross(b:ToVector())
+end
+
 function WorldToLocalBig(pos, ang, newSystemOrigin, newSystemAngles)
 	local offsetPos = pos - newSystemOrigin
 

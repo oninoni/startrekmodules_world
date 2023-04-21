@@ -165,7 +165,11 @@ function SELF:ExecuteCourse(course, targetSpeed, callback)
 end
 
 function SELF:PlotCourse(targetPos)
-	return Star_Trek.World:PlotCourse(self.Id, self.Pos, targetPos)
+	local success, course = Star_Trek.World:PlotCourse(self.Id, self.Pos, targetPos)
+	print(success, course)
+
+	-- TODO: Error Handling
+	return course
 end
 
 --------------------------------
