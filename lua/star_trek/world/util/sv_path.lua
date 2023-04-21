@@ -16,7 +16,7 @@
 --       Path Planning | Server      --
 ---------------------------------------
 
-local MAX_DEPTH = 10
+local MAX_DEPTH = 8
 
 -- Calculates the distance to a line AB from a point C.
 --
@@ -66,6 +66,13 @@ function Star_Trek.World:PlotCourse(shipId, startPos, endPos, depth)
 		local pos = ent.Pos
 
 		local closestApproach, approachPos, approachPoint = Star_Trek.World:DistanceToLine(startPos, endPos, pos)
+		if closestApproach == 0 then
+			local dir = endPos - startPos
+
+			closestApproach = 1
+			approachPos = pos + dir:GetNormalized():Angle():Right() * 1
+			approachPoint = approachPos:Distance(startPos)
+		end
 
 		-- Check if object is beyond course.
 		if approachPoint > distance or approachPoint < 0 then
@@ -93,11 +100,23 @@ function Star_Trek.World:PlotCourse(shipId, startPos, endPos, depth)
 
 		local segmentPoint = pos + n * h2
 
+		if segmentPoint:Distance(endPos) > startPos:Distance(endPos) then
+			return false, "Backwards Movement Detected"
+		end
+
 		-- Recursion
 		local success1, p1 = self:PlotCourse(shipId, startPos    , segmentPoint, depth - 1)
-		if not success1 then return false, p1 end
-
 		local success2, p2 = self:PlotCourse(shipId, segmentPoint,       endPos, depth - 1)
+
+		-- Try other side, if one of the segments failed.
+		if not success1 or not success2 then
+			segmentPoint = pos - n * h2
+
+			success1, p1 = self:PlotCourse(shipId, startPos    , segmentPoint, depth - 1)
+			success2, p2 = self:PlotCourse(shipId, segmentPoint,       endPos, depth - 1)
+		end
+
+		if not success1 then return false, p1 end
 		if not success2 then return false, p2 end
 
 		assert(p1[#p1] == p2[1], "Oh shit!")
