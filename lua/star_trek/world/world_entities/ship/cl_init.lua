@@ -20,17 +20,15 @@
 if not istable(ENT) then Star_Trek:LoadAllModules() return end
 local SELF = ENT
 
-function SELF:Init(clientData)
-	SELF.Base.Init(self, clientData)
-end
+function SELF:Update()
+	SELF.Base.Update(self)
 
-function SELF:Think(sysTime, deltaT)
-	SELF.Base.Think(self, sysTime, deltaT)
+	local activeManeuver = self.ActiveManeuver
+	if istable(activeManeuver) then
+		self.ManeuverStart = SysTime() - self.ManeuverOffset
+		self.ManeuverOffset = nil
 
-	-- Think hook for executing maneuvers.
-	local maneuverData = self.ActiveManeuver
-	if maneuverData then
-		self:ManeuverThink(sysTime, deltaT, maneuverData)
+		self:FixManeuverData(activeManeuver)
 	end
 end
 
@@ -40,22 +38,15 @@ function SELF:FixManeuverData(activeManeuver)
 		WorldVectorFromTable(activeManeuver.EndPos)
 		WorldVectorFromTable(activeManeuver.AccelPos)
 		WorldVectorFromTable(activeManeuver.DeccelPos)
-	--elseif activeManeuver.Type == "ALIGN" then
+
+		return
+	elseif activeManeuver.Type == "ALIGN" then
 		-- No Conversion Needed.
-	--elseif maneuverType == "IMPULSE" then
+
+		return
+	elseif maneuverType == "IMPULSE" then
 		-- TODO
+
+		return
 	end
-end
-
-function SELF:SetDynData(clientData)
-	SELF.Base.SetDynData(self, clientData)
-
-	local activeManeuver = clientData.ActiveManeuver
-	self.ManeuverStart = clientData.ManeuverStart
-
-	if istable(activeManeuver) then
-		self:FixManeuverData(activeManeuver)
-	end
-
-	self.ActiveManeuver = activeManeuver
 end

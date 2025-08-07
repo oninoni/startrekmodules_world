@@ -21,22 +21,6 @@ local UNIT_PER_METER = Star_Trek.World.UnitPerFoot * FOOT_PER_METER
 
 local SKYBOX_SCALE = 1 / Star_Trek.World.Skybox_Scale
 
-function Star_Trek.World:GetModelDiameter(model)
-	local ent = ents.Create("prop_physics")
-	ent:SetModel(model)
-	ent:Spawn()
-
-	local min, max = ent:GetModelBounds()
-	SafeRemoveEntity(ent)
-
-	local scale = max - min
-	return math.max(
-		math.abs(scale.x),
-		math.abs(scale.y),
-		math.abs(scale.z)
-	)
-end
-
 -- Return the units representing the meters given.
 -- 
 -- @param Number m
@@ -157,22 +141,20 @@ function Star_Trek.World:SkyboxToLightSpeed(skybox)
 end
 function SBtoC(skybox) return Star_Trek.World:SkyboxToLightSpeed(skybox) end
 
-local F1 = 42
-local E1 = 1.1
+local F1 = 0.1
 
 -- Return the multiples of c for a given warp factor.
 -- 
 -- @param Number warpFactor
 -- @return Number c
 function Star_Trek.World:WarpToC(warpFactor)
-	local c = math.pow(warpFactor, 10 / 3)
-
 	if warpFactor > 9 then
-		c = self.Warp9C +
-		F1 / math.pow(10 - warpFactor, E1)
+		local adjustedFactor = warpFactor
+
+		warpFactor = adjustedFactor + (F1 / (10 - adjustedFactor)) - F1
 	end
 
-	return c
+	return math.pow(warpFactor, 10 / 3)
 end
 
 Star_Trek.World.Warp9C = Star_Trek.World:WarpToC(9)
@@ -191,10 +173,13 @@ function W(warpFactor) return Star_Trek.World:WarpToSkybox(warpFactor) end
 function Star_Trek.World:SkyboxToWarp(skybox)
 	local c = SBtoC(skybox)
 
-	if c > self.Warp9C then
-		return 10 - math.pow(F1 / (c - self.Warp9C), 1/E1)
-	else
-		return math.pow(c, 3 / 10)
+	local warpFactor = math.pow(c, 3 / 10)
+	if warpFactor > 9 then
+		local adjustedFactor = 0.5 * ( -math.sqrt(F1 * F1 + 2 * F1 * (warpFactor - 8) + (warpFactor - 10) * (warpFactor - 10)) + F1 + warpFactor + 10)
+		warpFactor = adjustedFactor
 	end
+
+	return warpFactor
 end
+
 function SBtoW(skybox) return Star_Trek.World:SkyboxToWarp(skybox) end

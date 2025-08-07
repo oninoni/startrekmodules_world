@@ -20,12 +20,16 @@ Star_Trek:RequireModules()
 
 Star_Trek.World = Star_Trek.World or {}
 
+if game.GetMap() ~= "rp_intrepid_v1" then return end
+
 if SERVER then
 	AddCSLuaFile("sh_config.lua")
 	AddCSLuaFile("sh_loaders.lua")
 
+	AddCSLuaFile("util/sh_intersect.lua")
 	AddCSLuaFile("util/sh_convert.lua")
 	AddCSLuaFile("util/sh_vector.lua")
+	AddCSLuaFile("util/sh_measure.lua")
 	AddCSLuaFile("util/sh_quadtree.lua")
 	AddCSLuaFile("sh_entities.lua")
 
@@ -37,8 +41,10 @@ if SERVER then
 	include("sh_config.lua")
 	include("sh_loaders.lua")
 
+	include("util/sh_intersect.lua")
 	include("util/sh_convert.lua")
 	include("util/sh_vector.lua")
+	include("util/sh_measure.lua")
 	include("util/sh_quadtree.lua")
 	include("sh_entities.lua")
 
@@ -46,6 +52,7 @@ if SERVER then
 	include("net/sv_net.lua")
 	include("sv_entities.lua")
 
+	include("sv_galaxy.lua")
 	include("sv_systems.lua")
 end
 
@@ -53,8 +60,10 @@ if CLIENT then
 	include("sh_config.lua")
 	include("sh_loaders.lua")
 
+	include("util/sh_intersect.lua")
 	include("util/sh_convert.lua")
 	include("util/sh_vector.lua")
+	include("util/sh_measure.lua")
 	include("util/sh_quadtree.lua")
 	include("sh_entities.lua")
 

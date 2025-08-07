@@ -31,16 +31,9 @@ function Star_Trek.World:LoadEntity(clientData)
 		return false, ent
 	end
 
-	ent.Distance = math.huge
+	ent.Sort = math.huge
 
-	local shipId = LocalPlayer():GetNWInt("Star_Trek.World.ShipId", 1)
-	local shipEnt = self.Entities[shipId]
-	if shipEnt and IsWorldVector(shipEnt.Pos) and isangle(shipEnt.Ang) then
-		local pos = WorldToLocalBig(ent.Pos, ent.Ang, shipEnt.Pos, shipEnt.Ang)
-		ent.Distance = pos:Length()
-	end
-
-	self:GenerateRenderEntities()
+	self.ShouldGenRender = true
 
 	return true
 end
@@ -56,7 +49,12 @@ function Star_Trek.World:UnLoadEntity(id)
 		return false, errorTerminate
 	end
 
-	self:GenerateRenderEntities()
+	self.ShouldGenRender = true
 
 	return true
 end
+
+-- Reset Entities before map cleanup, since they are respawned afterwards.
+hook.Add("PreCleanupMap", "Star_Trek.World.ResetEntities", function()
+	Star_Trek.World.HullEntities = {}
+end)

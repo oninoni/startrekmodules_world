@@ -26,4 +26,4 @@ Star_Trek.Navigation.EnableManeuver = false
 
 -- Enables the Slistream Drive Mode.
 -- This mode will not do anything, unless provided with an external flight system.
-Star_Trek.Navigation.EnableSlipstream = true
+Star_Trek.Navigation.EnableSlipstream = false

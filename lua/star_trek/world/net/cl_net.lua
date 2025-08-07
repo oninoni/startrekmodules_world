@@ -56,6 +56,8 @@ net.Receive("Star_Trek.World.Update", function()
 
 	ent:SetData(clientData)
 	ent:SetDynData(clientData)
+
+	ent:Update()
 end)
 
 net.Receive("Star_Trek.World.Sync", function()

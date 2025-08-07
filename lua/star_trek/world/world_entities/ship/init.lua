@@ -20,12 +20,13 @@
 if not istable(ENT) then Star_Trek:LoadAllModules() return end
 local SELF = ENT
 
--- Degree per second.
-local TURN_SPEED = 20
+-- Turning Acceleration
+local ANG_ACCEL = 5
+
 -- Maximum Acceleration / Decceleration
 local MAX_ACCEL = C(10)
 -- Minimum time the ship will take to accelerate to full speed.
-local MIN_ACCEL_TIME = 10
+local MIN_ACCEL_TIME = 15
 
 -- Minimum Warp Speed
 local MIN_WARP = W(1)
@@ -36,21 +37,27 @@ function SELF:Init(pos, ang, model, diameter)
 	SELF.Base.Init(self, pos, ang, model, diameter)
 end
 
-function SELF:Think(sysTime, deltaT)
-	SELF.Base.Think(self, sysTime, deltaT)
+function SELF:Terminate()
+	SELF.Base.Terminate(self)
 
-	-- Think hook for executing maneuvers.
-	local maneuverData = self.ActiveManeuver
-	if maneuverData then
-		self:ManeuverThink(sysTime, deltaT, maneuverData)
+	if self.WarpEffectActive then
+		local warpDeactivate = ents.FindByName("warpdeactivate")[1]
+		warpDeactivate:Fire("Trigger")
+
+		self.WarpEffectActive = nil
 	end
 end
 
-function SELF:GetClientDynData(clientData)
-	SELF.Base.GetClientDynData(self, clientData)
+function SELF:GetClientData(clientData)
+	SELF.Base.GetClientData(self, clientData)
 
-	clientData.ActiveManeuver = self.ActiveManeuver
-	clientData.ManeuverStart = self.ManeuverStart
+	local activeManeuver = self.ActiveManeuver
+	if activeManeuver then
+		clientData.ActiveManeuver = activeManeuver
+		clientData.ManeuverOffset = SysTime() - self.ManeuverStart
+	else
+		clientData.ActiveManeuver = false
+	end
 end
 
 -- Perform the given maneuver, ending a current one, if active.
@@ -64,6 +71,46 @@ function SELF:TriggerManeuver(maneuverData, callback)
 	self.ManeuverStart = SysTime()
 	self.Updated = true
 end
+
+function SELF:AbortCourse()
+	if istable(self.Course) then
+		self.Course = nil
+		self.CourseStep = nil
+		self.CourseCallback = nil
+		self.CourseTargetSpeed = nil
+
+		self.ActiveManeuver = nil
+		self.ManeuverCallback = nil
+		self.ManeuverStart = nil
+
+		self.Vel = Vector()
+		self.Acc = Vector()
+		self.AngVel = Angle()
+		self.AngAcc = Angle()
+
+		self.Updated = true
+
+		if self.WarpEffectActive then
+			local warpDeactivate = ents.FindByName("warpdeactivate")[1]
+			warpDeactivate:Fire("Trigger")
+
+			self.WarpEffectActive = nil
+		end
+
+		return true
+	end
+end
+
+hook.Add("Star_Trek.WarpCore_Console.Eject", "Star_Trek.World.StopShip", function()
+	local ship = Star_Trek.World:GetEntity(1)
+	if not istable(ship) then return end
+
+	util.ScreenShake(Vector(), 10, 3, 6, 0)
+	Star_Trek.Alert:Enable("red")
+
+	ship.WarpEffectActive = nil
+	ship:AbortCourse()
+end)
 
 function SELF:ExecuteCourseStep()
 	local step = self.CourseStep
@@ -89,9 +136,21 @@ function SELF:ExecuteCourseStep()
 	-- Execute Course Segment
 	local maneuverData1 = self:CreateAlignManeuverAt(startPos, self.Ang, endPos)
 	self:TriggerManeuver(maneuverData1, function(_)
-		local maneuverData2 = self:CreateWarpManeuver(startPos, endPos, self.CourseTargetSpeed) -- TODO: Set Speed
-		self:TriggerManeuver(maneuverData2, function(_)
-			self:ExecuteCourseStep()
+		local maneuverData2 = self:CreateWarpManeuver(startPos, endPos, self.CourseTargetSpeed)
+
+		if self.Id == 1 and maneuverData2.Duration > 10 then
+			local warpActivate = ents.FindByName("warpactivate")[1]
+			warpActivate:Fire("Trigger")
+
+			self.WarpEffectActive = true
+		end
+
+		timer.Simple(3, function()
+			if self.Course == nil then return end
+
+			self:TriggerManeuver(maneuverData2, function(_)
+				self:ExecuteCourseStep()
+			end)
 		end)
 	end)
 end
@@ -106,7 +165,11 @@ function SELF:ExecuteCourse(course, targetSpeed, callback)
 end
 
 function SELF:PlotCourse(targetPos)
-	return Star_Trek.World:PlotCourse(self.Pos, targetPos)
+	local success, course = Star_Trek.World:PlotCourse(self.Id, self.Pos, targetPos)
+	print(success, course)
+
+	-- TODO: Error Handling
+	return course
 end
 
 --------------------------------
@@ -132,6 +195,7 @@ function SELF:CreateWarpManeuver(startPos, endPos, targetSpeed)
 
 	local diff = endPos - startPos
 	local distance = diff:Length()
+	maneuverData.Distance = distance
 
 	-- Determine Acceleration
 	local acceleration = math.min(MAX_ACCEL, targetSpeed / MIN_ACCEL_TIME)
@@ -171,19 +235,17 @@ end
 -- @param Angle targetAngle
 -- @return Table maneuverData
 function SELF:CreateAlignManeuver(startAngle, targetAngle)
-	targetAngle.p = -targetAngle.p
-
 	local maneuverData = {
 		Type = "ALIGN",
 		StartAngle = startAngle,
 		TargetAngle = targetAngle,
 	}
 
-	local diffAng = startAngle - targetAngle
+	local diffAng = targetAngle - startAngle
 	diffAng:Normalize()
 
-	local maxAng = math.max(math.abs(diffAng.y), math.abs(diffAng.p), math.abs(diffAng.r))
-	maneuverData.Duration = maxAng / TURN_SPEED
+	local angDistance = math.max(math.abs(diffAng.y), math.abs(diffAng.p), math.abs(diffAng.r))
+	maneuverData.Duration = math.sqrt(angDistance / ANG_ACCEL)
 
 	return maneuverData
 end
@@ -194,8 +256,8 @@ end
 -- @param Angle startAngle
 -- @param WorldVector targetPos
 -- @return Table maneuverData
-function SELF:CreateAlignManeuverAt(startPos, startAng, targetPos)
+function SELF:CreateAlignManeuverAt(startPos, startAngle, targetPos)
 	local direction = (targetPos - startPos):GetNormalized()
 
-	return self:CreateAlignManeuver(startAng, direction:Angle())
+	return self:CreateAlignManeuver(startAngle, direction:Angle())
 end

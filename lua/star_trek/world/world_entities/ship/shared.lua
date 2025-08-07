@@ -24,6 +24,18 @@ SELF.BaseClass = "base_acc"
 
 SELF.Dynamic = true
 
+SELF.Solid = false
+
+function SELF:Think(sysTime, deltaT)
+	SELF.Base.Think(self, sysTime, deltaT)
+
+	-- Think hook for executing maneuvers.
+	local maneuverData = self.ActiveManeuver
+	if maneuverData then
+		self:ManeuverThink(sysTime, deltaT, maneuverData)
+	end
+end
+
 function SELF:ResetManeuver()
 	self.ActiveManeuver = nil
 	self.ManeuverStart = nil
@@ -45,6 +57,13 @@ function SELF:ManeuverThink(sysTime, deltaT, maneuverData)
 	local maneuverType = maneuverData.Type
 	if maneuverType == "WARP" then
 		local endPos = maneuverData.EndPos
+
+		if SERVER and self.WarpEffectActive and time >= maneuverData.Duration - 3 then
+			local warpDeactivate = ents.FindByName("warpdeactivate")[1]
+			warpDeactivate:Fire("Trigger")
+
+			self.WarpEffectActive = nil
+		end
 
 		if time >= maneuverData.Duration then
 			self.Pos = endPos
@@ -76,6 +95,8 @@ function SELF:ManeuverThink(sysTime, deltaT, maneuverData)
 		local oldVel = self.OldVel or Vector()
 		self.Acc = (self.Vel - oldVel) / deltaT
 		self.OldVel = self.Vel
+
+		return
 	elseif maneuverType == "ALIGN" then
 		local targetAngle = maneuverData.TargetAngle
 
@@ -103,6 +124,8 @@ function SELF:ManeuverThink(sysTime, deltaT, maneuverData)
 		local oldAngVel = self.OldAngVel or Angle()
 		self.AngAcc = (self.AngVel - oldAngVel) / deltaT
 		self.OldAngVel = self.AngVel
+
+		return
 	elseif maneuverType == "IMPULSE" then
 		-- TODO
 

@@ -14,22 +14,28 @@
 
 ---------------------------------------
 --            World Entity           --
---          Planet | Server          --
+--            Sun | Server           --
 ---------------------------------------
 
 if not istable(ENT) then Star_Trek:LoadAllModules() return end
 local SELF = ENT
 
-function SELF:Init(pos, ang, model, diameter, spin)
-	model = model or "models/planets/earth.mdl"
-	diameter = diameter or KM(100)
-	if spin == nil then
-		spin = 0.1
-	end
+function SELF:Init(pos, ang, model, diameter, spin, lightColorVector)
+	model = model or "models/crazycanadian/star_trek/planets/star.mdl"
 
-	SELF.Base.Init(self, pos, ang, model, diameter, Vector(), Angle(0, spin, 0))
+	SELF.Base.Init(self, pos, ang, model, diameter, spin)
+
+	self:SetLightColorVector(lightColorVector)
 end
 
-function SELF:SetSpin(spin)
-	self:SetAngularVelocity(Angle(0, spin, 0))
+function SELF:GetClientData(clientData)
+	SELF.Base.GetClientData(self, clientData)
+
+	clientData.LightColorVector = self.LightColorVector
+end
+
+function SELF:SetLightColorVector(lightColorVector)
+	self.LightColorVector = lightColorVector
+
+	self.Updated = true
 end

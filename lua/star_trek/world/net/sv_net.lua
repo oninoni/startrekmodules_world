@@ -17,7 +17,7 @@
 ---------------------------------------
 
 util.AddNetworkString("Star_Trek.World.Load")
-function Star_Trek.World:GetCientData(ent, update, sync)
+function Star_Trek.World:GetClientData(ent, update, sync)
 	local clientData = {}
 	clientData.Id = ent.Id
 
@@ -36,7 +36,8 @@ end
 
 -- Network a newly loaded world entity to the clients.
 function Star_Trek.World:NetworkLoad(ent)
-	local clientData = Star_Trek.World:GetCientData(ent)
+	local clientData = Star_Trek.World:GetClientData(ent)
+	ent.Updated = nil
 
 	net.Start("Star_Trek.World.Load")
 		Star_Trek.Util:WriteNetTable(clientData)
@@ -50,7 +51,7 @@ util.AddNetworkString("Star_Trek.World.LoadMultiple")
 function Star_Trek.World:NetworkLoaded(ply)
 	local clientDataMultiple = {}
 	for id, ent in pairs(self.Entities) do
-		local clientData = Star_Trek.World:GetCientData(ent)
+		local clientData = Star_Trek.World:GetClientData(ent)
 		table.insert(clientDataMultiple, clientData)
 	end
 
@@ -74,7 +75,8 @@ end
 -- Update all data of the given entity.
 util.AddNetworkString("Star_Trek.World.Update")
 function Star_Trek.World:NetworkUpdate(ent)
-	local clientData = Star_Trek.World:GetCientData(ent, true)
+	local clientData = Star_Trek.World:GetClientData(ent, true)
+	ent.Updated = nil
 
 	net.Start("Star_Trek.World.Update")
 		Star_Trek.Util:WriteNetTable(clientData)
@@ -92,7 +94,7 @@ function Star_Trek.World:NetworkSync()
 		-- Skip non-dynamic entities.
 		if not ent.Dynamic then continue end
 
-		local clientData = Star_Trek.World:GetCientData(ent, true, true)
+		local clientData = Star_Trek.World:GetClientData(ent, true, true)
 		table.insert(clientDataMultiple, clientData)
 	end
 

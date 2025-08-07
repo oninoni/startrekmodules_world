@@ -23,24 +23,14 @@ local SELF = ENT
 function SELF:Init(pos, ang, model, diameter, vel, angVel)
 	SELF.Base.Init(self, pos, ang, model, diameter)
 
-	self.Vel = vel or Vector()
-	self.AngVel = angVel or Angle()
-end
-
-function SELF:SetVelocity(vel)
-	self.Vel = vel
-
-	self.Updated = true
-end
-
-function SELF:SetAngularVelocity(angVel)
-	self.AngVel = angVel
-
-	self.Updated = true
+	self:SetVelocity(vel)
+	self:SetAngularVelocity(angVel)
 end
 
 function SELF:GetClientData(clientData)
 	clientData.Model = self.Model
+	clientData.Material = self.Material
+
 	clientData.Diameter = self.Diameter
 	clientData.Scale = self.Scale
 
@@ -51,4 +41,16 @@ end
 function SELF:GetClientDynData(clientData)
 	clientData.Pos = self.Pos
 	clientData.Ang = self.Ang
+end
+
+function SELF:SetVelocity(vel)
+	self.Vel = vel or Vector()
+
+	self.Updated = true
+end
+
+function SELF:SetAngularVelocity(angVel)
+	self.AngVel = angVel or Angle()
+
+	self.Updated = true
 end

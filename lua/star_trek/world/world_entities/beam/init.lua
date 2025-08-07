@@ -14,22 +14,28 @@
 
 ---------------------------------------
 --            World Entity           --
---          Planet | Server          --
+--           Beam | Server           --
 ---------------------------------------
 
 if not istable(ENT) then Star_Trek:LoadAllModules() return end
 local SELF = ENT
 
-function SELF:Init(pos, ang, model, diameter, spin)
-	model = model or "models/planets/earth.mdl"
-	diameter = diameter or KM(100)
-	if spin == nil then
-		spin = 0.1
-	end
+function SELF:Init(pos, ang, length, parentId, material, color, width, tiling, stream)
+	SELF.Base.Init(self, pos, ang, "models/squad/sf_bars/sf_bar25x25x8.mdl", length, parentId)
 
-	SELF.Base.Init(self, pos, ang, model, diameter, Vector(), Angle(0, spin, 0))
+	self.Color = color or Color(255, 255, 255, 127)
+	self.Width = width or 1
+	self.Tiling = tiling or 512
+	self.Stream = -stream or 0
+
+	self:SetMaterial(material)
 end
 
-function SELF:SetSpin(spin)
-	self:SetAngularVelocity(Angle(0, spin, 0))
+function SELF:GetClientData(clientData)
+	SELF.Base.GetClientData(self, clientData)
+
+	clientData.Color = self.Color
+	clientData.Width = self.Width
+	clientData.Tiling = self.Tiling
+	clientData.Stream = self.Stream
 end

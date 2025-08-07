@@ -218,6 +218,10 @@ end
 -- @param Table worldVector
 -- @return WorldVector worldVector
 function WorldVectorFromTable(worldVector)
+	if IsWorldVector(worldVector) then
+		return worldVector
+	end
+
 	setmetatable(worldVector, metaTable)
 	worldVector:FixValue()
 
@@ -342,10 +346,24 @@ function vectorMeta:GetFloor()
 	)
 end
 
+function vectorMeta:Cross(b)
+	return self:ToVector():Cross(b:ToVector())
+end
+
 function WorldToLocalBig(pos, ang, newSystemOrigin, newSystemAngles)
 	local offsetPos = pos - newSystemOrigin
 
 	return WorldToLocal(offsetPos:ToVector(), ang, Vector(), newSystemAngles)
+end
+
+function LocalToWorldBig(localPos, localAng, originPos, originAng)
+	if IsWorldVector(localPos) then
+		localPos = localPos:ToVector()
+	end
+
+	local pos, ang = LocalToWorld(localPos, localAng, Vector(), originAng)
+
+	return originPos + pos, ang
 end
 
 function net.ReadWorldVector()

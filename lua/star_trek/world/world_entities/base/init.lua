@@ -20,25 +20,19 @@
 if not istable(ENT) then Star_Trek:LoadAllModules() return end
 local SELF = ENT
 
+function SELF:Init(pos, ang, model, diameter)
+	self:SetPos(pos)
+	self:SetAng(ang)
+
+	self:SetModel(model)
+	self:SetDiameter(diameter)
+end
+
 function SELF:Terminate()
 end
 
 function SELF:Update()
 	Star_Trek.World:NetworkUpdate(self)
-
-	self.Updated = nil
-end
-
-function SELF:SetPosition(pos)
-	self.Pos = pos
-
-	self.Updated = true
-end
-
-function SELF:SetAngle(ang)
-	self.Ang = ang
-
-	self.Updated = true
 end
 
 function SELF:GetClientData(clientData)
@@ -46,6 +40,8 @@ function SELF:GetClientData(clientData)
 	clientData.Ang = self.Ang
 
 	clientData.Model = self.Model
+	clientData.Material = self.Material
+
 	clientData.Diameter = self.Diameter
 	clientData.Scale = self.Scale
 end
@@ -53,12 +49,50 @@ end
 function SELF:GetClientDynData(clientData)
 end
 
-function SELF:Init(pos, ang, model, diameter)
+function SELF:SetPos(pos)
 	self.Pos = pos or WorldVector()
+
+	self.Updated = true
+end
+
+function SELF:SetAngles(ang)
 	self.Ang = ang or Angle()
 
-	self.Diameter = diameter or 1
-	self.Scale = self.Diameter / Star_Trek.World:GetModelDiameter(model)
+	self.Updated = true
+end
+SELF.SetAng = SELF.SetAngles
 
+function SELF:ApplySize()
+	local diameter = self.Diameter or 1
+
+	local model = self.Model
+	if istable(model) then
+		model = model.Model
+	end
+
+	local modelDiameter = Star_Trek.World:GetModelDiameter(model)
+
+	self.Scale = diameter / modelDiameter
+
+	self.Updated = true
+end
+
+function SELF:SetModel(model)
 	self.Model = model or "models/hunter/blocks/cube4x4x4.mdl"
+	self:ApplySize()
+
+	self.Updated = true
+end
+
+function SELF:SetDiameter(diameter)
+	self.Diameter = diameter or 1
+	self:ApplySize()
+
+	self.Updated = true
+end
+
+function SELF:SetMaterial(material)
+	self.Material = material
+
+	self.Updated = true
 end

@@ -16,88 +16,126 @@
 --       World Render | Client       --
 ---------------------------------------
 
-Star_Trek.World.RenderEntities = {}
-
-local VECTOR_MAX = Star_Trek.World.Vector_Max or 131071
 local SKY_CAM_SCALE = Star_Trek.World.Skybox_Scale or (1 / 1024)
+local SKY_CAM_OFFSET = Star_Trek.World.SkyboxOffset or Vector(0, 0, 13250)
 local SORT_DELAY = Star_Trek.World.SortDelay or 0.5
-
-function Star_Trek.World:GenerateRenderEntities()
-	self.RenderEntities = {}
-
-	for _, otherEnt in SortedPairsByMemberValue(self.Entities, "Distance", true) do
-		table.insert(self.RenderEntities, otherEnt)
-	end
+local VECTOR_MAX = Star_Trek.World.Vector_Max or 131071
+local AMBIENT_LIGHT = Star_Trek.World.AmbientLight
+if AMBIENT_LIGHT == nil then
+	AMBIENT_LIGHT = 0.0005
 end
 
-local nextSort = CurTime()
-function Star_Trek.World:RenderSort()
-	local curTime = CurTime()
-	if curTime < nextSort then
-		return
-	end
-	nextSort = curTime + SORT_DELAY
+Star_Trek.World.HullEntities = Star_Trek.World.HullEntities or {}
+local function initHull()
+	Star_Trek.World.HullEntities = {}
 
-	table.SortByMember(self.RenderEntities, "Distance")
+	--for _, ent in pairs(ents.FindByModel("models/kingpommes/startrek/intrepid/exterior_*")) do
+	for _, ent in pairs(ents.GetAll()) do
+		local model = ent:GetModel() or ""
+		if string.StartsWith(model, "models/kingpommes/startrek/intrepid/exterior_") then
+			ent:SetNoDraw(true)
+			table.insert(Star_Trek.World.HullEntities, ent)
+		end
+	end
 end
+hook.Add("PostCleanupMap", "Star_Trek.World.InitHull", initHull)
+hook.Add("InitPostEntity", "Star_Trek.World.InitHull", initHull)
+
+Star_Trek.World.RenderEntities = Star_Trek.World.RenderEntities or {}
+Star_Trek.World.LightSources = Star_Trek.World.LightSources or {}
 
 local shipId, shipPos, shipAng
+local nextSort = CurTime()
 function Star_Trek.World:RenderThink()
 	shipId = LocalPlayer():GetNWInt("Star_Trek.World.ShipId", 1)
 	local shipEnt = self.Entities[shipId]
 	if shipEnt then
-		shipPos = shipEnt.Pos
-		shipAng = shipEnt.Ang
+		shipPos, shipAng = LocalToWorldBig(Vector(1.255, 0, 1.015), Angle(0, 180, 0), shipEnt.Pos, shipEnt.Ang)
 	else
 		-- Disable rendering if ship is not valid.
 		shipId = nil
+
 		return
 	end
 
-	-- Apply World Correction Offset
-	-- Compensates Offset between Skybox and Map Model of Intrepid
-	shipPos = shipPos + Vector(1.255, 0, 1.015)
-	shipAng = shipAng + Angle(0, 180, 0)
+	-- Regenerate Render Entities if something changed.
+	if self.ShouldGenRender then
+		self.ShouldGenRender = nil
+		self.RenderEntities = {}
 
-	self:RenderSort()
-	for id, ent in ipairs(self.RenderEntities) do
-		if ent.Id == shipId then continue end
+		local j = 1
+		local lightSources = {{},{},{},{}}
+		self.LightSources = lightSources
 
-		local pos, ang = WorldToLocalBig(ent.Pos, ent.Ang, shipPos, shipAng)
+		for _, ent in SortedPairsByMemberValue(self.Entities, "Sort", true) do
+			if ent.Id == shipId then continue end
 
-		local realEnt = ent.ClientEntity
+			table.insert(self.RenderEntities, ent)
 
-		-- Apply scaling
-		local modelScale = ent.Scale or 1
+			ent:RenderThink(shipPos, shipAng)
 
-		local distance = pos:Length()
-		ent.Distance = distance
-		if distance > VECTOR_MAX then
-			pos = Vector(pos)
-			pos:Normalize()
-			pos = pos * VECTOR_MAX
+			if ent.LightSource then
+				lightSources[j] = ent.LightTable
 
-			realEnt:SetModelScale(modelScale * (VECTOR_MAX / distance))
-		else
-			realEnt:SetModelScale(modelScale)
+				j = j + 1
+				if j >= 4 then
+					break
+				end
+			end
 		end
 
-		realEnt:SetPos(pos)
-		realEnt:SetAngles(ang)
+		nextSort = CurTime() + SORT_DELAY
+		return
+	end
+
+	local renderEntities = self.RenderEntities
+
+	local curTime = CurTime()
+	if curTime >= nextSort then
+		nextSort = curTime + SORT_DELAY
+
+		-- Render Sorting.
+		table.SortByMember(renderEntities, "Sort")
+	end
+
+	-- Light sources.
+	local lightCount = 0
+	local lightSources = self.LightSources
+
+	for i = 1, #renderEntities do
+		local ent = renderEntities[i]
+
+		ent:RenderThink(shipPos, shipAng)
+		if ent.LightSource and lightCount <= 4 then
+			local lightTable = ent.LightTable
+			if lightTable.type == MATERIAL_LIGHT_DISABLE then continue end
+
+			lightCount = lightCount + 1
+			lightSources[lightCount] = lightTable
+		end
 	end
 end
 
-local eyePos, eyeAngles
-hook.Add("PreDrawSkyBox", "Star_Trek.World.Draw", function()
-	eyePos, eyeAngles = EyePos(), EyeAngles()
-	eyeAngles = LocalPlayer():EyeAngles()
+hook.Add("RenderScene", "Star_Trek.World.PreRenderReset", function()
+	Star_Trek.World.DrawSkybox = false
 end)
 
-function Star_Trek.World:Draw()
+function Star_Trek.World:SkyboxDraw()
 	if not shipId then return end
 
+	self.DrawSkybox = true
+	self.DrawOffset = false
+
+	local viewSetup = render.GetViewSetup(true)
+	local eyePos = viewSetup.origin
+	local eyeAngles = viewSetup.angles
+	if eyePos.z > SKY_CAM_OFFSET.z / 2 then
+		eyePos = eyePos - SKY_CAM_OFFSET
+
+		self.DrawOffset = true
+	end
+
 	render.SuppressEngineLighting(true)
-	render.SetColorModulation(1, 1, 1)
 
 	local mat = Matrix()
 	mat:SetAngles(shipAng)
@@ -107,21 +145,81 @@ function Star_Trek.World:Draw()
 		self:DrawBackground()
 	cam.End3D()
 
-	cam.Start3D(eyePos * SKY_CAM_SCALE, eyeAngles, nil, nil, nil, nil, nil, 0.0005, 10000000)
-		cam.IgnoreZ(true)
+	render.ResetModelLighting(AMBIENT_LIGHT, AMBIENT_LIGHT, AMBIENT_LIGHT)
+	render.SetLocalModelLights(self.LightSources)
+	--render.SetLightingOrigin(Vector()) Was used to prevent flickering depending on camera angle.
+
+	render.SetColorModulation(1, 1, 1)
+
+	cam.Start3D(eyePos * SKY_CAM_SCALE, eyeAngles, nil, nil, nil, nil, nil, 8, VECTOR_MAX)
+		--cam.IgnoreZ(true)
 		local renderEntities = self.RenderEntities
 		for i = 1, #renderEntities do
 			local ent = renderEntities[i]
-			if ent.Id == shipId then continue end
 
-			ent.ClientEntity:DrawModel()
+			ent:DrawSkybox()
 		end
-		cam.IgnoreZ(false)
+		--cam.IgnoreZ(false)
 	cam.End3D()
 
 	render.SuppressEngineLighting(false)
 end
 
 hook.Add("PostDraw2DSkyBox", "Star_Trek.World.Draw", function()
-	Star_Trek.World:Draw()
+	Star_Trek.World:SkyboxDraw()
+end)
+
+function Star_Trek.World:NearbyDraw()
+	if not shipId then return end
+
+	if not self.DrawSkybox then return end
+
+	local eyePos
+	if self.DrawOffset then
+		local viewSetup = render.GetViewSetup(true)
+		eyePos = viewSetup.origin - SKY_CAM_OFFSET
+	end
+
+	render.SuppressEngineLighting(true)
+
+	render.ResetModelLighting(AMBIENT_LIGHT, AMBIENT_LIGHT, AMBIENT_LIGHT)
+	render.SetLocalModelLights(self.LightSources)
+	--render.SetLightingOrigin(Vector()) Was used to prevent flickering depending on camera angle.
+
+	render.SetColorModulation(1, 1, 1)
+
+	cam.Start3D(eyePos)
+		if not self.DrawOffset then
+			local flashLight = LocalPlayer():FlashlightIsOn()
+
+			local hullEntities = self.HullEntities
+			for i = 1, #hullEntities do
+				local ent = hullEntities[i]
+				if not IsValid(ent) then continue end
+
+				ent:DrawModel()
+
+				if flashLight then
+					render.PushFlashlightMode(true)
+					ent:DrawModel()
+					render.PopFlashlightMode()
+				end
+			end
+		end
+
+		local renderEntities = self.RenderEntities
+		for i = 1, #renderEntities do
+			local ent = renderEntities[i]
+
+			ent:DrawNearby()
+		end
+	cam.End3D()
+
+	render.SuppressEngineLighting(false)
+end
+
+hook.Add("PostDrawTranslucentRenderables", "Star_Trek.World.Draw", function(bDrawingDepth, bDrawingSkybox, isDraw3DSkybox)
+	if bDrawingSkybox or isDraw3DSkybox then return end
+
+	Star_Trek.World:NearbyDraw()
 end)

@@ -23,3 +23,5 @@ local SELF = ENT
 SELF.BaseClass = "base_vel"
 
 SELF.Dynamic = true
+
+SELF.Solid = true
