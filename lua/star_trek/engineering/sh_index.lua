@@ -1,6 +1,6 @@
 ---------------------------------------
 ---------------------------------------
---        Star Trek Utilities        --
+--         Star Trek Modules         --
 --                                   --
 --            Created by             --
 --       Jan 'Oninoni' Ziegler       --
@@ -8,21 +8,22 @@
 -- This software can be used freely, --
 --    but only distributed by me.    --
 --                                   --
---    Copyright © 2021 Jan Ziegler   --
+--    Copyright © 2022 Jan Ziegler   --
 ---------------------------------------
 ---------------------------------------
 
 ---------------------------------------
---      Star Trek World | Loader     --
+--       Engineering | Shared        --
 ---------------------------------------
+Star_Trek:RequireModules("lcars")
 
-Star_Trek = Star_Trek or {}
-Star_Trek.Modules = Star_Trek.Modules or {}
+Star_Trek.Engineering = Star_Trek.Engineering or {}
+Star_Trek.Engineering.ChairPos = Vector(-212, 236, 13328) -- TODO change to chair.pos
 
-Star_Trek.Modules["world"] = true
+if SERVER then
+	include("sv_engineering.lua")
+end
 
-Star_Trek.Modules["operations"] = true
-Star_Trek.Modules["tactical"] = true
-Star_Trek.Modules["conn"] = true
-Star_Trek.Modules["science"] = true
-Star_Trek.Modules["engineering"] = true
+if CLIENT then
+	return
+end

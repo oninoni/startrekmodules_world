@@ -56,6 +56,8 @@ local setupButton = function()
 		print(ent)
 	end
 	Star_Trek.Operations.Button = ent
+
+
 end
 
 hook.Add("InitPostEntity", "Star_Trek.Operations.SpawnButton", setupButton)
